@@ -70,6 +70,8 @@ jobs:
             gh release upload "$TAG" dist/hushfall.jar dist/hushfall.zip --clobber
             # Releases antigas tinham o jar com a versão no nome; agora o nome é fixo.
             gh release delete-asset "$TAG" "silenciototal-${TAG#v}.jar" -y || true
+            # Se a tag foi recriada, o GitHub vira a release em rascunho; publica de novo.
+            gh release edit "$TAG" --draft=false --latest
           else
             gh release create "$TAG" dist/hushfall.jar dist/hushfall.zip --verify-tag \
               --title "Hushfall ${TAG#v}" --notes-file .github/release-notes.md --generate-notes
