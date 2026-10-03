@@ -1,19 +1,19 @@
-# Publica uma release com o jar do mod sempre que uma tag de versão é enviada.
+# Publica uma release sempre que uma tag de versão é enviada.
 #
 #   git tag v1.1.0 && git push origin v1.1.0
 #
-# A versão do jar vem da tag (v1.1.0 -> silenciototal-1.1.0.jar). Roda no GitHub com a
-# permissão do próprio repositório, então não depende de quem está logado no `gh` local.
+# Anexa dois arquivos com nome fixo, para o site baixar direto da última release
+# (https://github.com/pedrorreiro/hushfall/releases/latest/download/<arquivo>):
+#   hushfall.jar  só o mod
+#   hushfall.zip  o mod + Fabric API + LEIA-ME, pronto para a pasta mods
+#
+# A versão do mod vem da tag (v1.1.0 -> 1.1.0). Roda no GitHub com a permissão do próprio
+# repositório, então não depende de quem está logado no `gh` local.
 
 name: release
 on:
   push:
     tags: ['v*']
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag já existente para publicar (ex.: v1.0.0)'
-        required: true
 
 permissions:
   contents: write
@@ -22,12 +22,10 @@ jobs:
   release:
     runs-on: ubuntu-24.04
     env:
-      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      TAG: ${{ github.ref_name }}
     steps:
       - name: checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ env.TAG }}
       - name: validate gradle wrapper
         uses: gradle/actions/wrapper-validation@v6
       - name: setup jdk
@@ -39,14 +37,40 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew build -Pversion="${TAG#v}"
+      - name: package
+        run: |
+          VERSION="${TAG#v}"
+          FABRIC_API=$(grep '^fabric_api_version=' gradle.properties | cut -d= -f2)
+          MC=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          mkdir -p dist/mods
+          cp "build/libs/silenciototal-${VERSION}.jar" dist/hushfall.jar
+          cp dist/hushfall.jar "dist/mods/hushfall-${VERSION}.jar"
+          curl -fsSL -o "dist/mods/fabric-api-${FABRIC_API}.jar" \
+            "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/${FABRIC_API}/fabric-api-${FABRIC_API}.jar"
+          cat > dist/mods/LEIA-ME.txt <<EOF
+          Hushfall ${VERSION} (Silencio Total) - Minecraft Java ${MC}
+
+          1. Instale o Fabric Loader para o Minecraft ${MC}: https://fabricmc.net/use/installer/
+          2. Copie os dois arquivos .jar desta pasta para a pasta "mods" do Minecraft.
+             Windows: %appdata%\.minecraft\mods
+             macOS:   ~/Library/Application Support/minecraft/mods
+             Linux:   ~/.minecraft/mods
+          3. Abra o jogo pelo perfil "fabric-loader-${MC}".
+
+          Se ja tiver uma versao antiga do Hushfall (ou silenciototal-*.jar) na pasta mods, apague antes.
+          Como jogar: https://github.com/pedrorreiro/hushfall
+          EOF
+          (cd dist/mods && zip -q ../hushfall.zip *)
+          ls -la dist
       - name: publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          JAR="build/libs/silenciototal-${TAG#v}.jar"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "$JAR" --clobber
+            gh release upload "$TAG" dist/hushfall.jar dist/hushfall.zip --clobber
+            # Releases antigas tinham o jar com a versão no nome; agora o nome é fixo.
+            gh release delete-asset "$TAG" "silenciototal-${TAG#v}.jar" -y || true
           else
-            gh release create "$TAG" "$JAR" --verify-tag --title "Hushfall ${TAG#v}" \
-              --notes-file .github/release-notes.md --generate-notes
+            gh release create "$TAG" dist/hushfall.jar dist/hushfall.zip --verify-tag \
+              --title "Hushfall ${TAG#v}" --notes-file .github/release-notes.md --generate-notes
           fi

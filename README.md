@@ -49,7 +49,10 @@ Para instalar, coloque o jar em `mods/` junto com o Fabric API (0.161.0+26.3) e 
 
 ## Publicar uma versão
 
-Envie uma tag de versão. O workflow `.github/workflows/release.yml` compila o mod e publica a release com o jar no GitHub, e o botão "Baixar" do site passa a apontar para ela:
+Envie uma tag de versão. O workflow `.github/workflows/release.yml` compila o mod e publica a release com dois arquivos de nome fixo, que o botão "Baixar" do site baixa direto da última versão:
+
+- `hushfall.zip`: o mod + Fabric API + LEIA-ME, pronto para a pasta `mods`;
+- `hushfall.jar`: só o mod.
 
 ```bash
 git tag v1.1.0
