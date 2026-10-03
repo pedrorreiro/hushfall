@@ -156,3 +156,15 @@ for i in range(5):            # cabo enrolado em lã
 px[1, 14] = POMMEL; px[1, 15] = POMMEL; px[0, 15] = POMMEL
 dag.save(R + "textures/item/silent_dagger.png")
 print("dagger ok")
+
+# Sino Ensurdecedor 16x16: sino dourado com a orelha (carne) no lugar do badalo.
+bell = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+d = ImageDraw.Draw(bell)
+GOLD = (233, 183, 54, 255); GOLD_D = (176, 120, 26, 255); GOLD_L = (255, 232, 130, 255)
+d.rectangle((7, 0, 8, 2), fill=(110, 78, 48, 255))                 # alça (graveto)
+d.polygon([(4, 3), (11, 3), (12, 10), (13, 12), (2, 12), (3, 10)], fill=GOLD, outline=GOLD_D)
+d.line((5, 4, 4, 10), fill=GOLD_L)                                  # brilho
+d.rectangle((2, 12, 13, 13), fill=GOLD_D)                           # boca do sino
+d.ellipse((6, 13, 9, 15), fill=FLESH + (255,), outline=FLESH_DARK + (255,))  # badalo de orelha
+bell.save(R + "textures/item/deafening_bell.png")
+print("bell ok")

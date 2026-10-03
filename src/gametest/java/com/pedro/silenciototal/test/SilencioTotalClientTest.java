@@ -5,7 +5,6 @@ import com.pedro.silenciototal.entity.Listener;
 import com.pedro.silenciototal.noise.NightCycle;
 import com.pedro.silenciototal.noise.NoiseSources;
 import com.pedro.silenciototal.noise.NoiseTracker;
-import com.pedro.silenciototal.noise.SilentRoom;
 import com.pedro.silenciototal.noise.WorldSounds;
 import com.pedro.silenciototal.registry.ModEntities;
 import com.pedro.silenciototal.registry.ModItems;
@@ -260,45 +259,51 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 				NoiseTracker.set(player, 0);
 			});
 
-			// ---------------------------------------------------------------- sala silenciosa
+			// ---------------------------------------------------------------- barulho dentro de casa: porta de madeira cai, de ferro aguenta
+			server.runOnServer(s -> {
+				ServerPlayer player = player(s);
+				player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 6000, 4, false, false));
+				buildHouse(player.level(), player.blockPosition(), Blocks.OAK_DOOR.defaultBlockState());
+				spawnOutsideDoor(player);
+			});
+			boolean woodBroken = waitForDoor(ctx, server, 500, true);
+			check(woodBroken, "fazendo barulho dentro de casa, ele deveria arrombar a porta de madeira");
+			server.runOnServer(s -> {
+				listener(s).discard();
+				ServerPlayer player = player(s);
+				clearHouse(player.level(), player.blockPosition());
+				buildHouse(player.level(), player.blockPosition(), Blocks.IRON_DOOR.defaultBlockState());
+				spawnOutsideDoor(player);
+			});
+			boolean ironBroken = waitForDoor(ctx, server, 300, false);
+			check(!ironBroken, "porta de ferro deveria aguentar");
+			server.runOnServer(s -> {
+				listener(s).discard();
+				clearHouse(player(s).level(), player(s).blockPosition());
+				NoiseTracker.set(player(s), 0);
+			});
+
+			// ---------------------------------------------------------------- Sino Ensurdecedor: atordoa 10 s, uma vez por noite
 			server.runOnServer(s -> {
 				ServerPlayer player = player(s);
 				ServerLevel level = player.level();
-				BlockPos feet = player.blockPosition();
-				buildWoolRoom(level, feet);
-				check(SilentRoom.isInside(level, feet), "sala de lã deveria ser silenciosa");
-
-				BlockPos wall = feet.offset(2, 0, 0);
-				level.setBlockAndUpdate(wall, Blocks.STONE.defaultBlockState());
-				check(!SilentRoom.isInside(level, feet), "parede de pedra deveria vazar o som");
-
-				BlockState door = Blocks.OAK_DOOR.defaultBlockState();
-				level.setBlockAndUpdate(wall, Blocks.AIR.defaultBlockState());
-				level.setBlockAndUpdate(wall.above(), Blocks.AIR.defaultBlockState());
-				level.setBlock(wall, door.setValue(DoorBlock.HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER), 3);
-				level.setBlock(wall.above(), door.setValue(DoorBlock.HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER), 3);
-				check(SilentRoom.isInside(level, feet), "porta fechada deveria vedar");
-				level.setBlock(wall, level.getBlockState(wall).setValue(BlockStateProperties.OPEN, true), 3);
-				level.setBlock(wall.above(), level.getBlockState(wall.above()).setValue(BlockStateProperties.OPEN, true), 3);
-				check(!SilentRoom.isInside(level, feet), "porta aberta deveria vazar");
-				level.setBlock(wall, level.getBlockState(wall).setValue(BlockStateProperties.OPEN, false), 3);
-				level.setBlock(wall.above(), level.getBlockState(wall.above()).setValue(BlockStateProperties.OPEN, false), 3);
+				Listener listener = summon(player, 6, false);
+				player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ModItems.DEAFENING_BELL));
+				var first = ModItems.DEAFENING_BELL.use(level, player, net.minecraft.world.InteractionHand.MAIN_HAND);
+				check(first.consumesAction() && listener.isStunned(), "o sino deveria atordoar o Ouvinte");
+				player.getCooldowns().removeCooldown(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ModItems.DEAFENING_BELL));
+				var second = ModItems.DEAFENING_BELL.use(level, player, net.minecraft.world.InteractionHand.MAIN_HAND);
+				check(!second.consumesAction(), "o sino só deveria funcionar uma vez por noite");
 			});
-			ctx.waitTicks(30);
+			ctx.waitTicks(40);
+			ctx.takeScreenshot("silenciototal_stunned");
+			ctx.waitTicks(180);
 			server.runOnServer(s -> {
-				ServerPlayer player = player(s);
-				check(NoiseTracker.isInSilentRoom(player), "o rastreador não percebeu a sala silenciosa");
-				NoiseTracker.add(player, 40);
-				check(NoiseTracker.get(player) == 0, "dentro da sala silenciosa não deveria somar ruído");
-			});
-			ctx.waitTicks(5);
-			ctx.takeScreenshot("silenciototal_silent_room");
-			server.runOnServer(s -> {
-				ServerPlayer player = player(s);
-				BlockPos feet = player.blockPosition();
-				for (BlockPos pos : BlockPos.betweenClosed(feet.offset(-2, -1, -2), feet.offset(2, 3, 2))) {
-					player.level().setBlockAndUpdate(pos, pos.getY() < feet.getY() ? Blocks.GRASS_BLOCK.defaultBlockState() : Blocks.AIR.defaultBlockState());
-				}
+				Listener listener = listener(s);
+				check(!listener.isStunned(), "depois de 10 s o atordoamento deveria passar");
+				check(listener.getState() == Listener.INVESTIGATE, "depois de atordoado ele deveria ir investigar o sino, estado " + listener.getState());
+				listener.discard();
+				player(s).setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 			});
 
 			// ---------------------------------------------------------------- retrato do Ouvinte
@@ -412,13 +417,51 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 		return listener;
 	}
 
-	/** Cubo de lã com interior 3x3x3 em volta dos pés do jogador. */
-	private static void buildWoolRoom(ServerLevel level, BlockPos feet) {
+	/** Casinha de pedra com interior 3x3x3 em volta do jogador e uma porta no lado +x. */
+	private static void buildHouse(ServerLevel level, BlockPos feet, BlockState door) {
 		for (BlockPos pos : BlockPos.betweenClosed(feet.offset(-2, -1, -2), feet.offset(2, 3, 2))) {
 			boolean shell = Math.abs(pos.getX() - feet.getX()) == 2 || Math.abs(pos.getZ() - feet.getZ()) == 2
 					|| pos.getY() == feet.getY() - 1 || pos.getY() == feet.getY() + 3;
-			level.setBlockAndUpdate(pos, shell ? Blocks.WOOL.white().defaultBlockState() : Blocks.AIR.defaultBlockState());
+			level.setBlockAndUpdate(pos, shell ? Blocks.STONE.defaultBlockState() : Blocks.AIR.defaultBlockState());
 		}
+		BlockPos doorPos = feet.offset(2, 0, 0);
+		BlockState lower = door.setValue(DoorBlock.FACING, net.minecraft.core.Direction.WEST)
+				.setValue(DoorBlock.HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER);
+		level.setBlock(doorPos, lower, 3);
+		level.setBlock(doorPos.above(), lower.setValue(DoorBlock.HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER), 3);
+	}
+
+	private static void clearHouse(ServerLevel level, BlockPos feet) {
+		for (BlockPos pos : BlockPos.betweenClosed(feet.offset(-2, -1, -2), feet.offset(2, 3, 2))) {
+			level.setBlockAndUpdate(pos, pos.getY() < feet.getY() ? Blocks.GRASS_BLOCK.defaultBlockState() : Blocks.AIR.defaultBlockState());
+		}
+	}
+
+	private static void spawnOutsideDoor(ServerPlayer player) {
+		ServerLevel level = player.level();
+		Listener listener = ModEntities.LISTENER.create(level, EntitySpawnReason.COMMAND);
+		listener.snapTo(player.getBlockX() + 9.5, player.getY(), player.getBlockZ() + 0.5, 90, 0);
+		level.addFreshEntity(listener);
+		NoiseTracker.set(player, 90);
+	}
+
+	/** Mantém o jogador barulhento e espera a porta da casinha sumir (ou o tempo acabar). */
+	private static boolean waitForDoor(ClientGameTestContext ctx, TestServerContext server, int ticks, boolean screenshot) {
+		for (int waited = 0; waited < ticks; waited += 20) {
+			ctx.waitTicks(20);
+			boolean gone = server.computeOnServer(s -> {
+				ServerPlayer player = player(s);
+				NoiseTracker.set(player, 90);
+				return !(player.level().getBlockState(player.blockPosition().offset(2, 0, 0)).getBlock() instanceof DoorBlock);
+			});
+			if (screenshot && waited == 160) {
+				ctx.takeScreenshot("silenciototal_door_bash");
+			}
+			if (gone) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static Listener listener(MinecraftServer server) {

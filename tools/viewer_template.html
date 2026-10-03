@@ -4,432 +4,311 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hushfall · Silêncio Total</title>
-<meta name="description" content="Hushfall (Silêncio Total): mod de Minecraft em que, à noite, uma criatura cega caça pelo som. Veja o Ouvinte em 3D, os itens e o guia do jogador.">
+<meta name="description" content="Hushfall (Silêncio Total): mod de Minecraft em que, à noite, uma criatura cega caça pelo som. Como jogar, a criatura, itens e download.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #070a10;
-    --glass: rgba(16, 21, 31, 0.72);
-    --glass-strong: rgba(22, 28, 41, 0.9);
-    --line: rgba(150, 175, 210, 0.14);
-    --text: #e4e8ef;
-    --muted: #8b95a7;
-    --faint: #5c6677;
-    --patrol: #6fcf8a;
-    --investigate: #e8bd4a;
-    --alert: #ff8a4c;
-    --hunt: #ff4f5e;
-    --accent: var(--patrol);
+    --bg: #0b0d12;
+    --surface: #12161e;
+    --line: rgba(160, 180, 210, 0.12);
+    --text: #e6e9ef;
+    --muted: #8d96a6;
+    --accent: #7fd6e8;
+    --low: #6fcf8a;
+    --mid: #e8bd4a;
+    --high: #ff5a64;
+    --max: 1080px;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
-  body {
-    background: var(--bg); color: var(--text); overflow: hidden;
-    font: 14px/1.45 Inter, system-ui, sans-serif;
-  }
-  #stage { position: fixed; inset: 0; }
-  #stage canvas { display: block; }
-  .vignette { position: fixed; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 40% 45%, transparent 45%, rgba(0,0,0,.65) 100%); }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: "Pixelify Sans", monospace; font-weight: 700; line-height: 1.1; margin: 0; }
+  /* A Pixelify junta "fi" num glifo estranho; sem ligaduras fica legível. */
+  * { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0; }
+  p { margin: 0; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+  .muted { color: var(--muted); }
 
-  header { position: fixed; top: 24px; left: 28px; pointer-events: none; }
-  header h1 { margin: 0; font: 700 34px/1 "Pixelify Sans", monospace; letter-spacing: .04em;
-    text-shadow: 0 0 24px rgba(127, 214, 232, .25); }
-  header p { margin: 6px 0 0; color: var(--muted); font-size: 13px; letter-spacing: .02em; }
-  .hint { position: fixed; left: 28px; bottom: 22px; color: var(--faint); font-size: 12px; pointer-events: none; max-width: calc(100vw - 440px); }
-  .hint .legal { display: inline-block; margin-top: 6px; font-size: 11px; opacity: .8; }
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(11, 13, 18, 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  nav .logo { font: 700 20px "Pixelify Sans", monospace; text-decoration: none; letter-spacing: .02em; }
+  nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
+  nav ul a { text-decoration: none; color: var(--muted); transition: color .15s; }
+  nav ul a:hover { color: var(--text); }
 
-  #subtitles { position: fixed; right: 384px; bottom: 22px; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; pointer-events: none; }
-  .sub { background: rgba(0,0,0,.7); padding: 3px 10px; font: 500 15px "Pixelify Sans", monospace; color: #fff;
-    border-radius: 2px; animation: subfade 3s forwards; }
-  .sub .dir { color: var(--muted); margin: 0 6px; }
-  @keyframes subfade { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font: 600 15px Inter, sans-serif; text-decoration: none; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--text); transition: background .15s, border-color .15s; }
+  .btn:hover { border-color: rgba(255,255,255,.3); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary:hover { background: #fff; }
+  .btn.small { padding: 8px 14px; font-size: 14px; }
 
-  aside {
-    position: fixed; top: 16px; right: 16px; bottom: 16px; width: 352px;
-    background: var(--glass); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2);
-    border: 1px solid var(--line); border-radius: 18px; padding: 18px; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,.45);
-  }
-  aside::-webkit-scrollbar { width: 6px; } aside::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+  .hero { padding: 56px 0 72px; }
+  .hero .wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
+  .hero h1 { font-size: clamp(48px, 8vw, 84px); letter-spacing: .01em; }
+  .hero .tag { font-size: 20px; color: var(--muted); margin: 18px 0 32px; max-width: 30ch; }
+  .hero .tag b { color: var(--text); font-weight: 600; }
+  .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero .meta { margin-top: 28px; font-size: 13px; color: var(--muted); }
 
-  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 4px; background: rgba(0,0,0,.3); border-radius: 12px; }
-  .tabs button { background: none; border: 0; color: var(--muted); padding: 8px 4px; border-radius: 9px; cursor: pointer;
-    font: 500 13px Inter, sans-serif; transition: .2s; }
-  .tabs button.on { background: var(--glass-strong); color: var(--text); box-shadow: 0 1px 0 rgba(255,255,255,.06) inset; }
+  .stage-box { position: relative; aspect-ratio: 1 / 1; max-height: 560px; width: 100%; border-radius: 20px; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, #1a2234 0%, #0b0f17 70%); border: 1px solid var(--line); }
+  #stage { position: absolute; inset: 0; }
+  #stage canvas { display: block; width: 100%; height: 100%; }
+  .stage-ui { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .pill { border: 1px solid var(--line); background: rgba(11, 13, 18, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--muted); border-radius: 99px; padding: 6px 12px; font: 500 13px Inter, sans-serif; cursor: pointer; transition: .15s; display: inline-flex; align-items: center; gap: 6px; }
+  .pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); display: inline-block; }
+  .pill:hover { color: var(--text); }
+  .pill.on { color: var(--text); border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, rgba(11,13,18,.8)); }
+  .sound-btn { position: absolute; top: 12px; right: 12px; }
+  .stage-caption { position: absolute; top: 14px; left: 16px; font-size: 13px; color: var(--muted); max-width: 60%; }
+  .stage-caption b { color: var(--text); font-weight: 600; display: block; }
+  #subtitle { position: absolute; left: 50%; bottom: 58px; transform: translateX(-50%); background: rgba(0,0,0,.72); padding: 3px 10px; font: 500 14px "Pixelify Sans", monospace; border-radius: 2px; opacity: 0; transition: opacity .3s; white-space: nowrap; pointer-events: none; }
 
-  h2 { font: 700 22px "Pixelify Sans", monospace; margin: 18px 0 2px; }
-  .lead { color: var(--muted); margin: 0 0 14px; font-size: 13px; }
-  .label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--faint); margin: 18px 0 8px; }
+  section { padding: 88px 0; border-top: 1px solid var(--line); scroll-margin-top: 60px; }
+  .head { margin-bottom: 40px; max-width: 640px; }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .head h2 { font-size: clamp(32px, 4vw, 44px); }
+  .head p { color: var(--muted); margin-top: 12px; font-size: 17px; }
 
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .stat { background: rgba(0,0,0,.25); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
-  .stat b { display: block; font: 700 18px "Pixelify Sans", monospace; }
-  .stat span { color: var(--muted); font-size: 11px; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+  .step .n { font: 700 14px "Pixelify Sans", monospace; color: var(--accent); }
+  .step h3 { font-size: 20px; margin: 10px 0 8px; }
+  .step p { color: var(--muted); font-size: 15px; }
 
-  .states { display: grid; gap: 8px; }
-  .state { position: relative; text-align: left; cursor: pointer; width: 100%;
-    background: rgba(0,0,0,.22); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px 10px 14px;
-    color: var(--text); font: inherit; transition: border-color .2s, background .2s, transform .1s; }
-  .state:hover { border-color: rgba(255,255,255,.2); }
-  .state:active { transform: scale(.99); }
-  .state::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 2px; background: var(--c); opacity: .5; }
-  .state.on { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); }
-  .state.on::before { opacity: 1; box-shadow: 0 0 10px var(--c); }
-  .state .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .state strong { font-weight: 600; }
-  .state small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
-  .pill { font-size: 11px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+  .two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; margin-top: 56px; align-items: start; }
+  .sub { font-size: 22px; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 11px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
+  td:last-child { text-align: right; color: var(--text); font-weight: 600; white-space: nowrap; padding-left: 16px; }
+  .bands { display: grid; gap: 10px; }
+  .band { display: flex; gap: 14px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+  .band .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; background: var(--c); box-shadow: 0 0 12px var(--c); }
+  .band b { display: block; font-weight: 600; }
+  .band span { color: var(--muted); font-size: 14px; }
 
-  .meter { margin-top: 4px; }
-  .meter .bar { position: relative; height: 8px; border-radius: 4px; background: rgba(0,0,0,.4); overflow: hidden; }
-  .meter .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--accent); border-radius: 4px; transition: width .6s cubic-bezier(.2,.8,.2,1), background .3s; box-shadow: 0 0 12px var(--accent); }
-  .meter .tick { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(0,0,0,.8); }
-  .meter .legend { display: flex; justify-content: space-between; font-size: 11px; color: var(--faint); margin-top: 4px; }
+  .tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
+  .tip { padding: 24px; border-radius: 16px; border: 1px solid var(--line); }
+  .tip h3 { font-size: 19px; margin-bottom: 8px; }
+  .tip p { color: var(--muted); font-size: 15px; }
+  .tip b { color: var(--text); font-weight: 600; }
 
-  .sounds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .snd { background: rgba(0,0,0,.25); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 4px;
-    cursor: pointer; font: 500 12px Inter, sans-serif; transition: .15s; }
-  .snd:hover { border-color: rgba(255,255,255,.25); }
-  .snd.playing { border-color: var(--accent); color: var(--accent); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+  .stat { padding: 20px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+  .stat b { display: block; font: 700 30px "Pixelify Sans", monospace; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .state-row { display: grid; grid-template-columns: 180px 1fr auto; gap: 24px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .state-row h3 { font-size: 20px; display: flex; align-items: center; gap: 10px; }
+  .state-row h3 i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .state-row p { color: var(--muted); font-size: 15px; }
+  .play { border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 99px; padding: 6px 14px; font: 500 13px Inter, sans-serif; cursor: pointer; white-space: nowrap; }
+  .play:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
 
-  .controls { display: grid; gap: 10px; }
-  .switch { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 13px; cursor: pointer; }
-  .switch input { display: none; }
-  .switch i { width: 34px; height: 20px; border-radius: 99px; background: rgba(255,255,255,.12); position: relative; transition: .2s; flex-shrink: 0; }
-  .switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #cfd6e2; transition: .2s; }
-  .switch input:checked + i { background: var(--accent); }
-  .switch input:checked + i::after { left: 17px; background: #fff; }
-  input[type=range] { width: 120px; accent-color: var(--accent); }
+  .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .item { display: flex; gap: 22px; align-items: center; padding: 22px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+  .item h3 { font-size: 20px; margin-bottom: 6px; }
+  .item p { color: var(--muted); font-size: 14.5px; }
+  .item p b { color: var(--text); font-weight: 600; }
 
-  .card { background: rgba(0,0,0,.22); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-  ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); } li { margin: 3px 0; }
-
-  #soundGate { position: fixed; left: 50%; bottom: 70px; transform: translateX(calc(-50% - 184px)); background: var(--glass-strong);
-    border: 1px solid var(--line); border-radius: 99px; padding: 8px 16px; font-size: 13px; color: var(--muted); cursor: pointer; }
-  #soundGate:hover { color: var(--text); }
-
-  header { pointer-events: auto; }
-  #guideBtn { margin-top: 12px; background: var(--glass-strong); color: var(--text); border: 1px solid var(--line);
-    border-radius: 99px; padding: 7px 14px; font: 600 13px Inter, sans-serif; cursor: pointer; display: inline-flex; gap: 8px; align-items: center;
-    box-shadow: 0 0 0 0 rgba(127,214,232,.4); animation: glow 2.4s infinite; }
-  #guideBtn:hover { border-color: #7fd6e8; }
-  @keyframes glow { 0%,100% { box-shadow: 0 0 0 0 rgba(127,214,232,.0); } 50% { box-shadow: 0 0 18px 2px rgba(127,214,232,.25); } }
-
-  #guide { position: fixed; inset: 0; z-index: 20; background: rgba(4,6,10,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center; padding: 24px; }
-  #guide.open { display: flex; }
-  .guide-card { width: min(980px, 100%); max-height: 100%; overflow-y: auto; background: var(--glass-strong); border: 1px solid var(--line);
-    border-radius: 18px; padding: 26px 30px 30px; box-shadow: 0 30px 80px rgba(0,0,0,.6); position: relative; }
-  .guide-card h2 { margin: 0; font-size: 28px; }
-  .guide-card .sub-lead { color: var(--muted); margin: 6px 0 18px; }
-  .guide-close { position: absolute; top: 14px; right: 14px; background: none; border: 1px solid var(--line); color: var(--muted);
-    width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; }
-  .guide-close:hover { color: var(--text); border-color: var(--muted); }
-  .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .g { background: rgba(0,0,0,.25); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
-  .g.wide { grid-column: 1 / -1; }
-  .g h3 { margin: 0 0 8px; font: 700 17px "Pixelify Sans", monospace; display: flex; gap: 8px; align-items: center; }
-  .g h3 .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #7fd6e822; color: #7fd6e8; font: 700 12px Inter, sans-serif; }
-  .g p, .g li { color: #c3cad6; font-size: 13.5px; }
-  .g p { margin: 0 0 8px; }
-  .g ul { padding-left: 18px; margin: 4px 0 0; }
-  .g b { color: var(--text); }
-  table.noise { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
-  table.noise td { padding: 5px 6px; border-bottom: 1px solid var(--line); color: #c3cad6; }
-  table.noise td:last-child { text-align: right; font-weight: 600; color: var(--text); white-space: nowrap; }
-  .bands { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
-  .band { border-radius: 10px; padding: 8px 10px; border: 1px solid; font-size: 12.5px; color: #c3cad6; }
-  .band b { display: block; font: 700 15px "Pixelify Sans", monospace; margin-bottom: 2px; }
-  .band.low { border-color: #6fcf8a55; } .band.low b { color: #6fcf8a; }
-  .band.mid { border-color: #e8bd4a55; } .band.mid b { color: #e8bd4a; }
-  .band.high { border-color: #ff4f5e55; } .band.high b { color: #ff4f5e; }
-  .tip { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; color: #c3cad6; font-size: 13.5px; }
-  .tip i { font-style: normal; font-size: 16px; line-height: 1.2; }
-  .kbd { display: inline-block; padding: 0 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; font: 600 12px Inter, sans-serif; color: var(--text); }
-  /* Mesa de trabalho no estilo do Minecraft / wiki */
-  .mc-craft { display: inline-flex; align-items: center; gap: 12px; padding: 10px 12px; background: #c6c6c6;
-    border: 3px solid; border-color: #fff #555 #555 #fff; box-shadow: 0 0 0 2px #000, 0 8px 20px rgba(0,0,0,.35); border-radius: 4px; }
-  .mc-grid { display: grid; grid-template-columns: repeat(3, 38px); }
-  .mc-slot { width: 38px; height: 38px; background: #8b8b8b; border: 2px solid; border-color: #373737 #fff #fff #373737;
-    display: grid; place-items: center; position: relative; cursor: default; }
-  .mc-slot img { width: 32px; height: 32px; image-rendering: pixelated; pointer-events: none; }
+  .mc-craft { display: inline-flex; align-items: center; gap: 10px; padding: 8px 10px; background: #c6c6c6; flex-shrink: 0;
+    border: 3px solid; border-color: #fff #555 #555 #fff; box-shadow: 0 0 0 2px #000; border-radius: 3px; }
+  .mc-grid { display: grid; grid-template-columns: repeat(3, 34px); }
+  .mc-slot { width: 34px; height: 34px; background: #8b8b8b; border: 2px solid; border-color: #373737 #fff #fff #373737; display: grid; place-items: center; }
+  .mc-slot img { width: 28px; height: 28px; image-rendering: pixelated; pointer-events: none; }
+  .mc-slot.big { width: 48px; height: 48px; }
+  .mc-slot.big img { width: 36px; height: 36px; }
   .mc-slot:hover { background: #a6a6a6; }
-  .mc-slot.big { width: 54px; height: 54px; }
-  .mc-slot .count { position: absolute; right: 2px; bottom: 0; font: 700 14px "Pixelify Sans", monospace; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; }
-  .mc-arrow { width: 34px; height: 24px; image-rendering: pixelated; }
-  .mc-label { font: 500 12px "Pixelify Sans", monospace; color: #3f3f3f; text-align: center; max-width: 110px; }
-  .mc-tip { position: fixed; z-index: 50; pointer-events: none; padding: 4px 8px; background: #100010f0; color: #fff;
-    border: 2px solid #28007a; border-radius: 3px; font: 500 14px "Pixelify Sans", monospace; white-space: nowrap; display: none; }
+  .mc-arrow { width: 28px; height: 20px; }
+  .mc-label { font: 500 12px "Pixelify Sans", monospace; color: #3f3f3f; text-align: center; width: 102px; }
+  .mc-tip { position: fixed; z-index: 50; pointer-events: none; padding: 4px 8px; background: #100010f0; color: #fff; border: 2px solid #28007a; border-radius: 3px; font: 500 14px "Pixelify Sans", monospace; display: none; white-space: nowrap; }
   .mc-tip small { display: block; color: #a8a8a8; font: 12px Inter, sans-serif; }
-  .item-cards { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 6px; }
-  .item-card { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; background: rgba(0,0,0,.2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
-  .item-card > div:last-child { flex: 1 1 220px; }
-  .item-card h4 { margin: 0 0 4px; font: 700 15px "Pixelify Sans", monospace; color: var(--text); }
-  .item-card p { margin: 0; font-size: 13px; }
-  .panel-recipe { margin: 4px 0 6px; }
 
-  @media (max-width: 760px) { .guide-grid { grid-template-columns: 1fr; } .bands { grid-template-columns: 1fr; } .guide-card { padding: 20px 16px; } }
+  .install { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  ol.install-steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 14px; }
+  ol.install-steps li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; gap: 12px; color: var(--muted); }
+  ol.install-steps li::before { content: counter(s); font: 700 14px "Pixelify Sans", monospace; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--text); }
+  ol.install-steps b { color: var(--text); font-weight: 600; }
+  code { font: 13px ui-monospace, Menlo, monospace; background: var(--surface); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--text); }
+  .cta { padding: 32px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); text-align: center; }
+  .cta h3 { font-size: 26px; margin-bottom: 8px; }
+  .cta p { color: var(--muted); margin-bottom: 22px; }
 
-  @media (max-width: 760px) {
-    aside { top: auto; left: 10px; right: 10px; bottom: 10px; width: auto; max-height: 52vh; }
-    header { top: 14px; left: 16px; } header h1 { font-size: 26px; }
-    .hint { display: none; }
-    #subtitles { right: 16px; bottom: calc(52vh + 20px); }
-    #soundGate { bottom: calc(52vh + 20px); transform: translateX(-50%); }
+  footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    nav ul { display: none; }
+    .hero .wrap, .two, .install { grid-template-columns: 1fr; }
+    .steps, .stats { grid-template-columns: repeat(2, 1fr); }
+    .tips, .items { grid-template-columns: 1fr; }
+    .state-row { grid-template-columns: 1fr auto; }
+    .state-row p { grid-column: 1 / -1; grid-row: 2; }
+    section { padding: 64px 0; }
+  }
+  @media (max-width: 520px) {
+    .wrap { padding: 0 16px; }
+    .steps, .stats { grid-template-columns: 1fr; }
+    .item { flex-direction: column; align-items: flex-start; }
   }
 </style>
 </head>
 <body>
-<div id="stage"></div>
-<div class="vignette"></div>
-<header>
-  <h1>SILÊNCIO TOTAL</h1>
-  <p>shhh... ele está escutando</p>
-  <button id="guideBtn">📖 Guia do jogador</button>
-</header>
-<div class="hint">arraste para girar · role para aproximar<br>
-  <span class="legal">Hushfall é um mod feito por fãs. Não oficial: não é aprovado nem associado à Mojang ou à Microsoft. Minecraft é marca da Mojang AB.</span></div>
-<div id="subtitles"></div>
-<button id="soundGate">🔇 Clique para ligar o som</button>
 
-<div id="guide" role="dialog" aria-modal="true" aria-label="Guia do jogador">
-  <div class="guide-card">
-    <button class="guide-close" aria-label="Fechar">✕</button>
-    <h2>Guia do jogador</h2>
-    <p class="sub-lead">De dia você constrói em paz. De noite, o mundo pertence ao <b>Ouvinte</b>, uma criatura cega que caça só pelo som. Aprenda a ficar quieto.</p>
-
-    <div class="guide-grid">
-      <div class="g">
-        <h3><span class="n">1</span>A primeira noite</h3>
-        <p>A <b>primeira noite</b> de um mundo novo é de graça: o Ouvinte ainda dorme. Use para:</p>
-        <ul>
-          <li>Juntar <b>lã</b> (tosquie ou mate ovelhas).</li>
-          <li>Fazer uma <b>sala silenciosa</b> para dormir.</li>
-          <li>Treinar: o medidor de ruído já aparece no canto da tela.</li>
-        </ul>
-      </div>
-
-      <div class="g">
-        <h3><span class="n">2</span>O medidor de ruído</h3>
-        <p>Aparece no <b>canto superior esquerdo</b>, só à noite: um anel com a orelha no meio. Ao lado, a faixa e o valor (ex.: <b>Audível · 52</b>).</p>
-        <p>Parado ou agachado, ele <b>cai 4 por segundo</b>. Agachado, seus passos não fazem barulho.</p>
-      </div>
-
-      <div class="g wide">
-        <h3><span class="n">3</span>O que faz barulho</h3>
-        <table class="noise">
-          <tr><td>Andar (em pé)</td><td>+5/s · até 70</td></tr>
-          <tr><td>Correr ou cavalgar</td><td>+10/s</td></tr>
-          <tr><td>Pular</td><td>+6</td></tr>
-          <tr><td>Bater num bloco (árvore, pedra…) enquanto golpeia</td><td>+2 a +5/s</td></tr>
-          <tr><td>Quebrar terra / madeira / pedra</td><td>+5 / +10 / +15</td></tr>
-          <tr><td>Abrir baú, barril, porta, alçapão</td><td>+8</td></tr>
-          <tr><td>Bater numa criatura ou levar golpe</td><td>+15 (com a Adaga Silenciosa: 0)</td></tr>
-          <tr><td>Explosão perto</td><td>+40</td></tr>
-          <tr><td>Piso de lã/tapete/neve/água · Botas de Feltro</td><td>passos −50% · −60%</td></tr>
-          <tr><td>Chuva · Trovoada</td><td>tudo −30% · −50%</td></tr>
-        </table>
-        <div class="bands">
-          <div class="band low"><b>1–30 · Baixo</b>Ele ouve de longe (até ~46 blocos) e vem rondar a região, mas não sabe onde você está.</div>
-          <div class="band mid"><b>31–70 · Audível</b>Ouve de 48 a 96 blocos e vem investigar perto de você.</div>
-          <div class="band high"><b>71+ · ALTO!</b>Ouve a 128 blocos, ruge e <b>caça você</b>.</div>
-        </div>
-      </div>
-
-      <div class="g">
-        <h3><span class="n">4</span>Quando ele está perto</h3>
-        <ul>
-          <li>Barra <b>abaixo de 10</b>: ele chega, <b>fareja você</b> e vai embora. Não ataca.</li>
-          <li>Barra entre <b>5 e 10</b>: ele <b>desconfia</b> (vira a cabeça, orelhas em pé, faíscas nas orelhas). Pare!</li>
-          <li>Barra em <b>10 ou mais</b> a até 8 blocos: ele te descobre, ruge e caça.</li>
-          <li>Você ouve o <b>próprio coração</b> e as bordas da tela escurecem quanto mais perto do perigo.</li>
-        </ul>
-      </div>
-
-      <div class="g">
-        <h3><span class="n">5</span>Se ele estiver caçando</h3>
-        <ul>
-          <li>Ele é mais rápido que você correndo. Fugir em linha reta raramente dá certo.</li>
-          <li>Entre numa <b>sala silenciosa</b>: ele perde o rastro na hora.</li>
-          <li>Faça um <b>estrondo longe</b> (sino, explosão) para tirar a atenção dele.</li>
-          <li>Fique quieto: 3 segundos sem te ouvir e ele perde o rastro.</li>
-        </ul>
-      </div>
-
-      <div class="g">
-        <h3><span class="n">6</span>Sala silenciosa</h3>
-        <p>Paredes, <b>piso e teto de lã</b> (qualquer cor). <b>Portas e alçapões fechados</b> também vedam.</p>
-        <ul>
-          <li>Lá dentro ninguém te ouve, e o ruído cai rápido.</li>
-          <li>Dá para <b>dormir</b> mesmo com ele rondando lá fora.</li>
-          <li>Pedra, madeira ou vidro na casca deixam o som vazar.</li>
-        </ul>
-      </div>
-
-      <div class="g">
-        <h3><span class="n">7</span>Distrações e armadilhas</h3>
-        <ul>
-          <li><b>Sino, note block, pistão, dispensador</b>: ele vai investigar o lugar.</li>
-          <li><b>Jogue uma flecha ou bola de neve</b> longe: ele vai olhar onde caiu.</li>
-          <li>Ele é cego para quedas: um <b>buraco fundo</b> no caminho do som vira armadilha.</li>
-          <li>Ele <b>aprende</b>: dois alarmes falsos no mesmo lugar e ele ignora ali por 3 minutos.</li>
-        </ul>
-      </div>
-
-      <div class="g wide">
-        <h3><span class="n">8</span>O Ouvinte</h3>
-        <p>Só existe <b>um</b> por mundo. Surge <b>ao anoitecer</b> a 32–45 blocos de você (nunca a menos de 30) e vai rondando a sua área. Ao amanhecer se enterra. Tem <b>75 corações</b>, 12 de dano, regenera fora da caçada e tem barra de chefe quando está a até 32 blocos. Golpe de surpresa causa ×1,5. Se você conseguir matá-lo, ele só volta na noite seguinte e dropa a <b>Orelha do Ouvinte</b>.</p>
-        <div class="tip"><i>🔊</i><span>Ele <b>sempre avisa</b> antes de atacar: rosnado distante quando surge, estalo quando ouve algo, rugido antes da caçada. Ative as <b>legendas</b> do jogo para não perder nada.</span></div>
-      </div>
-
-      <div class="g wide">
-        <h3><span class="n">9</span>Itens</h3>
-        <div class="item-cards">
-          <div class="item-card"><div data-recipe="felt_boots"></div>
-            <div><h4>Botas de Feltro</h4><p>Abafam seus passos: <b>−60%</b> de ruído ao andar e correr. Defesa 1, reparo com lã.</p></div></div>
-          <div class="item-card"><div data-recipe="silent_dagger"></div>
-            <div><h4>Adaga Silenciosa</h4><p>Golpes <b>sem barulho</b>. Dano 5, ataque rápido. Levar golpe ainda faz +15.</p></div></div>
-          <div class="item-card"><div data-recipe="listener_ear"></div>
-            <div><h4>Orelha do Ouvinte</h4><p>Drop ao matá-lo. Segurando, você ouve um <b>coração que acelera</b> quando ele se aproxima (até 96 blocos).</p></div></div>
-          <div class="item-card"><div data-recipe="listener_spawn_egg"></div>
-            <div><h4>Ovo Gerador de Ouvinte</h4><p>Só no criativo. Como só existe um, gerar outro faz o antigo sumir.</p></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<aside>
-  <nav class="tabs">
-    <button data-tab="listener" class="on">Ouvinte</button>
-    <button data-tab="boots">Botas</button>
-    <button data-tab="dagger">Adaga</button>
-    <button data-tab="ear">Orelha</button>
-    <button data-tab="egg">Ovo</button>
-  </nav>
-
-  <section data-panel="listener">
-    <h2>Ouvinte</h2>
-    <p class="lead">Cego, caça só pelo som, 3 blocos de altura (mas se espreme em túneis). Só existe um por mundo: surge ao anoitecer a 32–45 blocos, vai rondando a sua área e se enterra ao amanhecer. A ideia é fugir, não lutar.</p>
-    <div class="stats">
-      <div class="stat"><b>75 ♥</b><span>vida (chefe)</span></div>
-      <div class="stat"><b>12</b><span>dano</span></div>
-      <div class="stat"><b>×1,5</b><span>surpresa</span></div>
-    </div>
-
-    <div class="label">Estado</div>
-    <div class="states">
-      <button class="state on" data-state="0" style="--c: var(--patrol)">
-        <div class="row"><strong>Patrulha</strong><span class="pill">0–30</span></div>
-        <small>Vem rondando sua área. A 8 blocos descobre quem está com ruído 10+; em silêncio só fareja.</small>
-      </button>
-      <button class="state" data-state="1" style="--c: var(--investigate)">
-        <div class="row"><strong>Investiga</strong><span class="pill">31–70</span></div>
-        <small>Ouviu algo. Vai até o som, fareja e ronda o lugar. Em silêncio, ele só te cheira.</small>
-      </button>
-      <button class="state" data-state="2" style="--c: var(--alert)">
-        <div class="row"><strong>Alerta</strong><span class="pill">71+</span></div>
-        <small>O aviso: para e ruge por ~1 segundo. Corra ou se esconda.</small>
-      </button>
-      <button class="state" data-state="3" style="--c: var(--hunt)">
-        <div class="row"><strong>Caça</strong><span class="pill">71+</span></div>
-        <small>Orelhas para trás, braços esticados, vem direto em você.</small>
-      </button>
-    </div>
-
-    <div class="label">Seu ruído neste estado</div>
-    <div class="meter">
-      <div class="bar"><div class="fill" id="meterFill"></div><div class="tick" style="left:30%"></div><div class="tick" style="left:70%"></div></div>
-      <div class="legend"><span>silencioso</span><span>audível</span><span>ALTO</span></div>
-    </div>
-
-    <div class="label">Sons</div>
-    <div class="sounds">
-      <button class="snd" data-sound="click">Clique</button>
-      <button class="snd" data-sound="sniff">Fungada</button>
-      <button class="snd" data-sound="alert">Rugido</button>
-      <button class="snd" data-sound="growl">Rosnado</button>
-      <button class="snd" data-sound="step">Passos</button>
-      <button class="snd" data-sound="attack">Mordida</button>
-      <button class="snd" data-sound="emerge">Surgindo</button>
-      <button class="snd" data-sound="hurt">Dano</button>
-      <button class="snd" data-sound="death">Morte</button>
-    </div>
-  </section>
-
-  <section data-panel="boots" hidden>
-    <h2>Botas de Feltro</h2>
-    <p class="lead">Lã prensada sobre couro. Protegem pouco, mas abafam seus passos.</p>
-    <div class="stats">
-      <div class="stat"><b>−60%</b><span>passos</span></div>
-      <div class="stat"><b>1</b><span>defesa</span></div>
-      <div class="stat"><b>lã</b><span>reparo</span></div>
-    </div>
-    <div class="label">Receita</div>
-    <div class="panel-recipe" data-recipe="felt_boots"></div>
-    <div class="label">Combina com</div>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">Hushfall</a>
     <ul>
-      <li>Agachado: nenhum passo faz barulho</li>
-      <li>Piso de lã, tapete, neve ou água: −50%</li>
-      <li>Chuva: −30% · Trovoada: −50%</li>
-      <li>Agachado: nenhum som</li>
+      <li><a href="#como-jogar">Como jogar</a></li>
+      <li><a href="#criatura">A criatura</a></li>
+      <li><a href="#itens">Itens</a></li>
+      <li><a href="#instalar">Instalar</a></li>
     </ul>
-  </section>
-
-  <section data-panel="dagger" hidden>
-    <h2>Adaga Silenciosa</h2>
-    <p class="lead">Lâmina de ferro com o cabo enrolado em lã. Para resolver um zumbi sem acordar o Ouvinte.</p>
-    <div class="stats">
-      <div class="stat"><b>0</b><span>ruído ao golpear</span></div>
-      <div class="stat"><b>5</b><span>dano</span></div>
-      <div class="stat"><b>rápida</b><span>ataque</span></div>
-    </div>
-    <div class="label">Receita</div>
-    <div class="panel-recipe" data-recipe="silent_dagger"></div>
-    <ul><li>Levar golpe ainda faz barulho (+15).</li></ul>
-  </section>
-
-  <section data-panel="ear" hidden>
-    <h2>Orelha do Ouvinte</h2>
-    <p class="lead">O troféu de quem consegue matá-lo. Segurando a orelha, você ouve o coração disparar quando ele se aproxima.</p>
-    <div class="stats">
-      <div class="stat"><b>96</b><span>blocos</span></div>
-      <div class="stat"><b>♥♥♥</b><span>acelera</span></div>
-      <div class="stat"><b>1</b><span>por morte</span></div>
-    </div>
-    <div class="label">Como conseguir</div>
-    <div class="panel-recipe" data-recipe="listener_ear"></div>
-    <div class="label">Ouça</div>
-    <div class="sounds">
-      <button class="snd" data-beat="80">Longe</button>
-      <button class="snd" data-beat="35">Perto</button>
-      <button class="snd" data-beat="8">Colado</button>
-    </div>
-  </section>
-
-  <section data-panel="egg" hidden>
-    <h2>Ovo Gerador</h2>
-    <p class="lead">Só no criativo, para testar o Ouvinte quando quiser.</p>
-    <div class="panel-recipe" data-recipe="listener_spawn_egg"></div>
-    <div class="card">
-      <ul style="margin:0">
-        <li>Funciona só à noite: de dia ele se enterra na hora.</li>
-        <li>Faça barulho perto dele para ver os estados.</li>
-        <li>Toque um note block a 20 blocos para distraí-lo.</li>
-      </ul>
-    </div>
-  </section>
-
-  <div class="label">Opções</div>
-  <div class="controls">
-    <label class="switch">Sons do estado em loop (como no jogo)<input type="checkbox" id="ambient" checked><i></i></label>
-    <label class="switch">Andando<input type="checkbox" id="walk" checked><i></i></label>
-    <label class="switch">Girar sozinho<input type="checkbox" id="spin" checked><i></i></label>
-    <label class="switch">Volume<input type="range" id="volume" min="0" max="1" step="0.05" value="0.7"></label>
+    <a class="btn small" href="#instalar">Baixar</a>
   </div>
-</aside>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <h1>Hushfall</h1>
+      <p class="tag">À noite, uma criatura cega caça pelo som. <b>Fique em silêncio.</b></p>
+      <div class="actions">
+        <a class="btn primary" href="#como-jogar">Como jogar</a>
+        <a class="btn" href="#instalar">Baixar o mod</a>
+      </div>
+      <p class="meta">Mod Fabric · Minecraft Java 26.3 · também conhecido como Silêncio Total</p>
+    </div>
+    <div class="stage-box">
+      <div id="stage"></div>
+      <div class="stage-caption"><b>O Ouvinte</b><span id="stateText">Ronda a sua área, orelhas balançando.</span></div>
+      <button class="pill sound-btn" id="soundBtn">🔇 Som</button>
+      <div id="subtitle"></div>
+      <div class="stage-ui">
+        <button class="pill on" data-state="0" style="--c: var(--low)"><i></i>Patrulha</button>
+        <button class="pill" data-state="1" style="--c: var(--mid)"><i></i>Investiga</button>
+        <button class="pill" data-state="2" style="--c: #ff8a4c"><i></i>Alerta</button>
+        <button class="pill" data-state="3" style="--c: var(--high)"><i></i>Caça</button>
+        <button class="pill" data-state="4" style="--c: var(--accent)"><i></i>Atordoado</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="como-jogar">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Como jogar</div>
+      <h2>De dia você constrói. De noite, você escuta.</h2>
+      <p>O mod só existe à noite. Tudo gira em torno de uma barra de ruído: quanto mais barulho, de mais longe ele ouve.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">01</span><h3>Primeira noite é de graça</h3><p>O Ouvinte ainda dorme. Aprenda a ler o medidor e se prepare: Botas de Feltro e uma casa com porta de ferro.</p></div>
+      <div class="step"><span class="n">02</span><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra seu ruído, de 0 a 100. Agache ou fique parado para ele baixar.</p></div>
+      <div class="step"><span class="n">03</span><h3>Perto dele, silêncio</h3><p>Abaixo de 10 ele só te fareja. Acima, ele te descobre. Ouviu o próprio coração? Ele está perto.</p></div>
+      <div class="step"><span class="n">04</span><h3>Se ele caçar, suma</h3><p>Ele corre mais que você. Feche-se atrás de ferro, faça um estrondo longe ou toque o Sino Ensurdecedor.</p></div>
+    </div>
+
+    <div class="two">
+      <div>
+        <h3 class="sub">O que faz barulho</h3>
+        <table>
+          <tr><td>Andar em pé</td><td>+5/s</td></tr>
+          <tr><td>Correr</td><td>+10/s</td></tr>
+          <tr><td>Pular</td><td>+6</td></tr>
+          <tr><td>Bater num bloco</td><td>+2 a +5/s</td></tr>
+          <tr><td>Quebrar terra / madeira / pedra</td><td>+5 / +10 / +15</td></tr>
+          <tr><td>Abrir baú ou porta</td><td>+8</td></tr>
+          <tr><td>Bater ou levar golpe</td><td>+15</td></tr>
+          <tr><td>Agachar ou ficar parado</td><td>−4/s</td></tr>
+        </table>
+        <p class="muted" style="font-size:14px;margin-top:14px">Lã, tapete, neve e água abafam os passos pela metade. Chuva abafa tudo em 30%, trovoada em 50%.</p>
+      </div>
+      <div>
+        <h3 class="sub">O que ele faz</h3>
+        <div class="bands">
+          <div class="band" style="--c: var(--low)"><span class="dot"></span><div><b>1–30 · Baixo</b><span>Ouve de longe e vem rondar a região, sem saber onde você está.</span></div></div>
+          <div class="band" style="--c: var(--mid)"><span class="dot"></span><div><b>31–70 · Audível</b><span>Vem investigar perto de você.</span></div></div>
+          <div class="band" style="--c: var(--high)"><span class="dot"></span><div><b>71+ · Alto</b><span>Ruge e caça você, de até 128 blocos.</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips">
+      <div class="tip"><h3>Casas</h3><p>Em silêncio, ele não entra. Fazendo barulho dentro de casa, ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
+      <div class="tip"><h3>Distrações</h3><p>Sino, note block, pistão, dispensador ou uma flecha caindo longe atraem ele para lá. Ele aprende com alarmes falsos.</p></div>
+      <div class="tip"><h3>Armadilhas</h3><p>Ele é cego para quedas. Um buraco fundo no caminho de um som vira armadilha, e preso ele leva mais dano.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="criatura">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">A criatura</div>
+      <h2>O Ouvinte</h2>
+      <p>Só existe um por mundo. Surge ao anoitecer a 32–45 blocos de você, nunca menos de 30, e se enterra ao amanhecer. A ideia é fugir, não lutar.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>75 ♥</b><span>vida de chefe</span></div>
+      <div class="stat"><b>12</b><span>de dano</span></div>
+      <div class="stat"><b>3</b><span>blocos de altura</span></div>
+      <div class="stat"><b>1</b><span>por mundo</span></div>
+    </div>
+    <div class="states">
+      <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar, mesmo sem ouvir nada. Cliques de orelha de tempos em tempos.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até a origem do som, fareja e ronda o lugar. Em silêncio, ele passa do seu lado.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você. Para por um segundo e ruge. É o aviso: corra ou se esconda.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Vem direto em você, mais rápido que você correndo. Perde o rastro depois de 3 segundos sem te ouvir.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Atingido pelo Sino Ensurdecedor: 10 segundos sem ouvir nem atacar. Depois vai atrás do som do sino.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="itens">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Itens</div>
+      <h2>Ferramentas para o silêncio</h2>
+      <p>Passe o mouse sobre os quadradinhos para ver o nome de cada ingrediente.</p>
+    </div>
+    <div class="items">
+      <div class="item"><div data-recipe="felt_boots"></div><div><h3>Botas de Feltro</h3><p>Abafam seus passos: <b>−60%</b> de ruído ao andar e correr.</p></div></div>
+      <div class="item"><div data-recipe="silent_dagger"></div><div><h3>Adaga Silenciosa</h3><p>Golpes <b>sem barulho</b>. Para resolver um zumbi sem acordar o Ouvinte.</p></div></div>
+      <div class="item"><div data-recipe="listener_ear"></div><div><h3>Orelha do Ouvinte</h3><p>Só cai ao derrotá-lo. Ingrediente do Sino Ensurdecedor.</p></div></div>
+      <div class="item"><div data-recipe="deafening_bell"></div><div><h3>Sino Ensurdecedor</h3><p>Atordoa o Ouvinte por <b>10 segundos</b> se ele estiver a até 16 blocos. <b>Uma vez por noite.</b></p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="instalar">
+  <div class="wrap install">
+    <div>
+      <div class="head" style="margin-bottom:28px">
+        <div class="eyebrow">Instalar</div>
+        <h2>Em 3 passos</h2>
+      </div>
+      <ol class="install-steps">
+        <li><span>Instale o <b>Fabric Loader</b> para o Minecraft <b>26.3</b> pelo <a href="https://fabricmc.net/use/installer/" target="_blank" rel="noopener">instalador oficial</a>.</span></li>
+        <li><span>Baixe o <b>Fabric API</b> no <a href="https://modrinth.com/mod/fabric-api" target="_blank" rel="noopener">Modrinth</a>.</span></li>
+        <li><span>Coloque os dois arquivos <code>.jar</code> na pasta <code>mods</code> e abra o jogo pelo perfil do Fabric.</span></li>
+      </ol>
+    </div>
+    <div class="cta">
+      <h3>Pronto para ficar quieto?</h3>
+      <p>Código aberto, feito por fãs.</p>
+      <a class="btn primary" href="https://github.com/pedrorreiro/hushfall/releases/latest" target="_blank" rel="noopener">Baixar o Hushfall</a>
+      <p style="margin:14px 0 0;font-size:13px"><a class="muted" href="https://github.com/pedrorreiro/hushfall" target="_blank" rel="noopener">Ver no GitHub</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Hushfall · Silêncio Total</span>
+    <span>Projeto de fã, não oficial. Não aprovado nem associado à Mojang ou à Microsoft. Minecraft é marca da Mojang AB.</span>
+  </div>
+</footer>
 
 <script type="importmap">
 { "imports": {
@@ -443,123 +322,49 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const TEX = __TEXTURES__;
 const SOUNDS = __SOUNDS__;
-const FELT = 0x6E6B66;
-const STATE_COLORS = ["#6fcf8a", "#e8bd4a", "#ff8a4c", "#ff4f5e"];
-const STATE_NOISE = [14, 52, 84, 92];
-const SUBTITLES = {
-  click: "Ouvinte estala as orelhas", growl: "Ouvinte rosna", alert: "Ouvinte ouviu você!",
-  sniff: "Ouvinte fareja", emerge: "Rosnado distante", burrow: "Ouvinte se enterra",
-  step: "Passos pesados", attack: "Ouvinte ataca", hurt: "Ouvinte se fere", death: "Ouvinte morre",
-};
+const ITEMS = __ITEMS__;
 const $ = s => document.querySelector(s);
+const COLORS = [0x6fcf8a, 0xe8bd4a, 0xff8a4c, 0xff5a64, 0x7fd6e8];
+const STATE_TEXT = [
+  "Ronda a sua área, orelhas balançando.",
+  "Ouviu algo. Vai até o som e fareja.",
+  "Ouviu você. O rugido é o aviso.",
+  "Vem direto em você.",
+  "Atordoado pelo sino por 10 segundos.",
+];
+const SUBTITLES = { click: "Ouvinte estala as orelhas", growl: "Ouvinte rosna", alert: "Ouvinte ouviu você!", sniff: "Ouvinte fareja", hurt: "Ouvinte cambaleia", attack: "Ouvinte ataca" };
 
 // ------------------------------------------------------------------ cena
 const stage = $("#stage");
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
-
 const scene = new THREE.Scene();
-const SKY = 0x0b1220;
-scene.background = new THREE.Color(SKY);
-scene.fog = new THREE.FogExp2(SKY, 0.085);
-
-const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 200);
-camera.position.set(-3.6, 2.1, -9.6);
+scene.fog = new THREE.Fog(0x0b0f17, 9, 22);
+const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+camera.position.set(-3.4, 2.2, -8.6);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 1.6, 0);
+controls.target.set(0, 1.55, 0);
 controls.enableDamping = true;
-controls.minDistance = 2.5;
-controls.maxDistance = 16;
-controls.maxPolarAngle = Math.PI * 0.53;
-
-// Luz da lua (azulada) e um contra-luz frio.
-scene.add(new THREE.HemisphereLight(0x8fa6d8, 0x10140c, 1.1));
-const moon = new THREE.DirectionalLight(0xc9d8ff, 2.2);
+controls.enableZoom = false;
+controls.enablePan = false;
+controls.maxPolarAngle = Math.PI * 0.55;
+scene.add(new THREE.HemisphereLight(0x9fb4e0, 0x10140c, 1.2));
+const moon = new THREE.DirectionalLight(0xd4e0ff, 2.2);
 moon.position.set(-4, 7, -5);
 moon.castShadow = true;
 moon.shadow.mapSize.set(1024, 1024);
-moon.shadow.camera.left = moon.shadow.camera.bottom = -4;
-moon.shadow.camera.right = moon.shadow.camera.top = 4;
-moon.shadow.radius = 4;
+Object.assign(moon.shadow.camera, { left: -3, right: 3, top: 4, bottom: -2 });
 scene.add(moon);
-const rim = new THREE.DirectionalLight(0x6fb8ff, 1.2);
+const rim = new THREE.DirectionalLight(0x6fb8ff, 1.0);
 rim.position.set(3, 3, 5);
 scene.add(rim);
-
-// Chão de grama escura em blocos.
-{
-  const c = document.createElement("canvas"); c.width = c.height = 256;
-  const x = c.getContext("2d");
-  for (let i = 0; i < 16; i++) for (let j = 0; j < 16; j++) {
-    const v = 26 + Math.random() * 10;
-    x.fillStyle = `rgb(${v * 0.75},${v * 1.25 + 6},${v * 0.7})`;
-    x.fillRect(i * 16, j * 16, 16, 16);
-    for (let k = 0; k < 6; k++) {
-      x.fillStyle = `rgba(80,120,70,${Math.random() * 0.25})`;
-      x.fillRect(i * 16 + Math.random() * 14, j * 16 + Math.random() * 14, 2, 2);
-    }
-  }
-  const t = new THREE.CanvasTexture(c);
-  t.magFilter = THREE.NearestFilter; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 4);
-  t.colorSpace = THREE.SRGBColorSpace;
-  const ground = new THREE.Mesh(new THREE.CircleGeometry(16, 64), new THREE.MeshLambertMaterial({ map: t }));
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
-}
-
-// Estrelas e lua.
-{
-  const pos = [];
-  for (let i = 0; i < 900; i++) {
-    const th = Math.random() * Math.PI * 2, ph = Math.random() * Math.PI * 0.42;
-    const r = 80;
-    pos.push(r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph) * 0.9 + 4, r * Math.sin(ph) * Math.sin(th));
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-  scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xdfe8ff, size: 0.35, fog: false, transparent: true, opacity: 0.85 })));
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(7, 7), new THREE.MeshBasicMaterial({ color: 0xeef3ff, fog: false }));
-  m.position.set(30, 38, 55);
-  m.lookAt(0, 0, 0);
-  scene.add(m);
-  const glowC = document.createElement("canvas"); glowC.width = glowC.height = 128;
-  const gx = glowC.getContext("2d");
-  const grad = gx.createRadialGradient(64, 64, 0, 64, 64, 64);
-  grad.addColorStop(0, "rgba(200,220,255,.45)"); grad.addColorStop(1, "rgba(200,220,255,0)");
-  gx.fillStyle = grad; gx.fillRect(0, 0, 128, 128);
-  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowC), fog: false, depthWrite: false }));
-  glow.position.copy(m.position); glow.scale.setScalar(34);
-  scene.add(glow);
-}
-
-// Névoa rasteira.
-const mist = [];
-{
-  const c = document.createElement("canvas"); c.width = c.height = 128;
-  const x = c.getContext("2d");
-  const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
-  g.addColorStop(0, "rgba(150,170,210,.18)"); g.addColorStop(1, "rgba(150,170,210,0)");
-  x.fillStyle = g; x.fillRect(0, 0, 128, 128);
-  const tex = new THREE.CanvasTexture(c);
-  for (let i = 0; i < 14; i++) {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthWrite: false, transparent: true }));
-    s.position.set((Math.random() - 0.5) * 10, 0.25 + Math.random() * 0.3, (Math.random() - 0.5) * 10);
-    s.scale.set(4 + Math.random() * 3, 1.2, 1);
-    s.userData.speed = 0.05 + Math.random() * 0.08;
-    scene.add(s); mist.push(s);
-  }
-}
-
-function pixelTexture(src) {
-  const t = new THREE.TextureLoader().load(src);
-  t.magFilter = THREE.NearestFilter; t.minFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace;
-  return t;
-}
+const ground = new THREE.Mesh(new THREE.CircleGeometry(6, 48), new THREE.MeshLambertMaterial({ color: 0x1a2416 }));
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
 
 // ------------------------------------------------------------------ Ouvinte (porta de ListenerModel.java)
 function mcBox(x, y, z, w, h, d, u, v, texW, texH, mirror) {
@@ -586,8 +391,9 @@ function mcBox(x, y, z, w, h, d, u, v, texW, texH, mirror) {
   g.computeVertexNormals();
   return g;
 }
-
-const listenerMat = new THREE.MeshLambertMaterial({ map: pixelTexture(TEX.listener), side: THREE.DoubleSide, alphaTest: 0.5 });
+const tex = new THREE.TextureLoader().load(TEX.listener);
+tex.magFilter = THREE.NearestFilter; tex.minFilter = THREE.NearestFilter; tex.colorSpace = THREE.SRGBColorSpace;
+const mat = new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide, alphaTest: 0.5 });
 function part(parent, box, pose) {
   const g = new THREE.Group();
   const [px, py, pz, rx = 0, ry = 0, rz = 0] = pose;
@@ -595,21 +401,18 @@ function part(parent, box, pose) {
   g.rotation.order = "ZYX";
   g.rotation.set(rx, ry, rz);
   g.userData.base = { x: rx, y: ry, z: rz };
-  if (box) {
-    const mesh = new THREE.Mesh(mcBox(...box.slice(0, 8), 64, 64, box[8]), listenerMat);
-    mesh.castShadow = true;
-    g.add(mesh);
-  }
+  const mesh = new THREE.Mesh(mcBox(...box.slice(0, 8), 64, 64, box[8]), mat);
+  mesh.castShadow = true;
+  g.add(mesh);
   parent.add(g);
   return g;
 }
-
 const listener = new THREE.Group();
-const space = new THREE.Group();      // espaço do modelo do MC: y para baixo, em pixels
+const space = new THREE.Group();
 space.scale.set(-1, -1, 1);
 space.position.y = 24;
 const holder = new THREE.Group();
-holder.scale.setScalar(1.6 / 16);   // ListenerRenderer.FULL_SCALE: 3 blocos de altura
+holder.scale.setScalar(1.6 / 16);
 holder.add(space);
 listener.add(holder);
 const P = {};
@@ -649,6 +452,14 @@ function setupAnim(mode, age, walkPos, walkSpeed) {
     P.rightArm.rotation.x = -1.3 + cos(walkPos * 0.6662) * 0.4 * walkSpeed;
     P.leftArm.rotation.x = -1.3 - cos(walkPos * 0.6662) * 0.4 * walkSpeed;
     P.body.rotation.x = 0.35;
+  } else if (mode === 4) {
+    const sway = sin(age * 0.25);
+    P.leftEar.rotation.z = 1.5 + sway * 0.1; P.rightEar.rotation.z = -1.5 + sway * 0.1;
+    P.leftEar.rotation.x = 0.5; P.rightEar.rotation.x = 0.5;
+    P.head.rotation.x = 0.5; P.head.rotation.z = sway * 0.3;
+    P.body.rotation.z = sway * 0.08; P.jaw.rotation.x = 0.45;
+    P.rightArm.rotation.x = 0.1; P.leftArm.rotation.x = 0.1;
+    P.rightArm.rotation.z = 0.15 + sway * 0.1; P.leftArm.rotation.z = -0.15 + sway * 0.1;
   } else {
     const idle = sin(age * 0.12) * 0.12;
     const flick = (age % 70) < 6 ? sin(age * 2.2) * 0.35 : 0;
@@ -659,62 +470,15 @@ function setupAnim(mode, age, walkPos, walkSpeed) {
   }
 }
 
-// ------------------------------------------------------------------ itens (sprite extrudado em voxels)
-function itemMesh(layers) {
-  const group = new THREE.Group();
-  const loads = layers.map(l => new Promise(res => { const img = new Image(); img.onload = () => res([img, l.tint]); img.src = l.src; }));
-  Promise.all(loads).then(list => {
-    const c = document.createElement("canvas"); c.width = c.height = 16;
-    const ctx = c.getContext("2d");
-    for (const [img, tint] of list) {
-      const t = document.createElement("canvas"); t.width = t.height = 16;
-      const tc = t.getContext("2d"); tc.drawImage(img, 0, 0);
-      if (tint !== undefined) {
-        const data = tc.getImageData(0, 0, 16, 16);
-        const r = (tint >> 16) & 255, g = (tint >> 8) & 255, b = tint & 255;
-        for (let i = 0; i < data.data.length; i += 4) {
-          data.data[i] *= r / 255; data.data[i+1] *= g / 255; data.data[i+2] *= b / 255;
-        }
-        tc.putImageData(data, 0, 0);
-      }
-      ctx.drawImage(t, 0, 0);
-    }
-    const px = ctx.getImageData(0, 0, 16, 16).data;
-    const geo = new THREE.BoxGeometry(1, 1, 1);
-    for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
-      const i = (y * 16 + x) * 4;
-      if (px[i + 3] < 128) continue;
-      const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: new THREE.Color(`rgb(${px[i]},${px[i+1]},${px[i+2]})`).convertSRGBToLinear() }));
-      m.position.set(x - 7.5, 15.5 - y, 0);
-      m.castShadow = true;
-      group.add(m);
-    }
-  });
-  group.scale.setScalar(1.4 / 16);
-  group.position.y = 0.55;
-  const pivot = new THREE.Group();
-  pivot.add(group);
-  return pivot;
-}
-const items = {
-  boots: itemMesh([{ src: TEX.boots, tint: FELT }, { src: TEX.bootsOverlay }]),
-  egg: itemMesh([{ src: TEX.egg }]),
-  ear: itemMesh([{ src: TEX.ear }]),
-  dagger: itemMesh([{ src: TEX.dagger }]),
-};
-for (const m of Object.values(items)) { m.visible = false; scene.add(m); }
-
-// ------------------------------------------------------------------ ondas de som saindo da cabeça
+// Ondas de som saindo da cabeça.
 const ripples = [];
 const headPos = new THREE.Vector3();
 function emitRipple(color, strength = 1) {
-  if (!listener.visible) return;
   P.head.getWorldPosition(headPos);
   for (let i = 0; i < 3; i++) {
     const ring = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 48),
       new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, fog: false }));
     ring.position.copy(headPos).add(new THREE.Vector3(0, 0.15, 0));
-    ring.lookAt(camera.position);
     ring.userData = { life: -i * 0.18, strength };
     scene.add(ring); ripples.push(ring);
   }
@@ -725,27 +489,33 @@ function updateRipples(dt) {
     r.userData.life += dt;
     const t = r.userData.life;
     if (t < 0) continue;
-    const s = 0.1 + t * 1.0 * r.userData.strength;
-    r.scale.setScalar(s);
+    r.scale.setScalar(0.1 + t * 1.0 * r.userData.strength);
     r.lookAt(camera.position);
     r.material.opacity = Math.max(0, 0.7 * (1 - t / 1.1));
     if (t > 1.1) { scene.remove(r); r.geometry.dispose(); r.material.dispose(); ripples.splice(i, 1); }
   }
 }
 
-// ------------------------------------------------------------------ áudio
-let audio = null, master = null;
+// ------------------------------------------------------------------ áudio (só depois de um clique)
+let audio = null, master = null, soundOn = false;
 const buffers = {};
-const gate = $("#soundGate");
-async function ensureAudio() {
-  if (audio) { if (audio.state === "suspended") await audio.resume(); return true; }
-  audio = new (window.AudioContext || window.webkitAudioContext)();
-  master = audio.createGain();
-  master.gain.value = +$("#volume").value;
-  master.connect(audio.destination);
-  gate.remove();
-  return true;
+const soundBtn = $("#soundBtn");
+async function enableSound() {
+  if (!audio) {
+    audio = new (window.AudioContext || window.webkitAudioContext)();
+    master = audio.createGain();
+    master.gain.value = 0.7;
+    master.connect(audio.destination);
+  }
+  if (audio.state === "suspended") await audio.resume();
+  soundOn = true;
+  soundBtn.textContent = "🔊 Som";
 }
+soundBtn.onclick = async () => {
+  if (soundOn) { soundOn = false; soundBtn.textContent = "🔇 Som"; return; }
+  await enableSound();
+  playState();
+};
 async function bufferFor(src) {
   if (!buffers[src]) {
     const bin = Uint8Array.from(atob(src.split(",")[1]), c => c.charCodeAt(0));
@@ -753,68 +523,107 @@ async function bufferFor(src) {
   }
   return buffers[src];
 }
-async function play(name, { volume = 1, ripple = true } = {}) {
-  if (!audio) return;
+let subTimer;
+async function play(name, { volume = 1, ripple = true, pitchScale = 1 } = {}) {
+  if (!soundOn) return;
   const variants = SOUNDS[name];
   if (!variants || !variants.length) return;
   const v = variants[Math.floor(Math.random() * variants.length)];
   const buf = await bufferFor(v.src);
-  if (!buf) { subtitle("(este navegador não toca .ogg — tente o Chrome)"); return; }
+  if (!buf) return;
   const src = audio.createBufferSource();
   src.buffer = buf;
-  src.playbackRate.value = v.pitch * (0.95 + Math.random() * 0.1);   // mesmo pitch do sounds.json
+  src.playbackRate.value = v.pitch * pitchScale * (0.95 + Math.random() * 0.1);
   const g = audio.createGain();
   g.gain.value = volume;
   src.connect(g).connect(master);
   src.start();
-  if (name !== "step") subtitle(SUBTITLES[name]);
-  if (ripple) emitRipple(STATE_COLORS[mode], name === "alert" || name === "growl" ? 1.5 : 0.9);
-  const btn = document.querySelector(`[data-sound="${name}"]`);
-  if (btn) { btn.classList.add("playing"); setTimeout(() => btn.classList.remove("playing"), buf.duration * 1000 / v.pitch); }
+  if (SUBTITLES[name]) {
+    const sub = $("#subtitle");
+    sub.textContent = "< " + SUBTITLES[name] + " >";
+    sub.style.opacity = 1;
+    clearTimeout(subTimer);
+    subTimer = setTimeout(() => sub.style.opacity = 0, 2200);
+  }
+  if (ripple && mode !== 4) emitRipple(COLORS[mode], name === "alert" || name === "growl" ? 1.5 : 0.9);
 }
-function subtitle(text) {
-  if (!text) return;
-  const box = $("#subtitles");
-  const el = document.createElement("div");
-  el.className = "sub";
-  el.innerHTML = `<span class="dir">&lt;</span>${text}<span class="dir">&gt;</span>`;
-  box.appendChild(el);
-  while (box.children.length > 4) box.firstChild.remove();
-  setTimeout(() => el.remove(), 3000);
-}
-gate.onclick = async () => { await ensureAudio(); playStateIntro(); };
-window.addEventListener("pointerdown", () => { if (!audio) ensureAudio(); }, { once: true });
-$("#volume").oninput = e => { if (master) master.gain.value = +e.target.value; };
 
-// O que cada estado "fala" ao ser escolhido e de quanto em quanto tempo (como o som ambiente no jogo).
 const STATE_SOUNDS = [
   { intro: ["click"], loop: ["click"], every: 4.5 },
   { intro: ["click", "sniff"], loop: ["sniff", "click"], every: 3.2 },
   { intro: ["alert"], loop: ["alert"], every: 3.0 },
   { intro: ["growl"], loop: ["growl", "growl", "attack"], every: 2.6 },
+  { intro: ["hurt"], loop: [], every: 99 },
 ];
-let nextAmbient = 0;
-function playStateIntro() {
+let mode = 0, nextAmbient = 0;
+function playState() {
   const s = STATE_SOUNDS[mode];
-  s.intro.forEach((n, i) => setTimeout(() => play(n), i * 650));
+  s.intro.forEach((n, i) => setTimeout(() => play(n, { pitchScale: mode === 4 ? 0.6 : 1 }), i * 650));
   nextAmbient = performance.now() / 1000 + s.every;
 }
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll("[data-state]").forEach(b => b.classList.toggle("on", +b.dataset.state === m));
+  $("#stateText").textContent = STATE_TEXT[m];
+  playState();
+}
+document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => setMode(+b.dataset.state));
+// "Ver e ouvir" na seção da criatura: liga o som, troca o estado e sobe até o modelo.
+document.querySelectorAll("[data-sound]").forEach(b => b.onclick = async () => {
+  await enableSound();
+  setMode(+b.dataset.sound);
+  $("#top").scrollIntoView({ behavior: "smooth" });
+});
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage);
+resize();
+
+const clock = new THREE.Clock();
+let age = 0, walkPos = 0, lastStep = 0, visible = true;
+new IntersectionObserver(e => visible = e[0].isIntersecting).observe(stage);
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.1);
+  if (!visible) return;
+  const now = performance.now() / 1000;
+  age += dt * 20;
+  const speed = mode === 2 || mode === 4 ? 0 : mode === 3 ? 1 : 0.6;
+  walkPos += dt * 20 * speed * (mode === 3 ? 1.6 : 1);
+  setupAnim(mode, age, walkPos, speed);
+  if (soundOn) {
+    const s = STATE_SOUNDS[mode];
+    if (s.loop.length && now >= nextAmbient) {
+      play(s.loop[Math.floor(Math.random() * s.loop.length)], { volume: 0.8 });
+      nextAmbient = now + s.every * (0.8 + Math.random() * 0.4);
+    }
+    const step = Math.floor(walkPos * 0.6662 / Math.PI);
+    if (speed > 0 && step !== lastStep) play("step", { volume: mode === 3 ? 0.5 : 0.25, ripple: false });
+    lastStep = step;
+  }
+  listener.rotation.y += dt * 0.25;
+  updateRipples(dt);
+  controls.update();
+  renderer.render(scene, camera);
+});
 
 // ------------------------------------------------------------------ receitas (estilo wiki)
-const ITEMS = __ITEMS__;
 const RECIPES = {
-  felt_boots: { grid: ["wool", null, "wool", "leather", null, "leather", null, null, null], result: "felt_boots", label: "Mesa de trabalho" },
-  silent_dagger: { grid: [null, null, "iron", null, "wool", null, "stick", null, null], result: "silent_dagger", label: "Mesa de trabalho" },
+  felt_boots: { grid: ["wool", null, "wool", "leather", null, "leather", null, null, null], result: "felt_boots" },
+  silent_dagger: { grid: [null, null, "iron", null, "wool", null, "stick", null, null], result: "silent_dagger" },
+  deafening_bell: { grid: [null, "stick", null, "gold", "listener_ear", "gold", "gold", null, "gold"], result: "deafening_bell" },
   listener_ear: { drop: "Derrote o Ouvinte", result: "listener_ear" },
-  listener_spawn_egg: { drop: "Inventário do criativo", result: "listener_spawn_egg" },
 };
 const ARROW = "data:image/svg+xml," + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15" shape-rendering="crispEdges"><path fill="#8b8b8b" d="M0 5h13V0h2v1h1v1h1v1h1v1h1v1h1v1h1v1h1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-2V10H0z"/></svg>');
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15" shape-rendering="crispEdges"><path fill="#8b8b8b" d="M0 5h13V0h2v1h1v1h1v1h1v1h1v1h1v1h1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-2V10H0z"/></svg>');
 const tip = document.createElement("div");
 tip.className = "mc-tip";
 document.body.appendChild(tip);
 const cycling = [];
-
 function slot(key, big = false) {
   const el = document.createElement("div");
   el.className = "mc-slot" + (big ? " big" : "");
@@ -834,9 +643,8 @@ function slot(key, big = false) {
   el.addEventListener("mouseleave", () => tip.style.display = "none");
   return el;
 }
-
-function renderRecipe(host, id) {
-  const r = RECIPES[id];
+document.querySelectorAll("[data-recipe]").forEach(host => {
+  const r = RECIPES[host.dataset.recipe];
   const box = document.createElement("div");
   box.className = "mc-craft";
   if (r.grid) {
@@ -857,117 +665,9 @@ function renderRecipe(host, id) {
   box.appendChild(arrow);
   box.appendChild(slot(r.result, true));
   host.appendChild(box);
-}
-document.querySelectorAll("[data-recipe]").forEach(el => renderRecipe(el, el.dataset.recipe));
-// Lã em qualquer cor: o ícone vai trocando, como nas wikis.
+});
 let cycleIndex = 0;
-setInterval(() => {
-  cycleIndex++;
-  for (const c of cycling) c.img.src = c.icons[cycleIndex % c.icons.length];
-}, 1100);
-
-// ------------------------------------------------------------------ guia
-const guide = $("#guide");
-$("#guideBtn").onclick = () => guide.classList.add("open");
-guide.querySelector(".guide-close").onclick = () => guide.classList.remove("open");
-guide.addEventListener("click", e => { if (e.target === guide) guide.classList.remove("open"); });
-addEventListener("keydown", e => { if (e.key === "Escape") guide.classList.remove("open"); });
-
-// ------------------------------------------------------------------ UI
-let mode = 0, showing = "listener";
-function setAccent() { document.documentElement.style.setProperty("--accent", showing === "listener" ? STATE_COLORS[mode] : "#7fd6e8"); }
-function setMeter() { $("#meterFill").style.width = STATE_NOISE[mode] + "%"; }
-document.querySelectorAll("[data-state]").forEach(b => b.onclick = async () => {
-  mode = +b.dataset.state;
-  document.querySelectorAll("[data-state]").forEach(o => o.classList.toggle("on", o === b));
-  setAccent(); setMeter();
-  await ensureAudio();
-  playStateIntro();
-});
-document.querySelectorAll("[data-sound]").forEach(b => b.onclick = async () => { await ensureAudio(); play(b.dataset.sound); });
-// Batimento da Orelha: mesma conta de EarHeartbeat.java (intervalo, volume e pitch pela distância).
-let beatDistance = -1, nextBeat = 0;
-document.querySelectorAll("[data-beat]").forEach(b => b.onclick = async () => {
-  await ensureAudio();
-  const d = +b.dataset.beat;
-  beatDistance = beatDistance === d ? -1 : d;
-  document.querySelectorAll("[data-beat]").forEach(o => o.classList.toggle("playing", +o.dataset.beat === beatDistance));
-  nextBeat = 0;
-});
-function tickHeartbeat(now) {
-  if (beatDistance < 0 || showing !== "ear" || !audio || now < nextBeat) return;
-  const far = Math.min(1, Math.max(0, (beatDistance - 6) / (96 - 6)));
-  const lerp = (a, b) => a + (b - a) * far;
-  playBeat(lerp(1.0, 0.25), lerp(1.15, 0.9));
-  nextBeat = now + lerp(7, 45) / 20;
-}
-async function playBeat(volume, pitch) {
-  const v = SOUNDS["item.listener_ear.heartbeat"][0];
-  const buf = await bufferFor(v.src);
-  if (!buf) return;
-  const src = audio.createBufferSource();
-  src.buffer = buf; src.playbackRate.value = pitch;
-  const g = audio.createGain(); g.gain.value = volume;
-  src.connect(g).connect(master); src.start();
-}
-
-document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => {
-  showing = b.dataset.tab;
-  document.querySelectorAll("[data-tab]").forEach(o => o.classList.toggle("on", o === b));
-  document.querySelectorAll("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== showing);
-  listener.visible = showing === "listener";
-  for (const [k, m] of Object.entries(items)) m.visible = k === showing;
-  controls.target.set(0, showing === "listener" ? 1.6 : 0.6, 0);
-  setAccent();
-});
-setAccent(); setMeter();
-
-function resize() {
-  const w = innerWidth, h = innerHeight;
-  renderer.setSize(w, h);
-  camera.aspect = w / h;
-  // Desloca o centro da imagem para a esquerda do painel no desktop.
-  const panel = w > 760 ? 368 : 0;
-  camera.setViewOffset(w + panel, h, panel, 0, w, h);
-  camera.updateProjectionMatrix();
-}
-addEventListener("resize", resize); resize();
-
-// ------------------------------------------------------------------ loop
-const clock = new THREE.Clock();
-let age = 0, walkPos = 0, lastStep = 0;
-renderer.setAnimationLoop(() => {
-  const dt = Math.min(clock.getDelta(), 0.1);
-  const now = performance.now() / 1000;
-  age += dt * 20;
-  const walking = $("#walk").checked;
-  const speed = walking ? (mode === 3 ? 1 : mode === 2 ? 0 : 0.6) : 0;
-  walkPos += dt * 20 * speed * (mode === 3 ? 1.6 : 1);
-  setupAnim(mode, age, walkPos, speed);
-
-  if (listener.visible && audio && $("#ambient").checked) {
-    if (now >= nextAmbient) {
-      const s = STATE_SOUNDS[mode];
-      play(s.loop[Math.floor(Math.random() * s.loop.length)], { volume: 0.8 });
-      nextAmbient = now + s.every * (0.8 + Math.random() * 0.4);
-    }
-    // Um passo a cada pisada (meio ciclo da animação de andar).
-    const step = Math.floor(walkPos * 0.6662 / Math.PI);
-    if (speed > 0 && step !== lastStep) play("step", { volume: mode === 3 ? 0.55 : 0.3, ripple: false });
-    lastStep = step;
-  }
-
-  if ($("#spin").checked) {
-    listener.rotation.y += dt * 0.35;
-    for (const m of Object.values(items)) m.rotation.y += dt * 0.8;
-  }
-  for (const m of Object.values(items)) m.children[0].position.y = 0.55 + Math.sin(now * 1.6) * 0.05;
-  for (const s of mist) { s.position.x += s.userData.speed * dt; if (s.position.x > 6) s.position.x = -6; }
-  tickHeartbeat(now);
-  updateRipples(dt);
-  controls.update();
-  renderer.render(scene, camera);
-});
+setInterval(() => { cycleIndex++; for (const c of cycling) c.img.src = c.icons[cycleIndex % c.icons.length]; }, 1100);
 </script>
 </body>
 </html>

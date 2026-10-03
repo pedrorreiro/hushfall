@@ -6,12 +6,10 @@
   "hud.silenciototal.level.low": "Silencioso",
   "hud.silenciototal.level.medium": "Audível",
   "hud.silenciototal.level.high": "ALTO!",
-  "hud.silenciototal.silent_room": "Sala silenciosa",
   "hud.silenciototal.rain": "Chuva abafa",
   "hud.silenciototal.grace": "Noite de graça",
   "message.silenciototal.night_falls": "A noite caiu. Algo está escutando...",
   "message.silenciototal.grace_night": "Primeira noite. Aproveite para juntar lã enquanto o Ouvinte dorme.",
-  "message.silenciototal.needs_silent_room": "Lá fora algo escuta sua respiração. Durma numa sala de lã.",
   "subtitles.silenciototal.listener.click": "Ouvinte estala as orelhas",
   "subtitles.silenciototal.listener.growl": "Ouvinte rosna",
   "subtitles.silenciototal.listener.alert": "Ouvinte ouviu você!",
@@ -24,5 +22,10 @@
   "subtitles.silenciototal.listener.death": "Ouvinte morre",
   "item.silenciototal.listener_ear": "Orelha do Ouvinte",
   "subtitles.silenciototal.listener_ear.heartbeat": "Coração acelerado",
-  "item.silenciototal.silent_dagger": "Adaga Silenciosa"
+  "item.silenciototal.silent_dagger": "Adaga Silenciosa",
+  "item.silenciototal.deafening_bell": "Sino Ensurdecedor",
+  "message.silenciototal.bell_day": "O sino só faz efeito à noite.",
+  "message.silenciototal.bell_used": "O sino ainda vibra... só funciona uma vez por noite.",
+  "message.silenciototal.bell_stunned": "O Ouvinte cambaleia, atordoado! Você tem 10 segundos.",
+  "message.silenciototal.bell_missed": "Nada por perto para ouvir o sino... e ele só toca uma vez por noite."
 }

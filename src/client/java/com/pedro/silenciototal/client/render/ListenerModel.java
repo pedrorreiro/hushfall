@@ -102,7 +102,26 @@ public class ListenerModel extends EntityModel<ListenerRenderState> {
 		leftArm.zRot = -0.08f - Mth.sin(age * 0.07f) * 0.04f;
 
 		int mode = state.suspicious && (state.mode == Listener.PATROL || state.mode == Listener.INVESTIGATE) ? -1 : state.mode;
+		if (state.stunned) {
+			mode = -2;
+		}
 		switch (mode) {
+			case -2 -> {
+				// Atordoado: orelhas caídas, cabeça pendendo e cambaleando, braços soltos.
+				float sway = Mth.sin(age * 0.25f);
+				leftEar.zRot = 1.5f + sway * 0.1f;
+				rightEar.zRot = -1.5f + sway * 0.1f;
+				leftEar.xRot = 0.5f;
+				rightEar.xRot = 0.5f;
+				head.xRot = 0.5f;
+				head.zRot = sway * 0.3f;
+				body.zRot = sway * 0.08f;
+				jaw.xRot = 0.45f;
+				rightArm.xRot = 0.1f;
+				leftArm.xRot = 0.1f;
+				rightArm.zRot = 0.15f + sway * 0.1f;
+				leftArm.zRot = -0.15f + sway * 0.1f;
+			}
 			case -1 -> {
 				// Desconfiado: orelhas retas para cima e viradas para a frente, tremendo rápido, boca entreaberta.
 				float tremble = Mth.sin(age * 3.1f) * 0.05f;

@@ -31,6 +31,7 @@ public class ListenerRenderer extends MobRenderer<Listener, ListenerRenderState,
 		super.extractRenderState(entity, state, partialTicks);
 		state.mode = entity.getState();
 		state.suspicious = entity.isSuspicious();
+		state.stunned = entity.isStunned();
 		// Sob um teto baixo ele se encolhe (a caixa de colisão já cabe em 2 blocos; só o desenho muda).
 		BlockPos head = BlockPos.containing(entity.getX(), entity.getY() + 2.1, entity.getZ());
 		boolean lowCeiling = !entity.level().getBlockState(head).getCollisionShape(entity.level(), head).isEmpty()

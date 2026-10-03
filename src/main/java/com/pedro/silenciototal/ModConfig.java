@@ -22,8 +22,6 @@ public final class ModConfig {
 	public int minSpawnDistance = 32;
 	/** Distância máxima do spawn até o jogador escolhido. */
 	public int maxSpawnDistance = 45;
-	/** Se true, à noite só dá para dormir dentro de uma sala silenciosa. */
-	public boolean sleepOnlyInSilentRoom = false;
 	/** Multiplicador geral do ruído do jogador (0.5 = metade do barulho). */
 	public float noiseMultiplier = 1.0f;
 	/** Versão do arquivo. Usada para atualizar valores padrão antigos. */

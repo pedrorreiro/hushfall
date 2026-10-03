@@ -8,6 +8,8 @@ public class ListenerRenderState extends LivingEntityRenderState {
 	public int mode = Listener.PATROL;
 	/** Desconfiado: orelhas em pé viradas para você. */
 	public boolean suspicious;
+	/** Atordoado pelo Sino Ensurdecedor. */
+	public boolean stunned;
 	/** Escala de desenho (menor quando ele se espreme sob um teto baixo). */
 	public float squeeze = ListenerRenderer.FULL_SCALE;
 }

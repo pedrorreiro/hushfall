@@ -1,6 +1,7 @@
 package com.pedro.silenciototal.registry;
 
 import com.pedro.silenciototal.SilencioTotal;
+import com.pedro.silenciototal.item.DeafeningBellItem;
 import java.util.Map;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
@@ -39,9 +40,13 @@ public final class ModItems {
 	public static final Item SILENT_DAGGER = register("silent_dagger", Item::new,
 			new Item.Properties().sword(ToolMaterial.IRON, 2.0f, -2.0f));
 
-	/** Troféu de quem mata o Ouvinte. Segurando, você ouve um batimento que acelera quando ele se aproxima. */
+	/** Drop do Ouvinte. Ingrediente do Sino Ensurdecedor. */
 	public static final Item LISTENER_EAR = register("listener_ear", Item::new,
 			new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant());
+
+	/** Feito com a Orelha: atordoa o Ouvinte por 10 s, uma vez por noite. */
+	public static final Item DEAFENING_BELL = register("deafening_bell", DeafeningBellItem::new,
+			new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
 	public static final Item LISTENER_SPAWN_EGG = register("listener_spawn_egg", SpawnEggItem::new,
 			new Item.Properties().spawnEgg(ModEntities.LISTENER));
@@ -59,6 +64,7 @@ public final class ModItems {
 			output.accept(FELT_BOOTS);
 			output.accept(SILENT_DAGGER);
 			output.accept(LISTENER_EAR);
+			output.accept(DEAFENING_BELL);
 		});
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(LISTENER_SPAWN_EGG));
 	}

@@ -34,6 +34,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -45,6 +46,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -101,6 +106,10 @@ public class Listener extends Monster {
 	private static final EntityDataAccessor<Integer> STATE = SynchedEntityData.defineId(Listener.class, EntityDataSerializers.INT);
 	/** Desconfiado: alguém perto está quase fazendo barulho demais (orelhas em pé, cabeça virada). */
 	private static final EntityDataAccessor<Boolean> SUSPICIOUS = SynchedEntityData.defineId(Listener.class, EntityDataSerializers.BOOLEAN);
+	/** Atordoado pelo Sino Ensurdecedor: não ouve, não anda, não ataca. */
+	private static final EntityDataAccessor<Boolean> STUNNED = SynchedEntityData.defineId(Listener.class, EntityDataSerializers.BOOLEAN);
+	/** Tempo para arrombar uma porta de madeira (o zumbi leva 12 s). */
+	public static final int DOOR_BREAK_TICKS = 100;
 	/** A partir desse ruído, perto dele, ele desconfia (o aviso antes de te descobrir em {@link #QUIET_NOISE}). */
 	public static final float SUSPICIOUS_NOISE = 5;
 	private static final int SUSPICIOUS_TICKS = 30;
@@ -122,6 +131,8 @@ public class Listener extends Monster {
 	private int lostTicks;
 	private long nextSniff;
 	private long suspiciousUntil;
+	private long stunnedUntil;
+	private @Nullable Vec3 stunSource;
 
 	private record Habituation(Vec3 pos, int visits, long expires) {
 	}
@@ -153,11 +164,13 @@ public class Listener extends Monster {
 		super.defineSynchedData(entityData);
 		entityData.define(STATE, PATROL);
 		entityData.define(SUSPICIOUS, false);
+		entityData.define(STUNNED, false);
 	}
 
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(1, new FloatGoal(this));
+		this.goalSelector.addGoal(1, new DoorBashGoal(this));
 		this.goalSelector.addGoal(2, new HuntGoal(this));
 		this.goalSelector.addGoal(3, new InvestigateGoal(this));
 		this.goalSelector.addGoal(4, new ProwlGoal(this));
@@ -190,6 +203,41 @@ public class Listener extends Monster {
 			this.entityData.set(STATE, state);
 			this.stateTicks = 0;
 		}
+		updateDoorPathing();
+	}
+
+	/**
+	 * Só atravessa (arrombando) portas de madeira quando vai atrás de alguém que fez barulho.
+	 * Patrulhando ou indo atrás de uma distração, porta fechada é parede.
+	 */
+	private void updateDoorPathing() {
+		boolean afterPlayer = getState() == HUNT || getState() == INVESTIGATE && soundFromPlayer;
+		getNavigation().setCanOpenDoors(afterPlayer && !isStunned());
+	}
+
+	public boolean isStunned() {
+		return this.entityData.get(STUNNED);
+	}
+
+	/**
+	 * Sino Ensurdecedor: fica atordoado, sem ouvir, andar ou atacar. Quando passa, vai
+	 * investigar de onde veio o som do sino.
+	 */
+	public void stun(int ticks, Vec3 source) {
+		if (!isAlive()) {
+			return;
+		}
+		stunnedUntil = level().getGameTime() + ticks;
+		stunSource = source;
+		entityData.set(STUNNED, true);
+		entityData.set(SUSPICIOUS, false);
+		setTarget(null);
+		alertTarget = null;
+		prowlCenter = null;
+		soundTarget = null;
+		setState(PATROL);
+		getNavigation().stop();
+		playSound(ModSounds.LISTENER_HURT, 1.6f, 0.6f);
 	}
 
 	public @Nullable Vec3 getSoundTarget() {
@@ -204,6 +252,9 @@ public class Listener extends Monster {
 
 	/** Chamado pelo {@link NoiseTracker} quando um jogador está dentro do raio de audição. */
 	public void hearPlayer(ServerPlayer player, float noise) {
+		if (isStunned()) {
+			return;
+		}
 		int state = getState();
 		if (state == HUNT) {
 			if (getTarget() == player) {
@@ -228,6 +279,9 @@ public class Listener extends Monster {
 
 	/** Um som no mundo (distração, explosão, raio...) com a força dada em blocos de alcance. */
 	public void hearSound(Vec3 pos, float loudness) {
+		if (isStunned()) {
+			return;
+		}
 		int state = getState();
 		if (state == ALERT) {
 			return;
@@ -263,7 +317,7 @@ public class Listener extends Monster {
 		double bestNoisy = SENSE_RADIUS * SENSE_RADIUS;
 		double bestQuiet = SNIFF_RADIUS * SNIFF_RADIUS;
 		for (ServerPlayer player : level.players()) {
-			if (!isHuntable(player) || NoiseTracker.isInSilentRoom(player)) {
+			if (!isHuntable(player)) {
 				continue;
 			}
 			double distance = distanceToSqr(player);
@@ -346,6 +400,7 @@ public class Listener extends Monster {
 		soundVersion++;
 		prowlCenter = null;
 		setState(INVESTIGATE);
+		updateDoorPathing();
 		stateTicks = 0;
 		if (wasCalm) {
 			// Aviso: o clique das orelhas virando para o som.
@@ -522,6 +577,21 @@ public class Listener extends Monster {
 	@Override
 	protected void customServerAiStep(ServerLevel level) {
 		super.customServerAiStep(level);
+		if (isStunned()) {
+			getNavigation().stop();
+			if (tickCount % 8 == 0) {
+				level.sendParticles(ParticleTypes.ENCHANTED_HIT, getX(), getY() + 2.8, getZ(), 4, 0.4, 0.2, 0.4, 0.05);
+			}
+			if (level.getGameTime() >= stunnedUntil) {
+				entityData.set(STUNNED, false);
+				Vec3 source = stunSource;
+				stunSource = null;
+				if (source != null) {
+					investigate(source, 40, false);
+				}
+			}
+			return;
+		}
 		stateTicks++;
 		if (isSuspicious() && (level.getGameTime() > suspiciousUntil || getState() == ALERT || getState() == HUNT)) {
 			entityData.set(SUSPICIOUS, false);
@@ -557,7 +627,7 @@ public class Listener extends Monster {
 	}
 
 	private void tickHunt(ServerLevel level) {
-		if (!(getTarget() instanceof ServerPlayer target) || !isHuntable(target) || NoiseTracker.isInSilentRoom(target)) {
+		if (!(getTarget() instanceof ServerPlayer target) || !isHuntable(target)) {
 			loseTrack();
 			return;
 		}
@@ -603,13 +673,13 @@ public class Listener extends Monster {
 	@Override
 	public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
 		Entity attacker = source.getEntity();
-		boolean surprised = attacker instanceof Player && (getState() == PATROL || getState() == INVESTIGATE || isCornered());
+		boolean surprised = attacker instanceof Player && (getState() == PATROL || getState() == INVESTIGATE || isCornered() || isStunned());
 		if (surprised) {
 			damage *= SURPRISE_MULTIPLIER;
 			level.sendParticles(ParticleTypes.CRIT, getX(), getY(1.0), getZ(), 15, 0.3, 0.4, 0.3, 0.2);
 		}
 		boolean hurt = super.hurtServer(level, source, damage);
-		if (hurt && isAlive() && attacker instanceof ServerPlayer player && isHuntable(player)) {
+		if (hurt && isAlive() && !isStunned() && attacker instanceof ServerPlayer player && isHuntable(player)) {
 			// Quem bate denuncia onde está: caça imediata.
 			alertTarget = null;
 			prowlCenter = null;
@@ -684,6 +754,61 @@ public class Listener extends Monster {
 
 	// ------------------------------------------------------------------ goals
 
+	/**
+	 * Arromba portas de madeira no caminho quando vai atrás de quem fez barulho (porta de ferro
+	 * aguenta). Bem mais rápido que o zumbi: {@link #DOOR_BREAK_TICKS}.
+	 */
+	private static class DoorBashGoal extends BreakDoorGoal {
+		private final Listener listener;
+
+		DoorBashGoal(Listener listener) {
+			super(listener, difficulty -> true);
+			this.listener = listener;
+		}
+
+		@Override
+		protected int getDoorBreakTime() {
+			return DOOR_BREAK_TICKS;
+		}
+
+		@Override
+		public boolean canUse() {
+			int state = listener.getState();
+			boolean afterPlayer = state == HUNT || state == INVESTIGATE && listener.soundFromPlayer;
+			if (!afterPlayer || listener.isStunned() || !listener.horizontalCollision) {
+				return false;
+			}
+			if (!(listener.level() instanceof ServerLevel level) || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+				return false;
+			}
+			// A checagem do jogo base exige estar colado na porta (feita para o zumbi, mais fino).
+			// Ele é largo, então procura uma porta de madeira nos próximos passos do caminho, até 2,5 blocos.
+			Path path = listener.getNavigation().getPath();
+			if (path == null || path.isDone()) {
+				return false;
+			}
+			int from = Math.max(0, path.getNextNodeIndex() - 1);
+			int to = Math.min(path.getNextNodeIndex() + 3, path.getNodeCount());
+			for (int i = from; i < to; i++) {
+				Node node = path.getNode(i);
+				for (int dy = 0; dy <= 1; dy++) {
+					BlockPos pos = new BlockPos(node.x, node.y + dy, node.z);
+					if (DoorBlock.isWoodenDoor(level, pos) && Vec3.atCenterOf(pos).closerThan(listener.position(), 2.5)) {
+						doorPos = pos;
+						hasDoor = true;
+						return !isOpen();
+					}
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public boolean canContinueToUse() {
+			return !listener.isStunned() && super.canContinueToUse();
+		}
+	}
+
 	/** Caça: ataque corpo a corpo seguindo o alvo mesmo sem "ver" (ele nunca vê). */
 	private static class HuntGoal extends MeleeAttackGoal {
 		private final Listener listener;
@@ -695,12 +820,12 @@ public class Listener extends Monster {
 
 		@Override
 		public boolean canUse() {
-			return listener.getState() == HUNT && super.canUse();
+			return listener.getState() == HUNT && !listener.isStunned() && super.canUse();
 		}
 
 		@Override
 		public boolean canContinueToUse() {
-			return listener.getState() == HUNT && super.canContinueToUse();
+			return listener.getState() == HUNT && !listener.isStunned() && super.canContinueToUse();
 		}
 	}
 
@@ -720,7 +845,7 @@ public class Listener extends Monster {
 
 		@Override
 		public boolean canUse() {
-			return listener.getState() == INVESTIGATE && listener.soundTarget != null;
+			return listener.getState() == INVESTIGATE && listener.soundTarget != null && !listener.isStunned();
 		}
 
 		@Override
@@ -799,12 +924,12 @@ public class Listener extends Monster {
 
 		@Override
 		public boolean canUse() {
-			return listener.isProwling();
+			return listener.isProwling() && !listener.isStunned();
 		}
 
 		@Override
 		public boolean canContinueToUse() {
-			return listener.isProwling();
+			return listener.isProwling() && !listener.isStunned();
 		}
 
 		@Override
@@ -849,12 +974,12 @@ public class Listener extends Monster {
 
 		@Override
 		public boolean canUse() {
-			return listener.getState() == PATROL && !listener.isProwling() && super.canUse();
+			return listener.getState() == PATROL && !listener.isProwling() && !listener.isStunned() && super.canUse();
 		}
 
 		@Override
 		public boolean canContinueToUse() {
-			return listener.getState() == PATROL && !listener.isProwling() && super.canContinueToUse();
+			return listener.getState() == PATROL && !listener.isProwling() && !listener.isStunned() && super.canContinueToUse();
 		}
 
 		@Override

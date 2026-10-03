@@ -22,7 +22,6 @@ public class SilencioTotalClient implements ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(NoisePayload.TYPE, (payload, context) -> NoiseHud.receive(payload));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> NoiseHud.reset());
-		ClientTickEvents.END_CLIENT_TICK.register(EarHeartbeat::tick);
 		ClientTickEvents.END_CLIENT_TICK.register(PanicFeedback::tick);
 		// Por baixo do resto da HUD, para não cobrir hotbar e medidor.
 		HudElementRegistry.addFirst(SilencioTotal.id("panic_vignette"), PanicFeedback::extract);

@@ -1,4 +1,4 @@
-"""Gera tools/visualizador.html: o Ouvinte e os itens do mod em 3D, com os sons, sem abrir o jogo.
+"""Gera o site (site/index.html e tools/visualizador.html): o Ouvinte em 3D com os sons, os itens com receitas e o guia.
 
 Rode de novo depois de mudar texturas ou sons:  python3 tools/build_viewer.py
 A geometria do Ouvinte espelha ListenerModel.java (mesmas caixas, pivôs e animações) e os sons
@@ -21,12 +21,6 @@ def data_url(raw, mime):
 def read(path):
     with open(path, "rb") as f:
         return f.read()
-
-
-def vanilla_texture(name):
-    jar = glob.glob(os.path.join(LOOM, "*/minecraft-client.jar"))[0]
-    with zipfile.ZipFile(jar) as z:
-        return data_url(z.read("assets/minecraft/textures/" + name), "image/png")
 
 
 def vanilla_sounds():
@@ -109,16 +103,13 @@ ITEMS = {
                    vanilla_raw("item/leather_boots_overlay.png"), (0x6E, 0x6B, 0x66))]},
     "silent_dagger": {"name": "Adaga Silenciosa", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/silent_dagger.png")), "image/png")]},
     "listener_ear": {"name": "Orelha do Ouvinte", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/listener_ear.png")), "image/png")]},
+    "gold": {"name": "Barra de Ouro", "icons": [data_url(vanilla_raw("item/gold_ingot.png"), "image/png")]},
+    "deafening_bell": {"name": "Sino Ensurdecedor", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/deafening_bell.png")), "image/png")]},
     "listener_spawn_egg": {"name": "Ovo Gerador de Ouvinte", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/listener_spawn_egg.png")), "image/png")]},
 }
 
 textures = {
     "listener": data_url(read(os.path.join(MOD_ASSETS, "textures/entity/listener/listener.png")), "image/png"),
-    "egg": data_url(read(os.path.join(MOD_ASSETS, "textures/item/listener_spawn_egg.png")), "image/png"),
-    "dagger": data_url(read(os.path.join(MOD_ASSETS, "textures/item/silent_dagger.png")), "image/png"),
-    "ear": data_url(read(os.path.join(MOD_ASSETS, "textures/item/listener_ear.png")), "image/png"),
-    "boots": vanilla_texture("item/leather_boots.png"),
-    "bootsOverlay": vanilla_texture("item/leather_boots_overlay.png"),
 }
 
 html = open(os.path.join(ROOT, "tools/viewer_template.html"), encoding="utf-8").read()

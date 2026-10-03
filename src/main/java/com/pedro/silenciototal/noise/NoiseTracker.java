@@ -34,7 +34,6 @@ public final class NoiseTracker {
 	public static final float WALK_PER_SECOND = 5f;
 	public static final float SPRINT_PER_SECOND = 10f;
 	public static final float DECAY_PER_SECOND = 4f;
-	public static final float SILENT_ROOM_DECAY_PER_SECOND = 15f;
 	public static final float WALK_CAP = 70f;
 
 	public static final float SOFT_FLOOR = 0.5f;
@@ -45,7 +44,6 @@ public final class NoiseTracker {
 	public static final float THUNDER = 0.5f;
 
 	private static final int HEARING_INTERVAL = 10;
-	private static final int ROOM_CHECK_INTERVAL = 20;
 	private static final Map<UUID, PlayerNoise> NOISE = new HashMap<>();
 
 	private NoiseTracker() {
@@ -54,9 +52,7 @@ public final class NoiseTracker {
 	private static final class PlayerNoise {
 		float noise;
 		Vec3 lastPos;
-		boolean silentRoom;
 		boolean active;
-		int roomCheck;
 		float sentNoise = -1;
 		byte sentFlags = -1;
 		long warnedNight = -1;
@@ -79,26 +75,17 @@ public final class NoiseTracker {
 		if (!active) {
 			data.active = false;
 			data.noise = 0;
-			data.silentRoom = false;
 			sync(player, data);
 			return;
 		}
 		if (!data.active) {
 			data.active = true;
-			data.roomCheck = 0;
 			announceNight(player, data);
-		}
-
-		if (--data.roomCheck <= 0) {
-			data.roomCheck = ROOM_CHECK_INTERVAL;
-			data.silentRoom = SilentRoom.isInside(level, player.blockPosition());
 		}
 
 		float footsteps = footstepsPerTick(player, pos.subtract(last));
 		float hitting = hittingPerTick(player);
-		if (data.silentRoom) {
-			data.noise -= SILENT_ROOM_DECAY_PER_SECOND / 20f;
-		} else if (hitting > 0) {
+		if (hitting > 0) {
 			// Batendo num bloco (árvore, pedra...): cada golpe faz barulho e o ruído não baixa.
 			data.noise += hitting * environment(player);
 		} else if (footsteps > 0) {
@@ -114,7 +101,7 @@ public final class NoiseTracker {
 		}
 		data.noise = clamp(data.noise);
 
-		if (player.tickCount % HEARING_INTERVAL == 0 && !data.silentRoom) {
+		if (player.tickCount % HEARING_INTERVAL == 0) {
 			broadcast(player, data.noise);
 		}
 		sync(player, data);
@@ -200,7 +187,7 @@ public final class NoiseTracker {
 	/** Soma ruído de uma ação (pular, quebrar bloco, abrir porta, combate, explosão...). */
 	public static void add(ServerPlayer player, float amount) {
 		PlayerNoise data = NOISE.get(player.getUUID());
-		if (data == null || !data.active || data.silentRoom || amount <= 0) {
+		if (data == null || !data.active || amount <= 0) {
 			return;
 		}
 		float before = data.noise;
@@ -220,22 +207,9 @@ public final class NoiseTracker {
 	public static void set(ServerPlayer player, float noise) {
 		PlayerNoise data = NOISE.computeIfAbsent(player.getUUID(), u -> new PlayerNoise());
 		data.noise = clamp(noise);
-		if (data.active && !data.silentRoom) {
+		if (data.active) {
 			broadcast(player, data.noise);
 		}
-	}
-
-	public static boolean isInSilentRoom(ServerPlayer player) {
-		PlayerNoise data = NOISE.get(player.getUUID());
-		return data != null && data.silentRoom;
-	}
-
-	/** Recalcula na hora se o jogador está numa sala silenciosa (ex.: ao deitar na cama). */
-	public static boolean refreshSilentRoom(ServerPlayer player) {
-		PlayerNoise data = NOISE.computeIfAbsent(player.getUUID(), u -> new PlayerNoise());
-		data.silentRoom = SilentRoom.isInside(player.level(), player.blockPosition());
-		data.roomCheck = ROOM_CHECK_INTERVAL;
-		return data.silentRoom;
 	}
 
 	/** O Ouvinte escuta conforme a faixa: alto = caça, médio = investiga a região, baixo = só colado nele. */
@@ -270,9 +244,6 @@ public final class NoiseTracker {
 		byte flags = 0;
 		if (data.active) {
 			flags |= NoisePayload.NIGHT;
-		}
-		if (data.silentRoom) {
-			flags |= NoisePayload.SILENT_ROOM;
 		}
 		if (data.active && level.isRaining()) {
 			flags |= NoisePayload.RAIN;

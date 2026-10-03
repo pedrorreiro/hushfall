@@ -1,21 +1,15 @@
 package com.pedro.silenciototal.noise;
 
-import com.pedro.silenciototal.ModConfig;
 import com.pedro.silenciototal.registry.ModItems;
-import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
-import net.fabricmc.fabric.api.util.EventResult;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
@@ -27,7 +21,7 @@ import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-/** Ações do jogador que fazem barulho, mais as regras de sono. */
+/** Ações do jogador que fazem barulho. */
 public final class NoiseSources {
 	public static final float JUMP = 6;
 	public static final float BREAK_STONE = 15;
@@ -35,9 +29,6 @@ public final class NoiseSources {
 	public static final float BREAK_SOFT = 5;
 	public static final float OPEN_CONTAINER = 8;
 	public static final float COMBAT = 15;
-
-	private static final Player.BedSleepingProblem NEEDS_SILENT_ROOM = new Player.BedSleepingProblem(
-			Component.translatable("message.silenciototal.needs_silent_room").withStyle(ChatFormatting.DARK_AQUA));
 
 	private NoiseSources() {
 	}
@@ -69,24 +60,6 @@ public final class NoiseSources {
 			if (entity instanceof ServerPlayer player && source.getEntity() != null && (damageTaken > 0 || blocked)) {
 				NoiseTracker.add(player, COMBAT);
 			}
-		});
-
-		// Dentro de uma sala silenciosa dá para dormir mesmo com o Ouvinte rondando lá fora.
-		EntitySleepEvents.ALLOW_NEARBY_MONSTERS.register((player, sleepingPos, vanillaResult) -> {
-			if (player instanceof ServerPlayer serverPlayer && NightCycle.isNight(serverPlayer.level())
-					&& NoiseTracker.refreshSilentRoom(serverPlayer)) {
-				return EventResult.ALLOW;
-			}
-			return EventResult.PASS;
-		});
-		EntitySleepEvents.ALLOW_SLEEPING.register((player, sleepingPos) -> {
-			if (!ModConfig.get().sleepOnlyInSilentRoom || !(player instanceof ServerPlayer serverPlayer)) {
-				return null;
-			}
-			if (!NightCycle.isHuntingNight(serverPlayer.level()) || NoiseTracker.refreshSilentRoom(serverPlayer)) {
-				return null;
-			}
-			return NEEDS_SILENT_ROOM;
 		});
 	}
 
