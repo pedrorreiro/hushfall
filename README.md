@@ -47,6 +47,15 @@ Para instalar, coloque o jar em `mods/` junto com o Fabric API (0.161.0+26.3) e 
 - `client/`: HUD da barra de ruído, modelo e renderer do Ouvinte
 - `tools/`: visualizador 3D e gerador de texturas
 
+## Publicar uma versão
+
+Envie uma tag de versão. O workflow `.github/workflows/release.yml` compila o mod e publica a release com o jar no GitHub, e o botão "Baixar" do site passa a apontar para ela:
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
+
 ## Site
 
 `site/index.html` é publicado na Vercel (`vercel.json` aponta a saída para `site/`, sem etapa de build). Para atualizar, rode `python3 tools/build_viewer.py` e faça commit dos dois HTML.

@@ -1,0 +1,52 @@
+# Publica uma release com o jar do mod sempre que uma tag de versão é enviada.
+#
+#   git tag v1.1.0 && git push origin v1.1.0
+#
+# A versão do jar vem da tag (v1.1.0 -> silenciototal-1.1.0.jar). Roda no GitHub com a
+# permissão do próprio repositório, então não depende de quem está logado no `gh` local.
+
+name: release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag já existente para publicar (ex.: v1.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.TAG }}
+      - name: validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+      - name: setup jdk
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -Pversion="${TAG#v}"
+      - name: publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          JAR="build/libs/silenciototal-${TAG#v}.jar"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$JAR" --clobber
+          else
+            gh release create "$TAG" "$JAR" --verify-tag --title "Hushfall ${TAG#v}" \
+              --notes-file .github/release-notes.md --generate-notes
+          fi
