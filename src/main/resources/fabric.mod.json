@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "silenciototal",
+	"version": "${version}",
+	"name": "Silêncio Total",
+	"description": "À noite, uma criatura cega caça pelo som. Fique em silêncio e use o barulho como ferramenta.",
+	"authors": [
+		"Pedro"
+	],
+	"license": "CC0-1.0",
+	"icon": "assets/silenciototal/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.pedro.silenciototal.SilencioTotal"
+		],
+		"client": [
+			"com.pedro.silenciototal.client.SilencioTotalClient"
+		]
+	},
+	"mixins": [
+		"silenciototal.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

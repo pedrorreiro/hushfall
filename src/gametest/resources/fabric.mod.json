@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"id": "silenciototal-test",
+	"version": "1.0.0",
+	"name": "Silêncio Total - testes",
+	"environment": "*",
+	"entrypoints": {
+		"fabric-client-gametest": [
+			"com.pedro.silenciototal.test.SilencioTotalClientTest"
+		]
+	},
+	"depends": {
+		"silenciototal": "*"
+	}
+}

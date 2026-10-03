@@ -1,0 +1,26 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "dyeable": {
+          "color_when_undyed": -9540762
+        },
+        "texture": "minecraft:leather"
+      },
+      {
+        "texture": "minecraft:leather_overlay"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "dyeable": {
+          "color_when_undyed": -9540762
+        },
+        "texture": "minecraft:leather"
+      },
+      {
+        "texture": "minecraft:leather_overlay"
+      }
+    ]
+  }
+}

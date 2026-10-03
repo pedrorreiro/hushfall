@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "silenciototal:item/felt_boots",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -9540762
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+	"required": true,
+	"package": "com.pedro.silenciototal.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"DispenserBlockMixin",
+		"ProjectileUtilMixin",
+		"ServerLevelMixin",
+		"ServerPlayerGameModeAccessor",
+		"ServerPlayerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
