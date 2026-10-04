@@ -18,6 +18,8 @@ public final class ModConfig {
 
 	/** Noites iniciais sem Ouvinte. A primeira noite de um mundo novo é de graça para dar tempo de achar lã. */
 	public int graceNights = 1;
+	/** Chance (0 a 1) de cada noite ter o Ouvinte. 0.5 = metade das noites; 1 = toda noite. */
+	public float nightChance = 0.5f;
 	/** Distância mínima entre o ponto de spawn e qualquer jogador (regra de ouro: nunca spawnar em cima de ninguém). */
 	public int minSpawnDistance = 32;
 	/** Distância máxima do spawn até o jogador escolhido. */
@@ -59,6 +61,7 @@ public final class ModConfig {
 		instance.minSpawnDistance = Math.max(30, instance.minSpawnDistance);
 		instance.maxSpawnDistance = Math.max(instance.minSpawnDistance + 4, instance.maxSpawnDistance);
 		instance.noiseMultiplier = Math.max(0f, instance.noiseMultiplier);
+		instance.nightChance = Math.max(0f, Math.min(1f, instance.nightChance));
 		try (Writer writer = Files.newBufferedWriter(path)) {
 			GSON.toJson(instance, writer);
 		} catch (IOException e) {

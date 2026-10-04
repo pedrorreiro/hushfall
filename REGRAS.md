@@ -5,13 +5,23 @@
 
 O mod só funciona **à noite** e só no **Overworld**. De dia nada disso existe.
 
+## 0. Quais noites
+
+- A **primeira noite** de um mundo novo é sempre de graça.
+- Depois, **cada noite tem 50% de chance** de ter o Ouvinte. O sorteio é fixo por mundo e por noite: sair e entrar no mundo não muda o resultado.
+- **Ao anoitecer** aparece uma mensagem: *"A noite caiu. Algo acordou... fique em silêncio."* ou *"A noite está calma. Ele não vem esta noite."*
+- O **medidor de ruído** só aparece nas noites em que ele vem. Nas noites calmas, pode caçar, minerar e fazer barulho à vontade.
+
+---
+
+
 ---
 
 ## 1. O Ouvinte
 
 **Só existe um Ouvinte no mundo.** Ele é um chefe: a ideia é **fugir**, não lutar.
 
-- Surge **logo ao anoitecer**, a **32–45 blocos** de um jogador e **nunca a menos de 30 blocos de ninguém**, sempre na mesma camada que você (superfície ou caverna).
+- Nas noites em que vem, surge **logo ao anoitecer**, a **32–45 blocos** de um jogador e **nunca a menos de 30 blocos de ninguém**, sempre na mesma camada que você (superfície ou caverna).
 - Ao surgir, solta um **rosnado distante**. É o primeiro aviso da noite.
 - **Ronda a sua área**: mesmo sem ouvir nada, a patrulha dele vai se aproximando aos poucos.
 - É **cego**: luz, invisibilidade e linha de visão não importam. Ele só reage ao **ruído**.
@@ -130,6 +140,7 @@ Sons no mundo que o Ouvinte vai investigar. Cada ponto tem **cooldown**.
 | Opção | Padrão | O que faz |
 |---|---|---|
 | `graceNights` | `1` | Noites iniciais sem Ouvinte (a primeira noite é de graça). |
+| `nightChance` | `0.5` | Chance de cada noite ter o Ouvinte. `1.0` = toda noite; `0.25` = uma a cada quatro, em média. |
 | `minSpawnDistance` | `32` | Distância mínima de qualquer jogador (nunca menos de 30). |
 | `maxSpawnDistance` | `45` | Distância máxima do jogador escolhido. |
 | `noiseMultiplier` | `1.0` | Multiplica todo o ruído do jogador. |

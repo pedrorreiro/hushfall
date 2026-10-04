@@ -1,5 +1,6 @@
 package com.pedro.silenciototal.test;
 
+import com.pedro.silenciototal.ModConfig;
 import com.pedro.silenciototal.client.NoiseHud;
 import com.pedro.silenciototal.entity.Listener;
 import com.pedro.silenciototal.noise.NightCycle;
@@ -53,15 +54,35 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 			// O spawn automático fica desligado: o teste cria cada Ouvinte na hora certa.
 			server.runCommand("gamerule spawn_monsters false");
 
-			// ---------------------------------------------------------------- noite de graça
+			// ---------------------------------------------------------------- noite de graça e sorteio das noites
 			server.runCommand("time set 14000");
 			ctx.waitTicks(30);
 			server.runOnServer(s -> {
 				ServerLevel level = s.overworld();
 				check(NightCycle.isNight(level), "14000 deveria ser noite");
 				check(!NightCycle.isHuntingNight(level), "a primeira noite deveria ser de graça");
+				// 50% por noite: perto de metade, e a mesma noite sempre dá o mesmo resultado.
+				ModConfig.get().nightChance = 0.5f;
+				int hunting = 0;
+				for (long day = 1; day <= 400; day++) {
+					boolean first = NightCycle.isHuntingDay(level, day);
+					check(first == NightCycle.isHuntingDay(level, day), "o sorteio da noite deveria ser sempre o mesmo");
+					if (first) {
+						hunting++;
+					}
+				}
+				check(hunting > 150 && hunting < 250, "com 50% deveriam ser ~200 de 400 noites, deu " + hunting);
+				ModConfig.get().nightChance = 0f;
 			});
-			check(ctx.computeOnClient(mc -> NoiseHud.visible()), "a barra de ruído não apareceu à noite");
+			check(ctx.computeOnClient(mc -> !NoiseHud.visible()), "na noite de graça o medidor não deveria aparecer");
+			server.runCommand("time set " + HUNTING_NIGHT);
+			ctx.waitTicks(30);
+			server.runOnServer(s -> check(!NightCycle.isHuntingNight(s.overworld()), "com chance 0 nenhuma noite deveria ter o Ouvinte"));
+			check(ctx.computeOnClient(mc -> !NoiseHud.visible()), "em noite calma o medidor não deveria aparecer");
+			// O resto do teste precisa do Ouvinte: toda noite.
+			ModConfig.get().nightChance = 1f;
+			server.runCommand("time set 14000");
+			ctx.waitTicks(5);
 
 			// ---------------------------------------------------------------- noite de caça + ruído
 			server.runCommand("time set " + HUNTING_NIGHT);

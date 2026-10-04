@@ -7,8 +7,7 @@
   "hud.silenciototal.level.medium": "Audível",
   "hud.silenciototal.level.high": "ALTO!",
   "hud.silenciototal.rain": "Chuva abafa",
-  "hud.silenciototal.grace": "Noite de graça",
-  "message.silenciototal.night_falls": "A noite caiu. Algo está escutando...",
+  "message.silenciototal.night_falls": "A noite caiu. Algo acordou... fique em silêncio.",
   "message.silenciototal.grace_night": "Primeira noite. Aproveite para juntar lã enquanto o Ouvinte dorme.",
   "subtitles.silenciototal.listener.click": "Ouvinte estala as orelhas",
   "subtitles.silenciototal.listener.growl": "Ouvinte rosna",
@@ -27,5 +26,6 @@
   "message.silenciototal.bell_day": "O sino só faz efeito à noite.",
   "message.silenciototal.bell_used": "O sino ainda vibra... só funciona uma vez por noite.",
   "message.silenciototal.bell_stunned": "O Ouvinte cambaleia, atordoado! Você tem 10 segundos.",
-  "message.silenciototal.bell_missed": "Nada por perto para ouvir o sino... e ele só toca uma vez por noite."
+  "message.silenciototal.bell_missed": "Nada por perto para ouvir o sino... e ele só toca uma vez por noite.",
+  "message.silenciototal.calm_night": "A noite está calma. Ele não vem esta noite."
 }

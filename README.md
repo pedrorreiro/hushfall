@@ -10,7 +10,8 @@ As regras completas estão em [REGRAS.md](REGRAS.md).
 
 ## Resumo
 
-- **Medidor de ruído (0–100)** redondo no canto da tela, só à noite. Andar +5/s (teto 70), correr +10/s, pular +6, bater num bloco +2 a +5/s, quebrar bloco +5/+10/+15, abrir baú/porta +8, combate +15, explosão +40. Parado ou agachado cai 4/s.
+- **Metade das noites**: a primeira noite é de graça e depois cada noite tem 50% de chance de ter o Ouvinte. Uma mensagem ao anoitecer avisa.
+- **Medidor de ruído (0–100)** redondo no canto da tela, só nas noites em que ele vem. Andar +5/s (teto 70), correr +10/s, pular +6, bater num bloco +2 a +5/s, quebrar bloco +5/+10/+15, abrir baú/porta +8, combate +15, explosão +40. Parado ou agachado cai 4/s.
 - **Faixas**: 1–30 ele ouve de longe e vem rondar, 31–70 ele investiga perto de você, 71+ ele ruge e caça.
 - **Modificadores**: lã/tapete/neve/água -50%, cascalho/vidro +50%, Botas de Feltro -60%, chuva -30%, trovoada -50%.
 - **Distrações**: sino, note block, pistão, dispensador, projéteis, explosões e raios. Cooldown por bloco, e ele se habitua a lugares onde já procurou à toa.

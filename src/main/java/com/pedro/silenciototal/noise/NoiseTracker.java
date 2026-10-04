@@ -67,7 +67,11 @@ public final class NoiseTracker {
 	private static void tickPlayer(ServerPlayer player) {
 		PlayerNoise data = NOISE.computeIfAbsent(player.getUUID(), u -> new PlayerNoise());
 		ServerLevel level = player.level();
-		boolean active = NightCycle.isNight(level) && !player.isCreative() && !player.isSpectator() && player.isAlive();
+		if (NightCycle.isNight(level) && player.isAlive()) {
+			announceNight(player, data);
+		}
+		// O medidor e o ruído só existem nas noites em que o Ouvinte vem.
+		boolean active = NightCycle.isHuntingNight(level) && !player.isCreative() && !player.isSpectator() && player.isAlive();
 		Vec3 pos = player.position();
 		Vec3 last = data.lastPos == null ? pos : data.lastPos;
 		data.lastPos = pos;
@@ -78,10 +82,7 @@ public final class NoiseTracker {
 			sync(player, data);
 			return;
 		}
-		if (!data.active) {
-			data.active = true;
-			announceNight(player, data);
-		}
+		data.active = true;
 
 		float footsteps = footstepsPerTick(player, pos.subtract(last));
 		float hitting = hittingPerTick(player);
@@ -233,9 +234,14 @@ public final class NoiseTracker {
 			return;
 		}
 		data.warnedNight = night;
-		Component message = NightCycle.isHuntingNight(level)
-				? Component.translatable("message.silenciototal.night_falls").withStyle(ChatFormatting.DARK_AQUA)
-				: Component.translatable("message.silenciototal.grace_night").withStyle(ChatFormatting.GRAY);
+		Component message;
+		if (NightCycle.isHuntingNight(level)) {
+			message = Component.translatable("message.silenciototal.night_falls").withStyle(ChatFormatting.DARK_AQUA);
+		} else if (night < ModConfig.get().graceNights) {
+			message = Component.translatable("message.silenciototal.grace_night").withStyle(ChatFormatting.GRAY);
+		} else {
+			message = Component.translatable("message.silenciototal.calm_night").withStyle(ChatFormatting.GRAY);
+		}
 		player.sendOverlayMessage(message);
 	}
 
@@ -247,9 +253,6 @@ public final class NoiseTracker {
 		}
 		if (data.active && level.isRaining()) {
 			flags |= NoisePayload.RAIN;
-		}
-		if (data.active && !NightCycle.isHuntingNight(level)) {
-			flags |= NoisePayload.GRACE;
 		}
 		boolean changed = flags != data.sentFlags || Math.abs(data.noise - data.sentNoise) >= 0.5f
 				|| data.noise == 0 && data.sentNoise != 0;

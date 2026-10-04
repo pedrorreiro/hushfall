@@ -7,8 +7,7 @@
   "hud.silenciototal.level.medium": "Audible",
   "hud.silenciototal.level.high": "LOUD!",
   "hud.silenciototal.rain": "Rain muffles",
-  "hud.silenciototal.grace": "Grace night",
-  "message.silenciototal.night_falls": "Night has fallen. Something is listening...",
+  "message.silenciototal.night_falls": "Night has fallen. Something woke up... stay quiet.",
   "message.silenciototal.grace_night": "First night. Gather wool while the Listener sleeps.",
   "subtitles.silenciototal.listener.click": "Listener clicks its ears",
   "subtitles.silenciototal.listener.growl": "Listener growls",
@@ -27,5 +26,6 @@
   "message.silenciototal.bell_day": "The bell only works at night.",
   "message.silenciototal.bell_used": "The bell is still ringing... it only works once per night.",
   "message.silenciototal.bell_stunned": "The Listener staggers, stunned! You have 10 seconds.",
-  "message.silenciototal.bell_missed": "Nothing nearby heard the bell... and it only rings once per night."
+  "message.silenciototal.bell_missed": "Nothing nearby heard the bell... and it only rings once per night.",
+  "message.silenciototal.calm_night": "The night is calm. It won't come tonight."
 }

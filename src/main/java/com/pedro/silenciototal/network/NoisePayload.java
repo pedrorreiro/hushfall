@@ -10,7 +10,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 public record NoisePayload(float noise, byte flags) implements CustomPacketPayload {
 	public static final byte NIGHT = 1;
 	public static final byte RAIN = 4;
-	public static final byte GRACE = 8;
 
 	public static final Type<NoisePayload> TYPE = new Type<>(SilencioTotal.id("noise"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, NoisePayload> CODEC = StreamCodec.composite(

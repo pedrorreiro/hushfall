@@ -90,9 +90,6 @@ public final class NoiseHud {
 	}
 
 	private static Component status() {
-		if ((flags & NoisePayload.GRACE) != 0) {
-			return Component.translatable("hud.silenciototal.grace");
-		}
 		if ((flags & NoisePayload.RAIN) != 0) {
 			return Component.translatable("hud.silenciototal.rain");
 		}
@@ -100,7 +97,7 @@ public final class NoiseHud {
 	}
 
 	private static int statusColor() {
-		return (flags & NoisePayload.GRACE) != 0 ? 0xFF9A9A9A : 0xFF8FA8D8;
+		return 0xFF8FA8D8;
 	}
 
 	/**
