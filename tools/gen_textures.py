@@ -1,4 +1,4 @@
-"""Gera as texturas do mod (Ouvinte, ovo, orelha, adaga e ícone). Rode: python3 tools/gen_textures.py"""
+"""Gera as texturas do mod (Ouvinte, ovo, orelha, adaga e sino) e o ícone a partir de branding/icone.png. Rode: python3 tools/gen_textures.py"""
 import os
 import random
 from PIL import Image, ImageDraw
@@ -113,16 +113,9 @@ for (x, y) in [(5, 5), (9, 4), (7, 9), (10, 11), (5, 12), (8, 6)]:
     egg.putpixel((x, y), FLESH + (255,))
 egg.save(R + "textures/item/listener_spawn_egg.png")
 
-# Ícone do mod 128x128: orelha em leque e ondas de som num fundo escuro.
-icon = Image.new("RGBA", (128, 128), (14, 18, 26, 255))
-d = ImageDraw.Draw(icon)
-for i, r in enumerate((56, 44, 32)):
-    d.arc((64 - r, 64 - r, 64 + r, 64 + r), 200, 340, fill=(60 + i * 30, 90 + i * 30, 120 + i * 30, 255), width=4)
-d.polygon([(40, 112), (52, 40), (76, 40), (88, 112)], fill=SKIN + (255,))
-d.polygon([(48, 104), (57, 50), (71, 50), (80, 104)], fill=FLESH + (255,))
-for y in range(56, 100, 8):
-    d.line((60, y, 68, y + 4), fill=FLESH_DARK + (255,), width=2)
-icon.save(R + "icon.png")
+# Ícone do mod 128x128: o mesmo de branding/icone.png (rosto do Ouvinte, usado no Modrinth), reduzido.
+BRANDING = os.path.join(os.path.dirname(R.rstrip("/")), "..", "..", "..", "..", "branding", "icone.png")
+Image.open(os.path.normpath(BRANDING)).convert("RGB").resize((128, 128), Image.LANCZOS).save(R + "icon.png")
 print("ok")
 
 # Orelha do Ouvinte 16x16: leque de pele com o interior de carne.
