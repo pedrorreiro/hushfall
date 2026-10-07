@@ -77,8 +77,8 @@ O mesmo workflow envia o `hushfall.jar` ao [CurseForge](https://www.curseforge.c
 Também envia o `hushfall.jar` ao [Modrinth](https://modrinth.com/) (projeto RkWfqwPL), com Fabric API obrigatório e Mod Menu opcional, usando o secret `MODRINTH_TOKEN` (permissões Create versions e Read projects). Sem ele, esse passo é pulado.
 
 ```bash
-git tag v1.2.2
-git push origin v1.2.2
+git tag v1.3.0
+git push origin v1.3.0
 ```
 
 ## Site
