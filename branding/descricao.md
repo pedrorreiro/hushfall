@@ -21,7 +21,7 @@ During the day, nothing changes. Build, explore, farm. When the sun goes down, y
 
 | Makes noise | Keeps you quiet |
 |---|---|
-| Running and jumping | Crouching or standing still |
+| Running and jumping, riding a boat or a minecart | Crouching or standing still |
 | Breaking blocks (stone is the worst) | Walking on wool, carpet or snow |
 | Opening chests, doors and gates | Walking in water |
 | Fighting | Rain and thunderstorms |
@@ -32,6 +32,7 @@ During the day, nothing changes. Build, explore, farm. When the sun goes down, y
 - **Home:** stay quiet and it has no reason to come in. Make noise inside and it will break down wooden doors. **Iron doors hold.**
 - **Sleeping:** it's blind, so if you're quiet it doesn't even know you're there. Get home, let your meter drop to zero and go to bed.
 - **Distractions:** bells, note blocks, pistons, dispensers or an arrow landing far away pull its attention elsewhere. But it learns from false alarms.
+- **No escape by logging out:** leave the world in the middle of a chase and it is still after you when you come back.
 - **Traps:** it doesn't notice holes. A deep pit between you and a sound is a trap.
 
 ## Fighting back
@@ -54,6 +55,7 @@ The Listener is a boss and hits very hard. Running is usually the smart move, bu
 - Minecraft Java **26.3**
 - **Fabric Loader** and **Fabric API**
 - Works in singleplayer and multiplayer. Install it on the server and on every player's game.
+- Optional: **Mod Menu**, to move and resize the noise meter.
 
 The Listener only appears in the Overworld, respects the difficulty setting (it never spawns on Peaceful) and the `spawn_monsters` and `mob_griefing` game rules. Options like how often it comes can be changed in `config/silenciototal.json`.
 
@@ -80,7 +82,7 @@ De dia nada muda: construa, explore, plante. Quando o sol se põe, você aprende
 
 | Faz barulho | Ajuda a ficar quieto |
 |---|---|
-| Correr e pular | Agachar ou ficar parado |
+| Correr e pular, andar de barco ou de carrinho de mina | Agachar ou ficar parado |
 | Quebrar blocos (pedra é o pior) | Andar em lã, tapete ou neve |
 | Abrir baús, portas e portões | Andar na água |
 | Lutar | Chuva e trovoada |
@@ -91,6 +93,7 @@ De dia nada muda: construa, explore, plante. Quando o sol se põe, você aprende
 - **Em casa:** em silêncio, ele não tem motivo para entrar. Fazendo barulho lá dentro, ele arromba portas de madeira. **Porta de ferro aguenta.**
 - **Hora de dormir:** ele é cego. Se você está quieto, ele nem sabe que você está ali. Chegue em casa, espere o medidor zerar e deite.
 - **Distrações:** sinos, note blocks, pistões, dispensadores ou uma flecha caindo longe chamam a atenção dele para outro lugar. Mas ele aprende com alarmes falsos.
+- **Sair do mundo não salva:** se você sair no meio de uma caçada, ele continua atrás de você quando você voltar.
 - **Armadilhas:** ele não percebe buracos. Um buraco fundo entre você e um som vira armadilha.
 
 ## Combate
@@ -113,5 +116,6 @@ O Ouvinte é um chefe e bate muito forte. Fugir costuma ser a melhor ideia, mas 
 - Minecraft Java **26.3**
 - **Fabric Loader** e **Fabric API**
 - Funciona no singleplayer e no multiplayer. Instale no servidor e no jogo de cada jogador.
+- Opcional: **Mod Menu**, para mudar a posição e o tamanho do medidor.
 
 O Ouvinte só aparece no Overworld, respeita a dificuldade (nunca aparece no Pacífico) e as regras `spawn_monsters` e `mob_griefing`. Opções como a frequência das noites com ele ficam em `config/silenciototal.json`.
