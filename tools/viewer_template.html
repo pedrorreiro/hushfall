@@ -58,14 +58,13 @@
   #stage:active { cursor: grabbing; }
   #stage canvas { display: block; width: 100%; height: 100%; }
   .hero .wrap > * { min-width: 0; }
-  .stage-info { display: grid; justify-items: center; gap: 6px; margin-top: 6px; text-align: center; }
-  .stage-state { display: inline-flex; align-items: center; gap: 9px; font: 700 20px "Pixelify Sans", monospace; color: var(--c); transition: color .3s; }
-  .stage-state i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); transition: background .3s, box-shadow .3s; }
-  .stage-ui { display: flex; gap: 10px; margin-top: 12px; }
-  .st-dot { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 99px; background: var(--c); opacity: .35; cursor: pointer;
-    transition: width .25s, opacity .25s; }
-  .st-dot:hover { opacity: .7; }
-  .st-dot.on { width: 26px; opacity: 1; }
+  .stage-info { display: grid; justify-items: center; gap: 8px; margin-top: 6px; text-align: center; }
+  .stage-nav { display: flex; align-items: center; gap: 8px; }
+  .stage-state { min-width: 150px; font: 700 21px "Pixelify Sans", monospace; color: var(--c); transition: color .3s; }
+  .st-arrow { width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: none;
+    color: var(--muted); cursor: pointer; transition: color .15s, background .15s; }
+  .st-arrow:hover { color: var(--text); background: rgba(255,255,255,.06); }
+  .st-arrow svg { width: 18px; height: 18px; }
   .sound-btn { position: absolute; top: 0; right: 0; z-index: 2; width: 40px; height: 40px; display: grid; place-items: center; padding: 0;
     border: 1px solid var(--line); border-radius: 50%; background: rgba(11,13,18,.6); color: var(--muted); cursor: pointer; transition: color .15s, border-color .15s; }
   .sound-btn:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
@@ -268,15 +267,12 @@
       <button class="sound-btn" id="soundBtn" aria-label="Ligar o som" title="Ligar o som"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg></button>
       <div id="subtitle"></div>
       <div class="stage-info">
-        <div class="stage-state" id="stateName" style="--c: var(--low)"><i></i><span>Patrulha</span></div>
-        <div class="stage-caption" id="stateText">Ronda a sua área, com as orelhas balançando.</div>
-        <div class="stage-ui" role="group" aria-label="Estado do Ouvinte">
-          <button class="st-dot on" data-state="0" style="--c: var(--low)" aria-label="Patrulha" title="Patrulha"></button>
-          <button class="st-dot" data-state="1" style="--c: var(--mid)" aria-label="Investiga" title="Investiga"></button>
-          <button class="st-dot" data-state="2" style="--c: #ff8a4c" aria-label="Alerta" title="Alerta"></button>
-          <button class="st-dot" data-state="3" style="--c: var(--high)" aria-label="Caça" title="Caça"></button>
-          <button class="st-dot" data-state="4" style="--c: var(--accent)" aria-label="Atordoado" title="Atordoado"></button>
+        <div class="stage-nav">
+          <button class="st-arrow" id="statePrev" aria-label="Estado anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="stage-state" id="stateName" style="--c: var(--low)" aria-live="polite">Patrulha</div>
+          <button class="st-arrow" id="stateNext" aria-label="Próximo estado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
         </div>
+        <div class="stage-caption" id="stateText">Ronda a sua área, com as orelhas balançando.</div>
       </div>
     </div>
   </div>
@@ -724,11 +720,10 @@ function playState() {
 }
 function setMode(m) {
   mode = m;
-  document.querySelectorAll("[data-state]").forEach(b => b.classList.toggle("on", +b.dataset.state === m));
   $("#stateText").textContent = STATE_TEXT[m];
   const name = $("#stateName");
   name.style.setProperty("--c", STATE_COLORS[m]);
-  name.querySelector("span").textContent = STATE_NAMES[m];
+  name.textContent = STATE_NAMES[m];
   playState();
 }
 // Sozinho, ele passa pelos estados para mostrar tudo o que faz. Para quando a pessoa escolhe um ou liga o som.
@@ -738,7 +733,9 @@ let autoCycle = setInterval(() => {
   setMode((mode + 1) % STATE_NAMES.length);
 }, 5000);
 function stopAutoCycle() { clearInterval(autoCycle); autoCycle = null; }
-document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => { stopAutoCycle(); setMode(+b.dataset.state); });
+const step = d => { stopAutoCycle(); setMode((mode + d + STATE_NAMES.length) % STATE_NAMES.length); };
+$("#statePrev").onclick = () => step(-1);
+$("#stateNext").onclick = () => step(1);
 // "Ver e ouvir" na seção da criatura: liga o som, troca o estado e sobe até o modelo.
 document.querySelectorAll("[data-sound]").forEach(b => b.onclick = async () => {
   stopAutoCycle();
