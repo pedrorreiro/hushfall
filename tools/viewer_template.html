@@ -58,20 +58,20 @@
   #stage:active { cursor: grabbing; }
   #stage canvas { display: block; width: 100%; height: 100%; }
   .hero .wrap > * { min-width: 0; }
-  .stage-ui { display: flex; width: fit-content; max-width: 100%; margin: 14px auto 0; padding: 4px; gap: 2px; overflow-x: auto; scrollbar-width: none;
-    border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.02); }
-  .stage-ui::-webkit-scrollbar { display: none; }
-  .st-btn { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border: 0; border-radius: 999px; background: none; flex-shrink: 0;
-    color: var(--muted); font: 500 13px Inter, sans-serif; cursor: pointer; transition: color .15s, background .15s; }
-  .st-btn:hover { color: var(--text); }
-  .st-btn.on { color: var(--text); background: rgba(255,255,255,.08); }
-  .st-btn i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+  .stage-info { display: grid; justify-items: center; gap: 6px; margin-top: 6px; text-align: center; }
+  .stage-state { display: inline-flex; align-items: center; gap: 9px; font: 700 20px "Pixelify Sans", monospace; color: var(--c); transition: color .3s; }
+  .stage-state i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); transition: background .3s, box-shadow .3s; }
+  .stage-ui { display: flex; gap: 10px; margin-top: 12px; }
+  .st-dot { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 99px; background: var(--c); opacity: .35; cursor: pointer;
+    transition: width .25s, opacity .25s; }
+  .st-dot:hover { opacity: .7; }
+  .st-dot.on { width: 26px; opacity: 1; }
   .sound-btn { position: absolute; top: 0; right: 0; z-index: 2; width: 40px; height: 40px; display: grid; place-items: center; padding: 0;
     border: 1px solid var(--line); border-radius: 50%; background: rgba(11,13,18,.6); color: var(--muted); cursor: pointer; transition: color .15s, border-color .15s; }
   .sound-btn:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
   .sound-btn.on { color: var(--accent); border-color: rgba(127,214,232,.45); }
   .sound-btn svg { width: 18px; height: 18px; }
-  .stage-caption { text-align: center; font-size: 14px; color: var(--muted); min-height: 1.6em; }
+  .stage-caption { font-size: 14.5px; color: var(--muted); min-height: 1.6em; }
   #subtitle { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); background: rgba(0,0,0,.6); padding: 3px 10px; font: 500 14px "Pixelify Sans", monospace; border-radius: 2px; opacity: 0; transition: opacity .3s; white-space: nowrap; color: #fff; }
 
   section { padding: 120px 0; scroll-margin-top: 60px; }
@@ -130,9 +130,6 @@
   .reward b { color: var(--text); font-weight: 600; }
 
   .bell { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
-  .bell-recipes { display: grid; gap: 16px; justify-items: center; }
-  .bell-recipes .plus { font: 700 18px "Pixelify Sans", monospace; color: var(--muted); }
-  .bell-recipes small { color: var(--muted); font-size: 13px; text-align: center; }
   .note { margin-top: 20px; color: var(--muted); font-size: 14.5px; }
   .note b { color: var(--text); font-weight: 600; }
 
@@ -155,7 +152,9 @@
   .meter span { color: var(--muted); font-size: 14.5px; }
 
   .states { max-width: 860px; margin: 0 auto; }
-  .bell-recipe { display: grid; justify-items: center; }
+  .bell-recipe { display: grid; justify-items: center; gap: 14px; }
+  .bell-recipe small { color: var(--muted); font-size: 13.5px; text-align: center; }
+  .bell-recipe small b { color: var(--text); font-weight: 600; }
   .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 40px; }
   .item { display: flex; gap: 22px; align-items: center; padding: 24px 0 0; border-top: 1px solid var(--line); }
   .item h3 { font-size: 20px; margin-bottom: 6px; }
@@ -266,15 +265,18 @@
     </div>
     <div class="stage-box">
       <div id="stage"></div>
-      <div class="stage-caption" id="stateText">Ronda a sua área, orelhas balançando.</div>
       <button class="sound-btn" id="soundBtn" aria-label="Ligar o som" title="Ligar o som"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg></button>
       <div id="subtitle"></div>
-      <div class="stage-ui">
-        <button class="st-btn on" data-state="0" style="--c: var(--low)"><i></i>Patrulha</button>
-        <button class="st-btn" data-state="1" style="--c: var(--mid)"><i></i>Investiga</button>
-        <button class="st-btn" data-state="2" style="--c: #ff8a4c"><i></i>Alerta</button>
-        <button class="st-btn" data-state="3" style="--c: var(--high)"><i></i>Caça</button>
-        <button class="st-btn" data-state="4" style="--c: var(--accent)"><i></i>Atordoado</button>
+      <div class="stage-info">
+        <div class="stage-state" id="stateName" style="--c: var(--low)"><i></i><span>Patrulha</span></div>
+        <div class="stage-caption" id="stateText">Ronda a sua área, com as orelhas balançando.</div>
+        <div class="stage-ui" role="group" aria-label="Estado do Ouvinte">
+          <button class="st-dot on" data-state="0" style="--c: var(--low)" aria-label="Patrulha" title="Patrulha"></button>
+          <button class="st-dot" data-state="1" style="--c: var(--mid)" aria-label="Investiga" title="Investiga"></button>
+          <button class="st-dot" data-state="2" style="--c: #ff8a4c" aria-label="Alerta" title="Alerta"></button>
+          <button class="st-dot" data-state="3" style="--c: var(--high)" aria-label="Caça" title="Caça"></button>
+          <button class="st-dot" data-state="4" style="--c: var(--accent)" aria-label="Atordoado" title="Atordoado"></button>
+        </div>
       </div>
     </div>
   </div>
@@ -288,10 +290,10 @@
       <p>Ele não enxerga nada, mas ouve tudo.</p>
     </div>
     <div class="steps">
-      <div class="step"><img class="ico" data-icon="moon" alt=""><h3>Nem toda noite</h3><p>Uma mensagem ao anoitecer avisa se ele vem.</p></div>
-      <div class="step"><img class="ico" data-icon="ear" alt=""><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra o seu barulho.</p></div>
-      <div class="step"><img class="ico" data-icon="heart" alt=""><h3>Coração disparou?</h3><p>Ele está perto. Agache e espere passar.</p></div>
-      <div class="step"><img class="ico" data-icon="iron_door" alt=""><h3>Ouviu o rugido?</h3><p>Corra e se tranque atrás de ferro.</p></div>
+      <div class="step"><img class="ico" data-icon="moon" alt=""><h3>Nem toda noite</h3><p>Ao anoitecer, uma mensagem avisa se ele vem.</p></div>
+      <div class="step"><img class="ico" data-icon="ear" alt=""><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra quanto barulho você faz.</p></div>
+      <div class="step"><img class="ico" data-icon="heart" alt=""><h3>Coração disparou?</h3><p>Ele está perto. Agache e espere ele passar.</p></div>
+      <div class="step"><img class="ico" data-icon="iron_door" alt=""><h3>Ouviu o rugido?</h3><p>Corra e se tranque atrás de uma porta de ferro.</p></div>
     </div>
   </div>
 </section>
@@ -304,9 +306,9 @@
       <p>Quanto mais cheio o anel, mais ele se interessa por você.</p>
     </div>
     <div class="meters">
-      <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" stroke-dasharray="49 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Baixinho</b><span>Ele vem rondar a região.</span></div></div>
-      <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" stroke-dasharray="107 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Audível</b><span>Ele vem investigar, de onde estiver.</span></div></div>
-      <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" stroke-dasharray="176 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Alto!</b><span>Ele ruge e caça você.</span></div></div>
+      <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" stroke-dasharray="49 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Baixinho</b><span>Ele só ouve de perto e vem rondar.</span></div></div>
+      <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" stroke-dasharray="107 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Audível</b><span>Ele ouve de qualquer lugar e vem investigar.</span></div></div>
+      <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" stroke-dasharray="176 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Alto!</b><span>Ele ruge e vem caçar você.</span></div></div>
     </div>
 
     <div class="tiles">
@@ -315,14 +317,14 @@
         <div class="tile"><img class="ico" data-icon="pickaxe" alt="">Quebrar blocos</div>
         <div class="tile"><img class="ico" data-icon="oak_door" alt="">Abrir portas e baús</div>
         <div class="tile"><img class="ico" data-icon="sword" alt="">Lutar</div>
-        <div class="tile"><img class="ico" data-icon="gravel" alt="">Pisar em cascalho</div>
+        <div class="tile"><img class="ico" data-icon="gravel" alt="">Pisar em cascalho ou vidro</div>
       </div></div>
       <div style="--c: var(--low)"><h4><i></i>Ajuda a ficar quieto</h4><div class="tile-row">
         <div class="tile"><img class="ico" data-icon="feather" alt="">Agachar</div>
-        <div class="tile"><img class="ico" data-icon="wool" alt="">Lã e tapete</div>
-        <div class="tile"><img class="ico" data-icon="snowball" alt="">Neve</div>
-        <div class="tile"><img class="ico" data-icon="water_bucket" alt="">Água</div>
-        <div class="tile"><img class="ico" data-icon="felt_boots" alt="">Botas de Feltro</div>
+        <div class="tile"><img class="ico" data-icon="wool" alt="">Andar em lã ou tapete</div>
+        <div class="tile"><img class="ico" data-icon="snowball" alt="">Andar na neve</div>
+        <div class="tile"><img class="ico" data-icon="water_bucket" alt="">Andar na água</div>
+        <div class="tile"><img class="ico" data-icon="felt_boots" alt="">Usar Botas de Feltro</div>
       </div></div>
     </div>
     <p class="tiles-foot">Chuva e trovoada abafam tudo.</p>
@@ -336,9 +338,9 @@
       <h2>Para sobreviver à noite</h2>
     </div>
     <div class="tips">
-      <div class="tip"><img class="ico" data-icon="iron_door" alt=""><h3>Em casa</h3><p>Ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
+      <div class="tip"><img class="ico" data-icon="iron_door" alt=""><h3>Em casa</h3><p>Se você fizer barulho, ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
       <div class="tip"><img class="ico" data-icon="bed" alt=""><h3>Hora de dormir</h3><p>Em silêncio, ele nem sabe que você está ali. <b>Pode deitar.</b></p></div>
-      <div class="tip"><img class="ico" data-icon="note_block" alt=""><h3>Distrações</h3><p>Sinos e note blocks atraem ele para longe. <b>Ele aprende</b> com alarmes falsos.</p></div>
+      <div class="tip"><img class="ico" data-icon="note_block" alt=""><h3>Distrações</h3><p>Sinos e note blocks chamam a atenção dele para longe. Mas <b>ele aprende</b> com alarmes falsos.</p></div>
     </div>
   </div>
 </section>
@@ -348,14 +350,14 @@
     <div class="head center">
       <div class="eyebrow">A criatura</div>
       <h2>O Ouvinte</h2>
-      <p>Surge longe de você ao anoitecer e se enterra quando o sol nasce.</p>
+      <p>Ele aparece longe de você ao anoitecer e se enterra quando o sol nasce.</p>
     </div>
     <div class="states">
       <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até o som e fareja.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você e ruge.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Vem direto em você.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Tonto com o sino.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até onde ouviu o som e fareja.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você e ruge. É o aviso.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Corre direto atrás de você.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Ficou tonto com o sino.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
     </div>
   </div>
 </section>
@@ -365,17 +367,17 @@
     <div class="head center">
       <div class="eyebrow">Combate</div>
       <h2>Dá para vencer. Só não de primeira.</h2>
-      <p>Ele bate forte, mas cada golpe seu fica marcado nele.</p>
+      <p>Ele bate forte, mas todo dano que você causa fica nele.</p>
     </div>
     <div class="fight">
-      <div class="card"><img class="ico" data-icon="sword" alt=""><h3>Cada golpe conta</h3><p>Ele <b>não se cura</b>, nem de uma noite para outra.</p></div>
-      <div class="card"><img class="ico" data-icon="dagger" alt=""><h3>Ataque de surpresa</h3><p>Golpes quando ele está distraído ou tonto <b>machucam mais</b>.</p></div>
-      <div class="card"><img class="ico" data-icon="goat_horn" alt=""><h3>Bater denuncia você</h3><p>Bateu, ele vem atrás. <b>Tenha uma rota de fuga.</b></p></div>
-      <div class="card"><img class="ico" data-icon="bow" alt=""><h3>Use o terreno</h3><p>Ele não vê <b>buracos</b>. Flechas acertam de longe.</p></div>
+      <div class="card"><img class="ico" data-icon="sword" alt=""><h3>Cada golpe conta</h3><p>Ele <b>não se cura</b>, nem de uma noite para a outra.</p></div>
+      <div class="card"><img class="ico" data-icon="dagger" alt=""><h3>Ataque de surpresa</h3><p>Atacar quando ele está distraído ou tonto <b>causa mais dano</b>.</p></div>
+      <div class="card"><img class="ico" data-icon="goat_horn" alt=""><h3>Atacar entrega você</h3><p>Bateu nele, ele vem atrás de você. <b>Tenha uma rota de fuga.</b></p></div>
+      <div class="card"><img class="ico" data-icon="bow" alt=""><h3>Use o terreno</h3><p>Ele não percebe <b>buracos</b> e cai neles. Com arco, dá para atacar de longe.</p></div>
     </div>
     <div class="reward">
       <div data-recipe="listener_ear"></div>
-      <div><h3>A recompensa</h3><p>Derrotado, ele deixa a <b>Orelha do Ouvinte</b>, o ingrediente do sino.</p></div>
+      <div><h3>A recompensa</h3><p>Quando você o derrota, ele deixa cair a <b>Orelha do Ouvinte</b>, usada para fazer o sino.</p></div>
     </div>
   </div>
 </section>
@@ -384,6 +386,7 @@
   <div class="wrap bell">
     <div class="bell-recipe">
       <div data-recipe="deafening_bell"></div>
+      <small>Feito com ouro, um graveto e a <b>Orelha do Ouvinte</b>.</small>
     </div>
     <div>
       <div class="head" style="margin-bottom:28px">
@@ -393,9 +396,9 @@
       </div>
       <ol class="install-steps">
         <li><span>Espere ele <b>chegar perto</b>.</span></li>
-        <li><span>Toque com o <b>botão direito</b>.</span></li>
+        <li><span>Clique com o <b>botão direito</b> para tocar.</span></li>
         <li><span>Ele fica <b>tonto</b>: fuja ou ataque.</span></li>
-        <li><span>Depois ele vai <b>até onde o sino tocou</b>.</span></li>
+        <li><span>Quando passar, ele vai <b>até onde o sino tocou</b>. Saia dali.</span></li>
       </ol>
       <p class="note">Funciona <b>uma vez por noite</b>.</p>
     </div>
@@ -407,11 +410,11 @@
     <div class="head center">
       <div class="eyebrow">Itens</div>
       <h2>Ferramentas para o silêncio</h2>
-      <p>Passe o mouse sobre os quadradinhos para ver o nome de cada ingrediente.</p>
+      <p>Passe o mouse nas receitas para ver os ingredientes.</p>
     </div>
     <div class="items">
-      <div class="item"><div data-recipe="felt_boots"></div><div><h3>Botas de Feltro</h3><p>Abafam bastante os seus passos, andando ou correndo. <b>O primeiro item para fazer.</b></p></div></div>
-      <div class="item"><div data-recipe="silent_dagger"></div><div><h3>Adaga Silenciosa</h3><p>Golpes <b>sem barulho</b>. Para resolver um zumbi sem acordar o Ouvinte.</p></div></div>
+      <div class="item"><div data-recipe="felt_boots"></div><div><h3>Botas de Feltro</h3><p>Deixam seus passos bem mais silenciosos. <b>Faça logo no começo.</b></p></div></div>
+      <div class="item"><div data-recipe="silent_dagger"></div><div><h3>Adaga Silenciosa</h3><p>Ataca <b>sem fazer barulho</b>. Para matar zumbis sem chamar a atenção do Ouvinte.</p></div></div>
     </div>
   </div>
 </section>
@@ -473,12 +476,14 @@ document.querySelectorAll("[data-icon]").forEach(el => {
 
 const $ = s => document.querySelector(s);
 const COLORS = [0x6fcf8a, 0xe8bd4a, 0xff8a4c, 0xff5a64, 0x7fd6e8];
+const STATE_NAMES = ["Patrulha", "Investiga", "Alerta", "Caça", "Atordoado"];
+const STATE_COLORS = ["var(--low)", "var(--mid)", "#ff8a4c", "var(--high)", "var(--accent)"];
 const STATE_TEXT = [
-  "Ronda a sua área, orelhas balançando.",
+  "Ronda a sua área, com as orelhas balançando.",
   "Ouviu algo. Vai até o som e fareja.",
   "Ouviu você. O rugido é o aviso.",
-  "Vem direto em você.",
-  "Tonto com o sino. Hora de fugir.",
+  "Corre direto atrás de você.",
+  "Ficou tonto com o sino. Hora de fugir.",
 ];
 const SUBTITLES = { click: "Ouvinte estala as orelhas", growl: "Ouvinte rosna", alert: "Ouvinte ouviu você!", sniff: "Ouvinte fareja", hurt: "Ouvinte cambaleia", attack: "Ouvinte ataca" };
 
@@ -721,11 +726,22 @@ function setMode(m) {
   mode = m;
   document.querySelectorAll("[data-state]").forEach(b => b.classList.toggle("on", +b.dataset.state === m));
   $("#stateText").textContent = STATE_TEXT[m];
+  const name = $("#stateName");
+  name.style.setProperty("--c", STATE_COLORS[m]);
+  name.querySelector("span").textContent = STATE_NAMES[m];
   playState();
 }
-document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => setMode(+b.dataset.state));
+// Sozinho, ele passa pelos estados para mostrar tudo o que faz. Para quando a pessoa escolhe um ou liga o som.
+let autoCycle = setInterval(() => {
+  if (soundOn) return stopAutoCycle();
+  if (document.hidden || window.scrollY > innerHeight) return;
+  setMode((mode + 1) % STATE_NAMES.length);
+}, 5000);
+function stopAutoCycle() { clearInterval(autoCycle); autoCycle = null; }
+document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => { stopAutoCycle(); setMode(+b.dataset.state); });
 // "Ver e ouvir" na seção da criatura: liga o som, troca o estado e sobe até o modelo.
 document.querySelectorAll("[data-sound]").forEach(b => b.onclick = async () => {
+  stopAutoCycle();
   await enableSound();
   setMode(+b.dataset.sound);
   $("#top").scrollIntoView({ behavior: "smooth" });
