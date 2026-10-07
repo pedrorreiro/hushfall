@@ -36,6 +36,12 @@ jobs:
       # Secret do repositório com o token de API do CurseForge. Sem ele, o envio ao CurseForge é pulado.
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
     steps:
+      - name: validate tag
+        run: |
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag inválida: '$TAG'. Use o formato v1.2.1 (sem ponto depois do v)."
+            exit 1
+          fi
       - name: checkout repository
         uses: actions/checkout@v6
         with:
