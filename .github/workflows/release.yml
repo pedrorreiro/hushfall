@@ -17,6 +17,13 @@ name: release
 on:
   push:
     tags: ['v*']
+  # Republicar uma versão que já existe (ex.: enviar ao CurseForge uma tag antiga):
+  #   gh workflow run release.yml -f tag=v1.2.1
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag da versão (ex.: v1.2.1)'
+        required: true
 
 permissions:
   contents: write
@@ -25,12 +32,14 @@ jobs:
   release:
     runs-on: ubuntu-24.04
     env:
-      TAG: ${{ github.ref_name }}
+      TAG: ${{ inputs.tag || github.ref_name }}
       # Secret do repositório com o token de API do CurseForge. Sem ele, o envio ao CurseForge é pulado.
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
     steps:
       - name: checkout repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ env.TAG }}
       - name: validate gradle wrapper
         uses: gradle/actions/wrapper-validation@v6
       - name: setup jdk
