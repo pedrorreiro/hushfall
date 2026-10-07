@@ -114,6 +114,38 @@
   .play { border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 99px; padding: 6px 14px; font: 500 13px Inter, sans-serif; cursor: pointer; white-space: nowrap; }
   .play:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
 
+  .lists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .list { padding: 22px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+  .list h4 { margin: 0 0 12px; font: 600 15px Inter, sans-serif; display: flex; align-items: center; gap: 8px; }
+  .list h4 i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); }
+  .list ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .list li { color: var(--muted); font-size: 15px; padding-left: 18px; position: relative; }
+  .list li::before { content: ""; position: absolute; left: 2px; top: 10px; width: 6px; height: 6px; background: var(--c); }
+
+  .traits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+  .trait { padding: 20px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+  .trait b { display: block; font: 700 24px "Pixelify Sans", monospace; margin-bottom: 4px; }
+  .trait span { color: var(--muted); font-size: 14px; }
+
+  .fight { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .fight .card { padding: 26px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--c); }
+  .fight .card h3 { font-size: 21px; margin-bottom: 8px; }
+  .fight .card p { color: var(--muted); font-size: 15px; }
+  .fight .card b { color: var(--text); font-weight: 600; }
+  .reward { margin-top: 24px; display: flex; gap: 24px; align-items: center; padding: 24px; border-radius: 16px;
+    background: linear-gradient(120deg, rgba(232,189,74,.10), rgba(232,189,74,0) 60%); border: 1px solid rgba(232,189,74,.3); }
+  .reward h3 { font-size: 21px; margin-bottom: 6px; }
+  .reward p { color: var(--muted); font-size: 15px; }
+  .reward b { color: var(--text); font-weight: 600; }
+
+  .bell { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
+  .bell-recipes { display: grid; gap: 14px; padding: 28px; border-radius: 20px; justify-items: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(127,214,232,.14), transparent 70%), var(--surface); border: 1px solid var(--line); }
+  .bell-recipes .plus { font: 700 18px "Pixelify Sans", monospace; color: var(--muted); }
+  .bell-recipes small { color: var(--muted); font-size: 13px; text-align: center; }
+  .note { margin-top: 20px; padding: 14px 16px; border-radius: 12px; border: 1px dashed var(--line); color: var(--muted); font-size: 14.5px; }
+  .note b { color: var(--text); font-weight: 600; }
+
   .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .item { display: flex; gap: 22px; align-items: center; padding: 22px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
   .item h3 { font-size: 20px; margin-bottom: 6px; }
@@ -166,9 +198,9 @@
 
   @media (max-width: 900px) {
     nav ul { display: none; }
-    .hero .wrap, .two, .install { grid-template-columns: 1fr; }
-    .steps, .stats { grid-template-columns: repeat(2, 1fr); }
-    .tips, .items { grid-template-columns: 1fr; }
+    .hero .wrap, .two, .install, .bell { grid-template-columns: 1fr; }
+    .steps, .stats, .traits { grid-template-columns: repeat(2, 1fr); }
+    .tips, .items, .fight, .lists { grid-template-columns: 1fr; }
     .state-row { grid-template-columns: 1fr auto; }
     .state-row p { grid-column: 1 / -1; grid-row: 2; }
     section { padding: 64px 0; }
@@ -176,8 +208,8 @@
   @media (max-width: 520px) {
     .stage-ui { grid-template-columns: repeat(3, 1fr); }
     .wrap { padding: 0 16px; }
-    .steps, .stats { grid-template-columns: 1fr; }
-    .item { flex-direction: column; align-items: flex-start; }
+    .steps, .stats, .traits { grid-template-columns: 1fr; }
+    .item, .reward { flex-direction: column; align-items: flex-start; }
   }
 </style>
 </head>
@@ -188,7 +220,9 @@
     <a class="logo" href="#top">Hushfall</a>
     <ul>
       <li><a href="#como-jogar">Como jogar</a></li>
-      <li><a href="#criatura">A criatura</a></li>
+      <li><a href="#criatura">O Ouvinte</a></li>
+      <li><a href="#combate">Combate</a></li>
+      <li><a href="#sino">O Sino</a></li>
       <li><a href="#itens">Itens</a></li>
       <li><a href="#instalar">Instalar</a></li>
     </ul>
@@ -242,44 +276,49 @@
     <div class="head">
       <div class="eyebrow">Como jogar</div>
       <h2>De dia você constrói. De noite, você escuta.</h2>
-      <p>O mod só existe à noite, e só em metade delas. Tudo gira em torno de uma barra de ruído: quanto mais barulho, de mais longe ele ouve.</p>
+      <p>Quando escurece, às vezes algo acorda. Ele não enxerga nada, mas ouve tudo. Seu trabalho é simples: não fazer barulho.</p>
     </div>
     <div class="steps">
-      <div class="step"><span class="n">01</span><h3>Ele não vem toda noite</h3><p>A primeira noite é de graça; depois, cada noite tem 50% de chance. Uma mensagem ao anoitecer avisa. Noite calma é hora de caçar.</p></div>
-      <div class="step"><span class="n">02</span><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra seu ruído, de 0 a 100. Agache ou fique parado para ele baixar.</p></div>
-      <div class="step"><span class="n">03</span><h3>Perto dele, silêncio</h3><p>Abaixo de 10 ele só te fareja. Acima, ele te descobre. Ouviu o próprio coração? Ele está perto.</p></div>
-      <div class="step"><span class="n">04</span><h3>Se ele caçar, suma</h3><p>Ele corre mais que você. Feche-se atrás de ferro, faça um estrondo longe ou toque o Sino Ensurdecedor.</p></div>
+      <div class="step"><span class="n">01</span><h3>Nem toda noite</h3><p>A primeira noite é tranquila. Depois, ele vem em algumas noites e em outras não. Ao anoitecer uma mensagem avisa. Noite calma é hora de explorar.</p></div>
+      <div class="step"><span class="n">02</span><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra quanto barulho você está fazendo. Verde é tranquilo, amarelo chama atenção, vermelho é perigo.</p></div>
+      <div class="step"><span class="n">03</span><h3>Perto dele, nada de barulho</h3><p>Ouviu o próprio coração batendo forte? Ele está perto. Agache e espere: em silêncio ele só fareja e segue em frente.</p></div>
+      <div class="step"><span class="n">04</span><h3>Se ele rugir, suma</h3><p>O rugido é o aviso. Ele corre mais que você, então se tranque atrás de ferro, faça um barulho longe dali ou toque o sino.</p></div>
     </div>
 
     <div class="two">
       <div>
-        <h3 class="sub">O que faz barulho</h3>
-        <table>
-          <tr><td>Andar em pé</td><td>+5/s</td></tr>
-          <tr><td>Correr</td><td>+10/s</td></tr>
-          <tr><td>Pular</td><td>+6</td></tr>
-          <tr><td>Bater num bloco</td><td>+2 a +5/s</td></tr>
-          <tr><td>Quebrar terra / madeira / pedra</td><td>+5 / +10 / +15</td></tr>
-          <tr><td>Abrir baú ou porta</td><td>+8</td></tr>
-          <tr><td>Bater ou levar golpe</td><td>+15</td></tr>
-          <tr><td>Agachar ou ficar parado</td><td>−4/s</td></tr>
-        </table>
-        <p class="muted" style="font-size:14px;margin-top:14px">Lã, tapete, neve e água abafam os passos pela metade. Chuva abafa tudo em 30%, trovoada em 50%.</p>
+        <h3 class="sub">Barulho e silêncio</h3>
+        <div class="lists">
+          <div class="list" style="--c: var(--high)"><h4><i></i>Faz barulho</h4><ul>
+            <li>Correr e pular</li>
+            <li>Quebrar blocos, principalmente pedra</li>
+            <li>Abrir baús, portas e portões</li>
+            <li>Lutar ou levar golpes</li>
+            <li>Pisar em cascalho ou vidro</li>
+          </ul></div>
+          <div class="list" style="--c: var(--low)"><h4><i></i>Ajuda a ficar quieto</h4><ul>
+            <li>Agachar ou ficar parado</li>
+            <li>Andar sobre lã, tapete ou neve</li>
+            <li>Andar na água</li>
+            <li>Chuva e trovoada</li>
+            <li>Botas de Feltro</li>
+          </ul></div>
+        </div>
       </div>
       <div>
         <h3 class="sub">O que ele faz</h3>
         <div class="bands">
-          <div class="band" style="--c: var(--low)"><span class="dot"></span><div><b>1–30 · Baixo</b><span>Ouve de longe e vem rondar a região, sem saber onde você está.</span></div></div>
-          <div class="band" style="--c: var(--mid)"><span class="dot"></span><div><b>31–70 · Audível</b><span>Vem investigar perto de você.</span></div></div>
-          <div class="band" style="--c: var(--high)"><span class="dot"></span><div><b>71+ · Alto</b><span>Ruge e caça você, de até 128 blocos.</span></div></div>
+          <div class="band" style="--c: var(--low)"><span class="dot"></span><div><b>Baixinho</b><span>Ele só tem uma ideia vaga de onde você está e vem rondar a região.</span></div></div>
+          <div class="band" style="--c: var(--mid)"><span class="dot"></span><div><b>Audível</b><span>Ele te ouve de qualquer lugar do mundo e vem investigar perto de você.</span></div></div>
+          <div class="band" style="--c: var(--high)"><span class="dot"></span><div><b>Alto</b><span>Ele ruge e vem direto caçar você, esteja onde estiver.</span></div></div>
         </div>
       </div>
     </div>
 
     <div class="tips">
-      <div class="tip"><h3>Casas</h3><p>Em silêncio, ele não entra. Fazendo barulho dentro de casa, ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
-      <div class="tip"><h3>Distrações</h3><p>Sino, note block, pistão, dispensador ou uma flecha caindo longe atraem ele para lá. Ele aprende com alarmes falsos.</p></div>
-      <div class="tip"><h3>Armadilhas</h3><p>Ele é cego para quedas. Um buraco fundo no caminho de um som vira armadilha, e preso ele leva mais dano.</p></div>
+      <div class="tip"><h3>Em casa</h3><p>Em silêncio, ele não tem motivo para entrar. Fazendo barulho lá dentro, ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
+      <div class="tip"><h3>Hora de dormir</h3><p>Ele é cego: se você está quieto, ele nem sabe que você está ali. <b>Chegue em casa, espere o medidor zerar e deite.</b> Só não dá se ele estiver atrás de você.</p></div>
+      <div class="tip"><h3>Distrações</h3><p>Sinos, note blocks, pistões ou uma flecha caindo longe atraem ele para lá. Mas cuidado: <b>ele aprende</b> com alarmes falsos.</p></div>
     </div>
   </div>
 </section>
@@ -289,20 +328,63 @@
     <div class="head">
       <div class="eyebrow">A criatura</div>
       <h2>O Ouvinte</h2>
-      <p>Só existe um por mundo. Nas noites em que vem, surge ao anoitecer a 32–45 blocos de você, nunca menos de 30, e se enterra ao amanhecer. A ideia é fugir, não lutar.</p>
+      <p>Alto, magro e com orelhas enormes. Ele surge longe de você ao anoitecer, com um rosnado distante, e se enterra quando o sol nasce. Fugir costuma ser a melhor ideia.</p>
     </div>
-    <div class="stats">
-      <div class="stat"><b>75 ♥</b><span>vida de chefe</span></div>
-      <div class="stat"><b>12</b><span>de dano</span></div>
-      <div class="stat"><b>3</b><span>blocos de altura</span></div>
-      <div class="stat"><b>1</b><span>por mundo</span></div>
+    <div class="traits">
+      <div class="trait"><b>Cego</b><span>Luz, invisibilidade e esconderijos não enganam. Só o som importa.</span></div>
+      <div class="trait"><b>Único</b><span>Só existe um no mundo inteiro, e ele sempre te encontra.</span></div>
+      <div class="trait"><b>Veloz</b><span>Corre mais que você. Fugir em linha reta não resolve.</span></div>
+      <div class="trait"><b>Avisa</b><span>Ele sempre dá um sinal antes do perigo: rosnado, estalo ou rugido.</span></div>
     </div>
     <div class="states">
-      <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar, mesmo sem ouvir nada. Cliques de orelha de tempos em tempos.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até a origem do som, fareja e ronda o lugar. Em silêncio, ele passa do seu lado.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você. Para por um segundo e ruge. É o aviso: corra ou se esconda.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Vem direto em você, mais rápido que você correndo. Perde o rastro depois de 3 segundos sem te ouvir.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Atingido pelo Sino Ensurdecedor: 10 segundos sem ouvir nem atacar. Depois vai atrás do som do sino.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar, mesmo sem ouvir nada. Dá para ouvir as orelhas estalando de tempos em tempos.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até onde ouviu o som, fareja e ronda o lugar. Em silêncio, ele passa do seu lado.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você. Para um instante e ruge. É o aviso: corra ou se esconda.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Vem direto em você. Se você ficar quieto e sumir do caminho, ele perde o rastro.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Tonto com o Sino Ensurdecedor: não ouve nem ataca por um tempinho.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="combate">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Combate</div>
+      <h2>Dá para vencer. Só não de primeira.</h2>
+      <p>Ele é um chefe e bate muito forte. Mas cada golpe seu fica marcado nele, então a vitória pode vir aos poucos, noite após noite.</p>
+    </div>
+    <div class="fight">
+      <div class="card" style="--c: var(--mid)"><h3>Cada golpe conta</h3><p>Ele <b>não se cura</b>. O dano que você causa fica de uma noite para outra. Bata, fuja, durma e volte amanhã.</p></div>
+      <div class="card" style="--c: var(--accent)"><h3>Ataque de surpresa</h3><p>Golpes quando ele <b>não está te caçando</b>, está <b>tonto</b> com o sino ou <b>encurralado</b> machucam bem mais.</p></div>
+      <div class="card" style="--c: var(--high)"><h3>Bater denuncia você</h3><p>Levou um golpe, ele sabe onde você está e vem atrás. <b>Tenha sempre uma rota de fuga</b> antes de atacar.</p></div>
+      <div class="card" style="--c: var(--low)"><h3>Use o terreno</h3><p>Ele não percebe buracos. Atraia ele com um som para perto de um <b>buraco fundo</b>, ou acerte de longe com flechas.</p></div>
+    </div>
+    <div class="reward">
+      <div data-recipe="listener_ear"></div>
+      <div><h3>A recompensa</h3><p>Derrotado, ele deixa cair a <b>Orelha do Ouvinte</b> e só volta na noite seguinte, com a vida cheia. A orelha é o ingrediente do Sino Ensurdecedor.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="sino">
+  <div class="wrap bell">
+    <div class="bell-recipes">
+      <div data-recipe="deafening_bell"></div>
+      <small>Feito com ouro, um graveto e a <b style="color:var(--text)">Orelha do Ouvinte</b>.<br>Passe o mouse nos quadradinhos para ver os ingredientes.</small>
+    </div>
+    <div>
+      <div class="head" style="margin-bottom:28px">
+        <div class="eyebrow">O Sino</div>
+        <h2>Sino Ensurdecedor</h2>
+        <p>Um toque bem alto, feito para machucar os ouvidos dele. É a sua carta na manga quando ele chega perto demais.</p>
+      </div>
+      <ol class="install-steps">
+        <li><span>Espere ele <b>chegar perto</b>. De longe, o sino não alcança.</span></li>
+        <li><span>Clique com o <b>botão direito</b> para tocar.</span></li>
+        <li><span>Ele fica <b>tonto</b> por alguns segundos: aproveite para fugir ou dar golpes de surpresa.</span></li>
+        <li><span>Quando passa, ele vai até <b>onde o sino tocou</b>. Não fique lá.</span></li>
+      </ol>
+      <p class="note">Funciona <b>uma vez por noite</b>, e o toque não conta como barulho seu.</p>
     </div>
   </div>
 </section>
@@ -315,10 +397,8 @@
       <p>Passe o mouse sobre os quadradinhos para ver o nome de cada ingrediente.</p>
     </div>
     <div class="items">
-      <div class="item"><div data-recipe="felt_boots"></div><div><h3>Botas de Feltro</h3><p>Abafam seus passos: <b>−60%</b> de ruído ao andar e correr.</p></div></div>
+      <div class="item"><div data-recipe="felt_boots"></div><div><h3>Botas de Feltro</h3><p>Abafam bastante os seus passos, andando ou correndo. <b>O primeiro item para fazer.</b></p></div></div>
       <div class="item"><div data-recipe="silent_dagger"></div><div><h3>Adaga Silenciosa</h3><p>Golpes <b>sem barulho</b>. Para resolver um zumbi sem acordar o Ouvinte.</p></div></div>
-      <div class="item"><div data-recipe="listener_ear"></div><div><h3>Orelha do Ouvinte</h3><p>Só cai ao derrotá-lo. Ingrediente do Sino Ensurdecedor.</p></div></div>
-      <div class="item"><div data-recipe="deafening_bell"></div><div><h3>Sino Ensurdecedor</h3><p>Atordoa o Ouvinte por <b>10 segundos</b> se ele estiver a até 16 blocos. <b>Uma vez por noite.</b></p></div></div>
     </div>
   </div>
 </section>
@@ -379,7 +459,7 @@ const STATE_TEXT = [
   "Ouviu algo. Vai até o som e fareja.",
   "Ouviu você. O rugido é o aviso.",
   "Vem direto em você.",
-  "Atordoado pelo sino por 10 segundos.",
+  "Tonto com o sino. Hora de fugir.",
 ];
 const SUBTITLES = { click: "Ouvinte estala as orelhas", growl: "Ouvinte rosna", alert: "Ouvinte ouviu você!", sniff: "Ouvinte fareja", hurt: "Ouvinte cambaleia", attack: "Ouvinte ataca" };
 
