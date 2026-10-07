@@ -6,7 +6,7 @@ saem de assets/silenciototal/sounds.json (mesmos arquivos e pitch do jogo).
 """
 import base64, glob, io, json, os, zipfile
 
-from PIL import Image, ImageEnhance
+from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD_ASSETS = os.path.join(ROOT, "src/main/resources/assets/silenciototal")
@@ -142,30 +142,13 @@ ICONS = {
 }
 
 
-def screenshot(name, width=854):
-    """
-    Captura do jogo (tools/screenshots), em JPEG para o site ficar leve. Corta a barra de itens e
-    os corações embaixo (fica o medidor no canto) e clareia um pouco: a noite sai escura demais.
-    """
-    image = Image.open(os.path.join(ROOT, "tools/screenshots", name)).convert("RGB")
-    image = image.crop((0, 0, image.width, int(image.height * 0.78)))
-    image = ImageEnhance.Brightness(image).enhance(1.45)
-    if image.width > width:
-        image = image.resize((width, image.height * width // image.width), Image.LANCZOS)
-    buf = io.BytesIO()
-    image.save(buf, "JPEG", quality=82, optimize=True)
-    return data_url(buf.getvalue(), "image/jpeg")
-
-
-SHOTS = {name.removesuffix(".png"): screenshot(name) for name in sorted(os.listdir(os.path.join(ROOT, "tools/screenshots"))) if name.endswith(".png")}
-
 textures = {
     "listener": data_url(read(os.path.join(MOD_ASSETS, "textures/entity/listener/listener.png")), "image/png"),
 }
 
 html = open(os.path.join(ROOT, "tools/viewer_template.html"), encoding="utf-8").read()
 html = html.replace("__TEXTURES__", json.dumps(textures)).replace("__ITEMS__", json.dumps(ITEMS))
-html = html.replace("__ICONS__", json.dumps(ICONS)).replace("__SHOTS__", json.dumps(SHOTS)).replace("__SOUNDS__", json.dumps(vanilla_sounds()))
+html = html.replace("__ICONS__", json.dumps(ICONS)).replace("__SOUNDS__", json.dumps(vanilla_sounds()))
 # tools/visualizador.html para abrir localmente; site/index.html é o que a Vercel publica.
 for out in (os.path.join(ROOT, "tools/visualizador.html"), os.path.join(ROOT, "site/index.html")):
     os.makedirs(os.path.dirname(out), exist_ok=True)

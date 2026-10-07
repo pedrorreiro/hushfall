@@ -157,14 +157,8 @@
   .meter b { display: block; font: 700 19px "Pixelify Sans", monospace; color: var(--c); }
   .meter span { color: var(--muted); font-size: 14.5px; }
 
-  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 96px; }
   .states { max-width: 860px; margin: 0 auto; }
-  figure { margin: 0; }
-  figure img { width: 100%; display: block; border-radius: 12px; border: 1px solid var(--line); image-rendering: auto; }
-  figcaption { margin-top: 10px; font-size: 14px; color: var(--muted); }
-  figcaption b { color: var(--text); font-weight: 600; }
-  .bell-shot { display: grid; gap: 20px; }
-  .bell-shot .mc-craft { justify-self: start; }
+  .bell-recipe { display: grid; justify-items: center; }
   .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 40px; }
   .item { display: flex; gap: 22px; align-items: center; padding: 24px 0 0; border-top: 1px solid var(--line); }
   .item h3 { font-size: 20px; margin-bottom: 6px; }
@@ -220,7 +214,7 @@
     .hero .wrap, .two, .install, .bell { grid-template-columns: 1fr; }
     .steps, .traits, .fight { grid-template-columns: repeat(2, 1fr); }
     section { padding: 80px 0; }
-    .tips, .items, .meters, .shots { grid-template-columns: 1fr; }
+    .tips, .items, .meters { grid-template-columns: 1fr; }
     .state-row { grid-template-columns: 1fr auto; }
     .state-row p { grid-column: 1 / -1; grid-row: 2; }
   }
@@ -360,10 +354,6 @@
       <h2>O Ouvinte</h2>
       <p>Surge longe de você ao anoitecer e se enterra quando o sol nasce.</p>
     </div>
-    <div class="shots">
-      <figure><img data-shot="alerta" alt="O Ouvinte rugindo na chuva, com o medidor no vermelho"><figcaption><b>Ele ouviu você.</b> O rugido é o aviso.</figcaption></figure>
-      <figure><img data-shot="de_perto" alt="O Ouvinte farejando o jogador de pertinho"><figcaption><b>Em silêncio</b>, ele fareja e segue em frente.</figcaption></figure>
-    </div>
     <div class="states">
       <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
       <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até o som e fareja.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
@@ -396,8 +386,7 @@
 
 <section id="sino" class="alt">
   <div class="wrap bell">
-    <div class="bell-shot">
-      <figure><img data-shot="sino" alt="O Ouvinte atordoado depois do toque do Sino Ensurdecedor"><figcaption><b>Tonto com o sino.</b> Hora de sair dali.</figcaption></figure>
+    <div class="bell-recipe">
       <div data-recipe="deafening_bell"></div>
     </div>
     <div>
@@ -481,12 +470,11 @@ const TEX = __TEXTURES__;
 const SOUNDS = __SOUNDS__;
 const ITEMS = __ITEMS__;
 const ICONS = __ICONS__;
-const SHOTS = __SHOTS__;
 document.querySelectorAll("[data-icon]").forEach(el => {
   const src = ICONS[el.dataset.icon];
   if (el.tagName.toLowerCase() === "image") el.setAttribute("href", src); else el.src = src;
 });
-document.querySelectorAll("[data-shot]").forEach(el => { el.src = SHOTS[el.dataset.shot]; el.loading = "lazy"; });
+
 const $ = s => document.querySelector(s);
 const COLORS = [0x6fcf8a, 0xe8bd4a, 0xff8a4c, 0xff5a64, 0x7fd6e8];
 const STATE_TEXT = [
