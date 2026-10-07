@@ -7,8 +7,9 @@
 #   hushfall.jar  só o mod
 #   hushfall.zip  o mod + Fabric API + LEIA-ME, pronto para a pasta mods
 #
-# Também envia o hushfall.jar ao CurseForge (projeto 1732438) se o secret CURSEFORGE_TOKEN
-# existir; sem ele, esse passo é pulado e a release do GitHub sai normalmente.
+# Também envia o hushfall.jar ao CurseForge (projeto 1732438) e ao Modrinth (projeto RkWfqwPL)
+# se os secrets CURSEFORGE_TOKEN e MODRINTH_TOKEN existirem; sem um deles, aquele passo é
+# pulado e o resto sai normalmente.
 #
 # A versão do mod vem da tag (v1.1.0 -> 1.1.0). Roda no GitHub com a permissão do próprio
 # repositório, então não depende de quem está logado no `gh` local.
@@ -35,6 +36,8 @@ jobs:
       TAG: ${{ inputs.tag || github.ref_name }}
       # Secret do repositório com o token de API do CurseForge. Sem ele, o envio ao CurseForge é pulado.
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+      # Secret do repositório com o token do Modrinth (permissões: Create versions, Read projects).
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
     steps:
       - name: validate tag
         run: |
@@ -112,3 +115,20 @@ jobs:
           game-versions: '26.3'
           java: '25'
           dependencies: fabric-api(required){curseforge:306612}
+      - name: publish to modrinth
+        if: env.MODRINTH_TOKEN != ''
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: RkWfqwPL
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          files: dist/hushfall.jar
+          name: Hushfall ${{ env.VERSION }}
+          version: ${{ env.VERSION }}
+          version-type: release
+          changelog-file: .github/release-notes.md
+          loaders: fabric
+          game-versions: '26.3'
+          java: '25'
+          dependencies: |
+            fabric-api(required){modrinth:P7dR8mSH}
+            modmenu(optional){modrinth:mOgUt4GM}
