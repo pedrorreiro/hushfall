@@ -10,14 +10,16 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Medidor de ruído redondo no canto superior esquerdo. Só aparece à noite.
+ * Medidor de ruído redondo num canto da tela (superior esquerdo por padrão, ajustável em
+ * {@link ClientConfig}). Só aparece à noite.
  * Um anel que enche no sentido horário a partir do topo (marcas em 30 e 70), com a orelha no
  * meio e, ao lado, a faixa e o valor.
  */
 public final class NoiseHud {
-	private static final int MARGIN = 6;
+	private static final int TEXT_GAP = 5;
 	private static final float OUTER = 13.5f;
 	private static final float INNER = 9.5f;
 	private static final int SIZE = (int) Math.ceil(OUTER * 2);
@@ -25,7 +27,11 @@ public final class NoiseHud {
 	private static final int TRACK = 0xB0202228;
 	private static final int BACKDROP = 0x90000000;
 	private static final int MARK = 0xFF0A0A0A;
-	private static final ItemStack EAR = new ItemStack(ModItems.LISTENER_EAR);
+	/**
+	 * A orelha do meio. Criada na primeira vez que dá: na tela de título (opções abertas pelo Mod
+	 * Menu) os itens ainda não estão prontos e criar um ItemStack derruba o jogo.
+	 */
+	private static @Nullable ItemStack ear;
 
 	private static float noise;
 	private static float shown;
@@ -59,37 +65,72 @@ public final class NoiseHud {
 			return;
 		}
 		shown = Mth.lerp(0.25f, shown, noise);
-		Font font = mc.font;
-		NoiseLevel level = NoiseLevel.of(noise);
+		draw(graphics, ClientConfig.get(), noise, shown, status(), mc.player.tickCount);
+	}
+
+	/**
+	 * Desenha o medidor no canto e com o tamanho da configuração. Também usado pela tela de opções,
+	 * para mostrar como fica antes de salvar.
+	 *
+	 * @param value  o ruído escrito ao lado do anel
+	 * @param shown  o ruído que o anel mostra (suavizado)
+	 * @param status a linha de baixo ("A chuva abafa"), ou {@code null}
+	 */
+	public static void draw(GuiGraphicsExtractor graphics, ClientConfig config, float value, float shown, @Nullable Component status, int tickCount) {
+		Font font = Minecraft.getInstance().font;
+		NoiseLevel level = NoiseLevel.of(value);
 		int color = switch (level) {
 			case LOW -> 0xFF4FBF6A;
 			case MEDIUM -> 0xFFE0B13A;
 			case HIGH -> 0xFFD8443A;
 		};
-		if (level == NoiseLevel.HIGH && (mc.player.tickCount / 4) % 2 == 0) {
+		if (level == NoiseLevel.HIGH && (tickCount / 4) % 2 == 0) {
 			color = 0xFFFF7A6E;
 		}
+		Component label = Component.translatable("hud.silenciototal.level." + level.name().toLowerCase())
+				.append(Component.literal(" · " + Math.round(value)));
+		int textWidth = config.showText ? Math.max(font.width(label), status == null ? 0 : font.width(status)) : 0;
+		int width = SIZE + (config.showText ? TEXT_GAP + textWidth : 0);
 
-		int x0 = MARGIN;
-		int y0 = MARGIN;
-		drawRing(graphics, x0, y0, Mth.clamp(shown / NoiseLevel.MAX, 0f, 1f), color);
+		// Posição no canto escolhido, em pixels já escalados; o desenho em si é feito sem escala.
+		float scale = config.scale;
+		float x = config.corner.right() ? graphics.guiWidth() - config.offsetX - width * scale : config.offsetX;
+		float y = config.corner.bottom() ? graphics.guiHeight() - config.offsetY - SIZE * scale : config.offsetY;
+		graphics.pose().pushMatrix();
+		graphics.pose().translate(x, y);
+		graphics.pose().scale(scale, scale);
+
+		// Anel à esquerda e texto à direita; nos cantos da direita, o texto vai para o lado de dentro.
+		int ringX = config.corner.right() ? width - SIZE : 0;
+		drawRing(graphics, ringX, 0, Mth.clamp(shown / NoiseLevel.MAX, 0f, 1f), color);
 
 		// No centro, a orelha: "isto é o quanto ele consegue te ouvir".
-		graphics.fakeItem(EAR, x0 + SIZE / 2 - 8, y0 + SIZE / 2 - 8);
+		ItemStack ear = ear();
+		if (ear != null) {
+			graphics.fakeItem(ear, ringX + SIZE / 2 - 8, SIZE / 2 - 8);
+		}
 
 		// Ao lado: a faixa e o valor ("Audível · 52") e, embaixo, o que está mexendo no ruído.
-		int textX = x0 + SIZE + 5;
-		Component label = Component.translatable("hud.silenciototal.level." + level.name().toLowerCase())
-				.append(Component.literal(" · " + Math.round(noise)));
-		Component status = status();
-		int textY = status == null ? y0 + SIZE / 2 - 4 : y0 + SIZE / 2 - 9;
-		graphics.text(font, label, textX, textY, color, true);
-		if (status != null) {
-			graphics.text(font, status, textX, textY + 10, statusColor(), true);
+		if (config.showText) {
+			int textY = status == null ? SIZE / 2 - 4 : SIZE / 2 - 9;
+			int labelX = config.corner.right() ? textWidth - font.width(label) : SIZE + TEXT_GAP;
+			graphics.text(font, label, labelX, textY, color, true);
+			if (status != null) {
+				int statusX = config.corner.right() ? textWidth - font.width(status) : SIZE + TEXT_GAP;
+				graphics.text(font, status, statusX, textY + 10, statusColor(), true);
+			}
 		}
+		graphics.pose().popMatrix();
 	}
 
-	private static Component status() {
+	private static @Nullable ItemStack ear() {
+		if (ear == null && ModItems.LISTENER_EAR.builtInRegistryHolder().areComponentsBound()) {
+			ear = new ItemStack(ModItems.LISTENER_EAR);
+		}
+		return ear;
+	}
+
+	private static @Nullable Component status() {
 		if ((flags & NoisePayload.RAIN) != 0) {
 			return Component.translatable("hud.silenciototal.rain");
 		}

@@ -4,6 +4,7 @@ import com.pedro.silenciototal.ModConfig;
 import com.pedro.silenciototal.entity.Listener;
 import com.pedro.silenciototal.mixin.ServerPlayerGameModeAccessor;
 import com.pedro.silenciototal.network.NoisePayload;
+import com.pedro.silenciototal.registry.ModAttachments;
 import com.pedro.silenciototal.registry.ModEntities;
 import com.pedro.silenciototal.registry.ModItems;
 import java.util.HashMap;
@@ -17,7 +18,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -35,6 +40,12 @@ public final class NoiseTracker {
 	public static final float WALK_PER_SECOND = 5f;
 	public static final float SPRINT_PER_SECOND = 10f;
 	public static final float DECAY_PER_SECOND = 4f;
+	/** Remo batendo na água: baixo, mas não é silêncio. */
+	public static final float BOAT_PER_SECOND = 3f;
+	/** Rodas rangendo no trilho: tão alto quanto correr, e sem teto. */
+	public static final float MINECART_PER_SECOND = 8f;
+	/** Quem saiu do mundo sendo caçado volta com pelo menos isso: alto o bastante para ele rugir de novo. */
+	public static final float REJOIN_HUNTED_NOISE = 80f;
 	public static final float WALK_CAP = 70f;
 
 	public static final float SOFT_FLOOR = 0.5f;
@@ -57,6 +68,8 @@ public final class NoiseTracker {
 		float sentNoise = -1;
 		byte sentFlags = -1;
 		long warnedNight = -1;
+		/** Já leu o ruído salvo de quando o jogador saiu do mundo. */
+		boolean restored;
 	}
 
 	public static void tick(MinecraftServer server) {
@@ -77,9 +90,17 @@ public final class NoiseTracker {
 		Vec3 last = data.lastPos == null ? pos : data.lastPos;
 		data.lastPos = pos;
 
+		if (!data.restored) {
+			data.restored = true;
+			restore(player, data, active);
+		}
+
 		if (!active) {
 			data.active = false;
 			data.noise = 0;
+			if (player.hasAttached(ModAttachments.NOISE_MEMORY)) {
+				player.removeAttached(ModAttachments.NOISE_MEMORY);
+			}
 			sync(player, data);
 			return;
 		}
@@ -91,7 +112,7 @@ public final class NoiseTracker {
 			// Batendo num bloco (árvore, pedra...): cada golpe faz barulho e o ruído não baixa.
 			data.noise += hitting * environment(player);
 		} else if (footsteps > 0) {
-			float cap = player.isSprinting() ? NoiseLevel.MAX : WALK_CAP;
+			float cap = isRunning(player) ? NoiseLevel.MAX : WALK_CAP;
 			if (data.noise < cap) {
 				data.noise = Math.min(cap, data.noise + footsteps * environment(player));
 			} else {
@@ -105,15 +126,66 @@ public final class NoiseTracker {
 
 		if (player.tickCount % HEARING_INTERVAL == 0) {
 			broadcast(player, data.noise);
+			remember(player, data);
 		}
 		sync(player, data);
+	}
+
+	/**
+	 * Guarda a barra no próprio jogador. Assim, sair do mundo no meio da noite (ou da caçada) e
+	 * voltar não zera nada: quem estava sendo caçado volta já fazendo barulho alto e ele ruge de novo.
+	 */
+	private static void remember(ServerPlayer player, PlayerNoise data) {
+		ServerLevel level = player.level();
+		boolean hunted = false;
+		for (Listener listener : level.getEntities(ModEntities.LISTENER, Listener::isAlive)) {
+			if (listener.isAfter(player)) {
+				hunted = true;
+				break;
+			}
+		}
+		player.setAttached(ModAttachments.NOISE_MEMORY, new NoiseMemory(data.noise, NightCycle.day(level), hunted));
+	}
+
+	private static void restore(ServerPlayer player, PlayerNoise data, boolean active) {
+		NoiseMemory memory = player.removeAttached(ModAttachments.NOISE_MEMORY);
+		if (memory == null || !active || memory.night() != NightCycle.day(player.level())) {
+			return;
+		}
+		data.noise = clamp(memory.hunted() ? Math.max(memory.noise(), REJOIN_HUNTED_NOISE) : memory.noise());
+		data.active = true;
+		if (memory.hunted()) {
+			// Ele estava atrás de você: ouve na hora, ruge e volta a caçar.
+			broadcast(player, data.noise);
+		}
+	}
+
+	/** Correndo, a cavalo ou de carrinho de mina: o ruído dos passos não tem teto. */
+	private static boolean isRunning(ServerPlayer player) {
+		Entity vehicle = player.getVehicle();
+		return player.isSprinting() || vehicle instanceof LivingEntity || vehicle instanceof AbstractMinecart;
+	}
+
+	/** Ruído por segundo andando de barco (+3) ou de carrinho de mina (+8). Outros veículos não fazem barulho. */
+	public static float vehiclePerSecond(Entity vehicle) {
+		if (vehicle instanceof AbstractBoat) {
+			return BOAT_PER_SECOND;
+		}
+		if (vehicle instanceof AbstractMinecart) {
+			return MINECART_PER_SECOND;
+		}
+		return 0;
 	}
 
 	/** Ruído de passos neste tick, já com piso e botas (sem chuva). */
 	private static float footstepsPerTick(ServerPlayer player, Vec3 delta) {
 		double horizontal = Math.sqrt(delta.x * delta.x + delta.z * delta.z);
-		if (horizontal < 0.02 || player.isPassenger() && !(player.getVehicle() instanceof net.minecraft.world.entity.LivingEntity)) {
+		if (horizontal < 0.02) {
 			return 0;
+		}
+		Entity vehicle = player.getVehicle();
+		if (vehicle != null && !(vehicle instanceof LivingEntity)) {
+			return vehiclePerSecond(vehicle) / 20f;
 		}
 		if (player.isFallFlying() || player.getAbilities().flying) {
 			return 0;

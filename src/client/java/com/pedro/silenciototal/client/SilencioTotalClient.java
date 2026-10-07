@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 public class SilencioTotalClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
+		ClientConfig.load();
 		ModelLayerRegistry.registerModelLayer(ListenerModel.LAYER, ListenerModel::createBodyLayer);
 		EntityRendererRegistry.register(ModEntities.LISTENER, ListenerRenderer::new);
 

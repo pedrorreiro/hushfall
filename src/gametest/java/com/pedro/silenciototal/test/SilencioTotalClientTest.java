@@ -1,6 +1,8 @@
 package com.pedro.silenciototal.test;
 
 import com.pedro.silenciototal.ModConfig;
+import com.pedro.silenciototal.client.ClientConfig;
+import com.pedro.silenciototal.client.HudConfigScreen;
 import com.pedro.silenciototal.client.NoiseHud;
 import com.pedro.silenciototal.entity.Listener;
 import com.pedro.silenciototal.noise.NightCycle;
@@ -21,7 +23,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -29,6 +33,8 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -255,6 +261,99 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 				NoiseTracker.set(player, 0);
 			});
 
+			// ---------------------------------------------------------------- ele lembra dos alarmes falsos mesmo depois de ressurgir
+			server.runOnServer(s -> {
+				ServerPlayer player = player(s);
+				ServerLevel level = player.level();
+				Vec3 decoy = player.position().add(10, 0, 0);
+				long now = level.getGameTime();
+				ListenerSpawner.setState(s, ListenerSpawner.state(s)
+						.withFruitlessVisit(decoy, now, 3600, 4)
+						.withFruitlessVisit(decoy, now, 3600, 4));
+				Listener fresh = summon(player, 20, false);
+				fresh.hearSound(decoy, WorldSounds.Kind.NOTE_BLOCK.loudness);
+				check(fresh.getState() == Listener.PATROL, "um Ouvinte novo deveria lembrar que ali era alarme falso, estado " + fresh.getState());
+				fresh.hearSound(player.position().add(-10, 0, 0), WorldSounds.Kind.NOTE_BLOCK.loudness);
+				check(fresh.getState() == Listener.INVESTIGATE, "em outro lugar ele deveria continuar investigando");
+				fresh.discard();
+				ListenerSpawner.setState(s, ListenerSpawner.state(s).withHabituations(List.of()));
+			});
+
+			// ---------------------------------------------------------------- salvar e carregar no meio da caçada
+			server.runOnServer(s -> {
+				ServerPlayer player = player(s);
+				ServerLevel level = player.level();
+				// Ele vai caçar de verdade: o jogador não pode morrer no meio do teste.
+				player.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 300, 4));
+				Listener hunter = summon(player, 6, false);
+				hunter.hearPlayer(player, 90);
+				TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, level.registryAccess());
+				hunter.saveWithoutId(output);
+				hunter.discard();
+				Listener loaded = ModEntities.LISTENER.create(level, EntitySpawnReason.LOAD);
+				loaded.load(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), output.buildResult()));
+				check(loaded.getState() == Listener.ALERT, "carregado do save ele deveria continuar em alerta, estado " + loaded.getState());
+				check(loaded.isAfter(player), "carregado do save ele deveria lembrar quem estava caçando");
+				level.addFreshEntity(loaded);
+			});
+			ctx.waitTicks(Listener.ALERT_TICKS + 10);
+			server.runOnServer(s -> {
+				Listener loaded = listener(s);
+				check(loaded.getState() == Listener.HUNT && loaded.getTarget() == player(s),
+						"depois de carregar, o alerta deveria virar caçada ao mesmo jogador, estado " + loaded.getState());
+			});
+
+			// ---------------------------------------------------------------- sair do mundo no meio da caçada não salva ninguém
+			ctx.waitTicks(20);
+			server.runOnServer(s -> {
+				ServerPlayer player = player(s);
+				NoiseTracker.set(player, 40);
+				// Sair do servidor apaga a barra da memória; o que vale é o que ficou salvo no jogador.
+				NoiseTracker.forget(player.getUUID());
+				listener(s).discard();
+			});
+			ctx.waitTicks(2);
+			server.runOnServer(s -> check(NoiseTracker.get(player(s)) >= 71,
+					"quem saiu sendo caçado deveria voltar com barulho alto, voltou com " + NoiseTracker.get(player(s))));
+			server.runOnServer(s -> NoiseTracker.set(player(s), 40));
+			ctx.waitTicks(20);
+			server.runOnServer(s -> NoiseTracker.forget(player(s).getUUID()));
+			ctx.waitTicks(2);
+			server.runOnServer(s -> {
+				float noise = NoiseTracker.get(player(s));
+				check(noise > 30 && noise < 71, "sem caçada, sair e voltar deveria manter a barra como estava, voltou com " + noise);
+				NoiseTracker.set(player(s), 0);
+			});
+
+			// ---------------------------------------------------------------- barco e carrinho de mina fazem barulho
+			server.runOnServer(s -> {
+				ServerLevel level = s.overworld();
+				check(NoiseTracker.vehiclePerSecond(EntityTypes.OAK_BOAT.create(level, EntitySpawnReason.COMMAND)) == NoiseTracker.BOAT_PER_SECOND,
+						"barco deveria fazer barulho");
+				check(NoiseTracker.vehiclePerSecond(EntityTypes.MINECART.create(level, EntitySpawnReason.COMMAND)) == NoiseTracker.MINECART_PER_SECOND,
+						"carrinho de mina deveria fazer barulho");
+			});
+
+			// ---------------------------------------------------------------- medidor em outro canto e a tela de opções
+			ctx.runOnClient(mc -> {
+				ClientConfig config = ClientConfig.get().copy();
+				config.corner = ClientConfig.Corner.BOTTOM_RIGHT;
+				config.scale = 1.5f;
+				config.offsetY = 40;
+				ClientConfig.set(config);
+			});
+			server.runOnServer(s -> NoiseTracker.set(player(s), 50));
+			ctx.waitTicks(20);
+			ctx.takeScreenshot("silenciototal_hud_bottom_right");
+			ctx.runOnClient(mc -> mc.gui.setScreen(new HudConfigScreen(null)));
+			ctx.waitTicks(20);
+			ctx.takeScreenshot("silenciototal_config_screen");
+			ctx.runOnClient(mc -> {
+				mc.gui.setScreen(null);
+				ClientConfig.set(new ClientConfig());
+			});
+			server.runOnServer(s -> NoiseTracker.set(player(s), 0));
+
 			// ---------------------------------------------------------------- faro: em silêncio ele só fareja
 			server.runOnServer(s -> {
 				ServerPlayer player = player(s);
@@ -341,7 +440,7 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 			server.runOnServer(s -> {
 				listener(s).discard();
 				ServerPlayer player = player(s);
-				clearHouse(player.level(), player.blockPosition());
+				clearHouse(player.level(), houseDoor.offset(-2, 0, 0));
 				buildHouse(player.level(), player.blockPosition(), Blocks.IRON_DOOR.defaultBlockState());
 				spawnOutsideDoor(player);
 			});
@@ -349,7 +448,7 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 			check(!ironBroken, "porta de ferro deveria aguentar");
 			server.runOnServer(s -> {
 				listener(s).discard();
-				clearHouse(player(s).level(), player(s).blockPosition());
+				clearHouse(player(s).level(), houseDoor.offset(-2, 0, 0));
 				NoiseTracker.set(player(s), 0);
 			});
 
@@ -487,6 +586,12 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 		return listener;
 	}
 
+	/**
+	 * Onde está a porta da última casinha. Fica fixo: o jogador pode levar um empurrão lá dentro e
+	 * mudar de bloco, e aí "a porta ao lado dele" seria a parede.
+	 */
+	private static BlockPos houseDoor = BlockPos.ZERO;
+
 	/** Casinha de pedra com interior 3x3x3 em volta do jogador e uma porta no lado +x. */
 	private static void buildHouse(ServerLevel level, BlockPos feet, BlockState door) {
 		for (BlockPos pos : BlockPos.betweenClosed(feet.offset(-2, -1, -2), feet.offset(2, 3, 2))) {
@@ -495,6 +600,7 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 			level.setBlockAndUpdate(pos, shell ? Blocks.STONE.defaultBlockState() : Blocks.AIR.defaultBlockState());
 		}
 		BlockPos doorPos = feet.offset(2, 0, 0);
+		houseDoor = doorPos;
 		BlockState lower = door.setValue(DoorBlock.FACING, net.minecraft.core.Direction.WEST)
 				.setValue(DoorBlock.HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER);
 		level.setBlock(doorPos, lower, 3);
@@ -522,7 +628,7 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 			boolean gone = server.computeOnServer(s -> {
 				ServerPlayer player = player(s);
 				NoiseTracker.set(player, 90);
-				return !(player.level().getBlockState(player.blockPosition().offset(2, 0, 0)).getBlock() instanceof DoorBlock);
+				return !(player.level().getBlockState(houseDoor).getBlock() instanceof DoorBlock);
 			});
 			if (screenshot && waited == 160) {
 				ctx.takeScreenshot("silenciototal_door_bash");

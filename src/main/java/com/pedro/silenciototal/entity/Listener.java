@@ -7,11 +7,11 @@ import com.pedro.silenciototal.registry.ModItems;
 import com.pedro.silenciototal.registry.ModSounds;
 import com.pedro.silenciototal.spawn.ListenerSpawner;
 import com.pedro.silenciototal.spawn.ListenerState;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -50,6 +50,8 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -134,16 +136,18 @@ public class Listener extends Monster {
 	private @Nullable Vec3 lastStuckCheck;
 	private @Nullable Vec3 prowlCenter;
 	private long prowlUntil;
-	private final List<Habituation> habituations = new ArrayList<>();
 	private int lostTicks;
 	private long nextSniff;
 	private long suspiciousUntil;
 	private long stunnedUntil;
 	private @Nullable Vec3 stunSource;
 	private long nextFarRelocate;
-
-	private record Habituation(Vec3 pos, int visits, long expires) {
-	}
+	/**
+	 * Alvo da caçada (ou do alerta) lido do save: o jogador talvez ainda não tenha entrado no mundo
+	 * quando o chunk carrega, então ele espera um pouco por ele antes de desistir.
+	 */
+	private @Nullable UUID savedTarget;
+	private long savedTargetDeadline;
 
 	/** Só no cliente: escala atual do desenho (ele se encolhe sob tetos baixos). */
 	public float clientScale = -1;
@@ -464,7 +468,8 @@ public class Listener extends Monster {
 		LivingEntity target = getTarget();
 		setTarget(null);
 		alertTarget = null;
-		if (target != null && target.isAlive() && target.level() == level()) {
+		// Quem saiu do mundo não está morto: ele vai farejar onde a presa sumiu e fica rondando ali.
+		if (target != null && !target.isDeadOrDying() && target.level() == level()) {
 			// Vai até o último lugar onde ouviu a presa, fareja e ronda por lá.
 			soundTarget = target.position();
 			soundLoudness = 0;
@@ -484,27 +489,115 @@ public class Listener extends Monster {
 		setState(PATROL);
 	}
 
+	/** A memória dos alarmes falsos fica no estado do mundo: sobrevive a ele se enterrar e ressurgir. */
 	private boolean isHabituatedTo(Vec3 pos) {
-		long now = level().getGameTime();
-		habituations.removeIf(h -> h.expires() < now);
-		for (Habituation h : habituations) {
-			if (h.visits() >= HABITUATION_VISITS && h.pos().closerThan(pos, HABITUATION_RADIUS)) {
-				return true;
-			}
+		if (!(level() instanceof ServerLevel level)) {
+			return false;
 		}
-		return false;
+		return ListenerSpawner.state(level.getServer()).isHabituatedTo(pos, level.getGameTime(), HABITUATION_VISITS, HABITUATION_RADIUS);
 	}
 
 	private void rememberFruitlessVisit(Vec3 pos) {
-		long now = level().getGameTime();
-		for (int i = 0; i < habituations.size(); i++) {
-			Habituation h = habituations.get(i);
-			if (h.pos().closerThan(pos, HABITUATION_RADIUS)) {
-				habituations.set(i, new Habituation(h.pos(), h.visits() + 1, now + HABITUATION_TICKS));
-				return;
+		if (!(level() instanceof ServerLevel level)) {
+			return;
+		}
+		MinecraftServer server = level.getServer();
+		ListenerSpawner.setState(server, ListenerSpawner.state(server)
+				.withFruitlessVisit(pos, level.getGameTime(), HABITUATION_TICKS, HABITUATION_RADIUS));
+	}
+
+	// ------------------------------------------------------------------ save
+
+	/** Tempo que ele espera o alvo salvo entrar no mundo antes de ir farejar onde ele estava. */
+	private static final int SAVED_TARGET_WAIT = 200;
+
+	/**
+	 * Salva o que ele estava fazendo: sair e voltar ao mundo (ou o chunk descarregar) não pode
+	 * zerar uma caçada nem uma investigação.
+	 */
+	@Override
+	protected void addAdditionalSaveData(ValueOutput output) {
+		super.addAdditionalSaveData(output);
+		output.putInt("listener_state", getState());
+		output.putInt("state_ticks", stateTicks);
+		output.storeNullable("sound_target", Vec3.CODEC, soundTarget);
+		output.putFloat("sound_loudness", soundLoudness);
+		output.putBoolean("sound_from_player", soundFromPlayer);
+		output.storeNullable("prowl_center", Vec3.CODEC, prowlCenter);
+		output.putLong("prowl_until", prowlUntil);
+		output.putLong("stunned_until", isStunned() ? stunnedUntil : 0);
+		output.storeNullable("stun_source", Vec3.CODEC, stunSource);
+		output.putLong("next_far_relocate", nextFarRelocate);
+		ServerPlayer target = getState() == HUNT && getTarget() instanceof ServerPlayer hunted ? hunted
+				: getState() == ALERT ? alertTarget : null;
+		output.storeNullable("target", UUIDUtil.CODEC, target != null ? target.getUUID() : savedTarget);
+	}
+
+	@Override
+	protected void readAdditionalSaveData(ValueInput input) {
+		super.readAdditionalSaveData(input);
+		int state = Mth.clamp(input.getIntOr("listener_state", PATROL), PATROL, HUNT);
+		soundTarget = input.read("sound_target", Vec3.CODEC).orElse(null);
+		soundLoudness = input.getFloatOr("sound_loudness", 0);
+		soundFromPlayer = input.getBooleanOr("sound_from_player", false);
+		prowlCenter = input.read("prowl_center", Vec3.CODEC).orElse(null);
+		prowlUntil = input.getLongOr("prowl_until", 0);
+		stunnedUntil = input.getLongOr("stunned_until", 0);
+		stunSource = input.read("stun_source", Vec3.CODEC).orElse(null);
+		nextFarRelocate = input.getLongOr("next_far_relocate", 0);
+		savedTarget = input.read("target", UUIDUtil.CODEC).orElse(null);
+		if ((state == HUNT || state == ALERT) && savedTarget == null) {
+			state = soundTarget != null ? INVESTIGATE : PATROL;
+		}
+		if (state == INVESTIGATE && soundTarget == null) {
+			state = PATROL;
+		}
+		entityData.set(STATE, state);
+		entityData.set(STUNNED, stunnedUntil > 0);
+		stateTicks = input.getIntOr("state_ticks", 0);
+		savedTargetDeadline = -1;
+		updateDoorPathing();
+	}
+
+	/**
+	 * Depois de carregar do save no meio de uma caçada: espera o jogador entrar e continua de onde
+	 * parou. Se ele não aparece, vai farejar o último lugar onde o ouviu.
+	 *
+	 * @return {@code true} enquanto ainda está esperando (a IA de caça não roda)
+	 */
+	private boolean resumeSavedTarget(ServerLevel level) {
+		if (savedTarget == null) {
+			return false;
+		}
+		if (getState() != HUNT && getState() != ALERT) {
+			savedTarget = null;
+			return false;
+		}
+		long now = level.getGameTime();
+		if (savedTargetDeadline < 0) {
+			savedTargetDeadline = now + SAVED_TARGET_WAIT;
+		}
+		if (level.getPlayerByUUID(savedTarget) instanceof ServerPlayer player && isHuntable(player)) {
+			savedTarget = null;
+			if (getState() == HUNT) {
+				startHunt(player);
+			} else {
+				alertTarget = player;
+			}
+			return false;
+		}
+		getNavigation().stop();
+		if (now >= savedTargetDeadline) {
+			savedTarget = null;
+			if (soundTarget != null) {
+				soundFromPlayer = true;
+				soundVersion++;
+				setState(INVESTIGATE);
+			} else {
+				setState(PATROL);
 			}
 		}
-		habituations.add(new Habituation(pos, 1, now + HABITUATION_TICKS));
+		return true;
 	}
 
 	// ------------------------------------------------------------------ tick
@@ -620,6 +713,9 @@ public class Listener extends Monster {
 			}
 			return;
 		}
+		if (resumeSavedTarget(level)) {
+			return;
+		}
 		stateTicks++;
 		if (isSuspicious() && (level.getGameTime() > suspiciousUntil || getState() == ALERT || getState() == HUNT)) {
 			entityData.set(SUSPICIOUS, false);
@@ -675,6 +771,12 @@ public class Listener extends Monster {
 
 	private boolean isHuntable(ServerPlayer player) {
 		return player.isAlive() && !player.isCreative() && !player.isSpectator() && player.level() == level();
+	}
+
+	/** Está caçando este jogador, ou rugindo para ele logo antes da caçada. */
+	public boolean isAfter(ServerPlayer player) {
+		return getState() == HUNT && getTarget() == player || getState() == ALERT && alertTarget == player
+				|| player.getUUID().equals(savedTarget);
 	}
 
 	public boolean isCornered() {

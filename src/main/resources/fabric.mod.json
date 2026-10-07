@@ -2,11 +2,16 @@
 	"schemaVersion": 1,
 	"id": "silenciototal",
 	"version": "${version}",
-	"name": "Silêncio Total",
-	"description": "À noite, uma criatura cega caça pelo som. Fique em silêncio e use o barulho como ferramenta.",
+	"name": "Hushfall",
+	"description": "At night, a blind creature hunts by sound. Stay quiet and use noise as a tool.",
 	"authors": [
 		"Pedro"
 	],
+	"contact": {
+		"homepage": "https://hushfall-minecraft.vercel.app/",
+		"sources": "https://github.com/pedrorreiro/hushfall",
+		"issues": "https://github.com/pedrorreiro/hushfall/issues"
+	},
 	"license": "CC0-1.0",
 	"icon": "assets/silenciototal/icon.png",
 	"environment": "*",
@@ -16,6 +21,9 @@
 		],
 		"client": [
 			"com.pedro.silenciototal.client.SilencioTotalClient"
+		],
+		"modmenu": [
+			"com.pedro.silenciototal.client.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -26,5 +34,8 @@
 		"minecraft": "~26.3",
 		"java": ">=25",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }

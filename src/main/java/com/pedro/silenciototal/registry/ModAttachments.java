@@ -1,6 +1,7 @@
 package com.pedro.silenciototal.registry;
 
 import com.pedro.silenciototal.SilencioTotal;
+import com.pedro.silenciototal.noise.NoiseMemory;
 import com.pedro.silenciototal.spawn.ListenerState;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -14,6 +15,10 @@ public final class ModAttachments {
 	/** Última noite em que o jogador tocou o Sino Ensurdecedor (uma vez por noite). */
 	public static final AttachmentType<Long> BELL_NIGHT = AttachmentRegistry.create(SilencioTotal.id("bell_night"),
 			builder -> builder.initializer(() -> -1L).persistent(Codec.LONG).copyOnDeath());
+
+	/** Ruído do jogador ao sair do mundo: voltar não zera a barra nem encerra a caçada. Some ao morrer. */
+	public static final AttachmentType<NoiseMemory> NOISE_MEMORY = AttachmentRegistry.create(SilencioTotal.id("noise_memory"),
+			builder -> builder.persistent(NoiseMemory.CODEC));
 
 	private ModAttachments() {
 	}

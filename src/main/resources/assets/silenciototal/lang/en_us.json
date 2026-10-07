@@ -27,5 +27,18 @@
   "message.silenciototal.bell_used": "The bell is still ringing... it only works once per night.",
   "message.silenciototal.bell_stunned": "The Listener staggers, stunned! You have 10 seconds.",
   "message.silenciototal.bell_missed": "Nothing nearby heard the bell... and it only rings once per night.",
-  "message.silenciototal.calm_night": "The night is calm. It won't come tonight."
+  "message.silenciototal.calm_night": "The night is calm. It won't come tonight.",
+  "modmenu.descriptionTranslation.silenciototal": "At night, a blind creature hunts by sound. Stay quiet and use noise as a tool.",
+  "config.silenciototal.title": "Hushfall: noise meter",
+  "config.silenciototal.preview": "The meter on screen shows how it will look.",
+  "config.silenciototal.corner": "Position",
+  "config.silenciototal.corner.top_left": "Top left",
+  "config.silenciototal.corner.top_right": "Top right",
+  "config.silenciototal.corner.bottom_left": "Bottom left",
+  "config.silenciototal.corner.bottom_right": "Bottom right",
+  "config.silenciototal.scale": "Size",
+  "config.silenciototal.offset_x": "Side margin",
+  "config.silenciototal.offset_y": "Top/bottom margin",
+  "config.silenciototal.show_text": "Text next to the ring",
+  "config.silenciototal.reset": "Reset to defaults"
 }

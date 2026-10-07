@@ -45,6 +45,8 @@ O mod só funciona **à noite** e só no **Overworld**. De dia nada disso existe
 
 **Perder o rastro**: se ele passar 3 segundos sem te ouvir, vai até o último lugar onde te ouviu, fareja e volta a patrulhar.
 
+**Sair do mundo não salva ninguém**: a sua barra fica salva com você. Se você sair no meio de uma caçada, volta já com barulho alto (80) e ele ruge e caça de novo. Fora da caçada, você volta com a barra como estava. Ele também guarda o que estava fazendo (caçando, investigando, rondando) quando o mundo é salvo.
+
 ### De perto ele te sente
 
 - A até **8 blocos**, com a sua barra em **10 ou mais** (em pé ou agachado): ele te descobre, ruge e caça.
@@ -77,12 +79,14 @@ Chegue em casa, fique parado até a barra zerar e deite.
 
 ## 3. A barra de ruído (0 a 100)
 
-Medidor redondo no **canto superior esquerdo**, só à noite: o anel enche com a cor da faixa, a orelha fica no meio e ao lado aparece a faixa e o valor (ex.: "Audível · 52").
+Medidor redondo no **canto superior esquerdo** (dá para mudar o canto, a margem e o tamanho pelo Mod Menu), só à noite: o anel enche com a cor da faixa, a orelha fica no meio e ao lado aparece a faixa e o valor (ex.: "Audível · 52").
 
 | Ação | Ruído |
 |---|---|
 | Andar | +5 por segundo (**sozinho, andar nunca passa de 70**) |
 | Correr (ou cavalgar) | +10 por segundo |
+| De carrinho de mina | +8 por segundo (sem teto, como correr) |
+| De barco | +3 por segundo (teto de 70, como andar) |
 | Pular | +6 |
 | Agachar / ficar parado | +0, e o ruído **cai 4 por segundo** |
 | **Bater num bloco** (cada segundo golpeando) | pedra +5/s, madeira +4/s, terra/folhas +2/s |
@@ -121,7 +125,7 @@ Sons no mundo que o Ouvinte vai investigar. Cada ponto tem **cooldown**.
 | Projétil caindo (flecha, bola de neve, ovo...) | 12 blocos | 2 s |
 | Explosão / raio | 64 blocos | 1 s |
 
-- **Ele aprende**: dois alarmes falsos no mesmo lugar e ele ignora sons dali por 3 minutos.
+- **Ele aprende**: dois alarmes falsos no mesmo lugar e ele ignora sons dali por 3 minutos. A memória fica no mundo: ele não esquece ao se enterrar e ressurgir.
 - **Durante a caçada**, só um estrondo forte (sino, explosão, raio) tira a atenção dele, e só se você não estiver fazendo barulho alto.
 
 ---
@@ -158,3 +162,14 @@ Sons no mundo que o Ouvinte vai investigar. Cada ponto tem **cooldown**.
 | `noiseMultiplier` | `1.0` | Multiplica todo o ruído do jogador. |
 
 O spawn respeita a dificuldade (nada no Pacífico) e a regra `spawn_monsters`. Arrombar portas respeita a regra `mob_griefing`.
+
+### Medidor (de cada jogador)
+
+`config/silenciototal-client.json`, ou pelo botão de opções do **Mod Menu** (opcional), que mostra o medidor na tela enquanto você ajusta:
+
+| Opção | Padrão | O que faz |
+|---|---|---|
+| `corner` | `TOP_LEFT` | Canto da tela: `TOP_LEFT`, `TOP_RIGHT`, `BOTTOM_LEFT` ou `BOTTOM_RIGHT`. |
+| `offsetX` / `offsetY` | `6` / `6` | Distância da borda lateral e da borda de cima (ou de baixo), de 0 a 200. |
+| `scale` | `1.0` | Tamanho do medidor, de 0.5 a 2.0. |
+| `showText` | `true` | Mostra a faixa e o valor ao lado do anel. |

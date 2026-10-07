@@ -27,5 +27,18 @@
   "message.silenciototal.bell_used": "O sino ainda vibra... só funciona uma vez por noite.",
   "message.silenciototal.bell_stunned": "O Ouvinte cambaleia, atordoado! Você tem 10 segundos.",
   "message.silenciototal.bell_missed": "Nada por perto para ouvir o sino... e ele só toca uma vez por noite.",
-  "message.silenciototal.calm_night": "A noite está calma. Ele não vem esta noite."
+  "message.silenciototal.calm_night": "A noite está calma. Ele não vem esta noite.",
+  "modmenu.descriptionTranslation.silenciototal": "À noite, uma criatura cega caça pelo som. Fique em silêncio e use o barulho como ferramenta.",
+  "config.silenciototal.title": "Hushfall: medidor de ruído",
+  "config.silenciototal.preview": "O medidor na tela mostra como vai ficar.",
+  "config.silenciototal.corner": "Posição",
+  "config.silenciototal.corner.top_left": "Superior esquerdo",
+  "config.silenciototal.corner.top_right": "Superior direito",
+  "config.silenciototal.corner.bottom_left": "Inferior esquerdo",
+  "config.silenciototal.corner.bottom_right": "Inferior direito",
+  "config.silenciototal.scale": "Tamanho",
+  "config.silenciototal.offset_x": "Margem lateral",
+  "config.silenciototal.offset_y": "Margem de cima/baixo",
+  "config.silenciototal.show_text": "Texto ao lado do anel",
+  "config.silenciototal.reset": "Restaurar padrão"
 }
