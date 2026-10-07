@@ -206,6 +206,55 @@ public class SilencioTotalClientTest implements FabricClientGameTest {
 				listener.discard();
 			});
 
+			// ---------------------------------------------------------------- dormir: em silêncio ele não impede
+			server.runOnServer(s -> {
+				ServerPlayer player = player(s);
+				NoiseTracker.set(player, 0);
+				Listener listener = summon(player, 6, false);
+				check(!listener.isPreventingPlayerRest(player.level(), player), "em silêncio, com ele patrulhando, deveria dar para dormir");
+				NoiseTracker.set(player, 15);
+				check(listener.isPreventingPlayerRest(player.level(), player), "fazendo barulho perto dele não deveria dar para dormir");
+				NoiseTracker.set(player, 0);
+				listener.hurtServer(player.level(), player.damageSources().playerAttack(player), 1.0f);
+				check(listener.isPreventingPlayerRest(player.level(), player), "com ele caçando não deveria dar para dormir");
+				listener.discard();
+			});
+
+			// ---------------------------------------------------------------- sem regeneração: o dano fica
+			server.runOnServer(s -> {
+				ServerPlayer player = player(s);
+				ServerLevel level = player.level();
+				NoiseTracker.set(player, 0);
+				Listener listener = summon(player, 20, false);
+				ListenerSpawner.setState(s, ListenerSpawner.state(s).withCurrent(listener.getUUID(), NightCycle.day(level), listener.getHealth()));
+				listener.hurtServer(level, level.damageSources().generic(), 20.0f);
+				check(near(ListenerSpawner.state(s).scars(), 20), "20 de dano deveria ficar salvo, ficou " + ListenerSpawner.state(s).scars());
+			});
+			ctx.waitTicks(20 * 5);
+			server.runOnServer(s -> {
+				Listener listener = listener(s);
+				float expected = (float) Listener.MAX_HEALTH - 20;
+				check(near(listener.getHealth(), expected), "ele não deveria regenerar: esperado " + expected + ", está com " + listener.getHealth());
+				listener.discard();
+				ListenerSpawner.setState(s, ListenerSpawner.state(s).withScars(0));
+			});
+
+			// ---------------------------------------------------------------- ouve de longe: ressurge perto de quem fez barulho
+			server.runOnServer(s -> {
+				ServerPlayer player = player(s);
+				ServerLevel level = player.level();
+				Listener far = summon(player, 20, false);
+				ListenerSpawner.setState(s, ListenerSpawner.state(s).withCurrent(far.getUUID(), NightCycle.day(level), far.getHealth()));
+				far.hearPlayerFromAfar(player, 50);
+				check(far.isRemoved(), "ouvindo de longe, ele deveria se enterrar onde estava");
+				Listener moved = listener(s);
+				check(moved != far && moved.distanceTo(player) >= 30 && moved.distanceTo(player) <= 50,
+						"deveria ressurgir a 30-50 blocos de quem fez barulho, está a " + moved.distanceTo(player));
+				check(moved.getState() == Listener.INVESTIGATE, "ao ressurgir ele deveria ir investigar o barulho");
+				moved.discard();
+				NoiseTracker.set(player, 0);
+			});
+
 			// ---------------------------------------------------------------- faro: em silêncio ele só fareja
 			server.runOnServer(s -> {
 				ServerPlayer player = player(s);

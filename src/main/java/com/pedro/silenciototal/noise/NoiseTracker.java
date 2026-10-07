@@ -4,6 +4,7 @@ import com.pedro.silenciototal.ModConfig;
 import com.pedro.silenciototal.entity.Listener;
 import com.pedro.silenciototal.mixin.ServerPlayerGameModeAccessor;
 import com.pedro.silenciototal.network.NoisePayload;
+import com.pedro.silenciototal.registry.ModEntities;
 import com.pedro.silenciototal.registry.ModItems;
 import java.util.HashMap;
 import java.util.Map;
@@ -213,16 +214,25 @@ public final class NoiseTracker {
 		}
 	}
 
-	/** O Ouvinte escuta conforme a faixa: alto = caça, médio = investiga a região, baixo = só colado nele. */
+	/**
+	 * O Ouvinte escuta conforme a faixa: alto = caça, médio = investiga a região, baixo = só por perto.
+	 * Audível ou alto ele ouve de qualquer distância: longe demais para ir andando, ele ressurge perto.
+	 */
 	private static void broadcast(ServerPlayer player, float noise) {
 		double radius = NoiseLevel.hearingRadius(noise);
 		if (radius <= 0) {
 			return;
 		}
 		ServerLevel level = player.level();
-		for (Listener listener : level.getEntitiesOfClass(Listener.class, player.getBoundingBox().inflate(radius))) {
-			if (listener.distanceToSqr(player) <= radius * radius) {
+		boolean global = NoiseLevel.of(noise) != NoiseLevel.LOW;
+		for (Listener listener : level.getEntities(ModEntities.LISTENER, Listener::isAlive)) {
+			double distanceSqr = listener.distanceToSqr(player);
+			if (distanceSqr <= radius * radius) {
 				listener.hearPlayer(player, noise);
+			} else if (global && distanceSqr <= Listener.FAR_HEARING * Listener.FAR_HEARING) {
+				listener.hearPlayer(player, noise);
+			} else if (global) {
+				listener.hearPlayerFromAfar(player, noise);
 			}
 		}
 	}

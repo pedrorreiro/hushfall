@@ -13,27 +13,33 @@ import net.minecraft.core.UUIDUtil;
  * @param night     a noite a que {@code health} se refere
  * @param health    vida dele nesta noite: sumir de perto e voltar não cura a criatura
  * @param killedNight última noite em que ele foi morto (só volta na noite seguinte)
+ * @param scars     todo dano que ele já levou (não regenera nem de uma noite para outra); zera quando morre
  */
-public record ListenerState(Optional<UUID> current, long night, float health, long killedNight) {
-	public static final ListenerState EMPTY = new ListenerState(Optional.empty(), -1, -1, -1);
+public record ListenerState(Optional<UUID> current, long night, float health, long killedNight, float scars) {
+	public static final ListenerState EMPTY = new ListenerState(Optional.empty(), -1, -1, -1, 0);
 
 	public static final Codec<ListenerState> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			UUIDUtil.CODEC.optionalFieldOf("current").forGetter(ListenerState::current),
 			Codec.LONG.fieldOf("night").forGetter(ListenerState::night),
 			Codec.FLOAT.fieldOf("health").forGetter(ListenerState::health),
-			Codec.LONG.fieldOf("killed_night").forGetter(ListenerState::killedNight)
+			Codec.LONG.fieldOf("killed_night").forGetter(ListenerState::killedNight),
+			Codec.FLOAT.optionalFieldOf("scars", 0f).forGetter(ListenerState::scars)
 	).apply(instance, ListenerState::new));
 
 	public ListenerState withCurrent(UUID id, long night, float health) {
-		return new ListenerState(Optional.of(id), night, health, killedNight);
+		return new ListenerState(Optional.of(id), night, health, killedNight, scars);
 	}
 
 	public ListenerState withHealth(float health) {
-		return new ListenerState(current, night, health, killedNight);
+		return new ListenerState(current, night, health, killedNight, scars);
 	}
 
 	public ListenerState killed(long night) {
-		return new ListenerState(Optional.empty(), night, -1, night);
+		return new ListenerState(Optional.empty(), night, -1, night, 0);
+	}
+
+	public ListenerState withScars(float scars) {
+		return new ListenerState(current, night, health, killedNight, scars);
 	}
 
 	public boolean isCurrent(UUID id) {

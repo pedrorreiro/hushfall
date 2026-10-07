@@ -27,11 +27,12 @@ O mod só funciona **à noite** e só no **Overworld**. De dia nada disso existe
 - É **cego**: luz, invisibilidade e linha de visão não importam. Ele só reage ao **ruído**.
 - **3 blocos de altura**, mas se espreme para passar em túneis e portas de 2 blocos. Golpes e flechas acertam o corpo todo.
 - **Chefe**: 150 de vida (75 corações), 12 de dano, resistente a empurrão e mais rápido que você correndo. Barra de chefe aparece a até 32 blocos.
-- **Regenera** 1 de vida por segundo quando não está caçando.
+- **Não regenera**: todo dano que ele leva fica, inclusive de uma noite para outra. Dá para enfraquecê-lo ao longo de várias noites. Ele só volta com a vida cheia depois de morrer.
 - **Ataque surpresa** (fora da caçada, encurralado ou atordoado): dano ×1,5.
 - **Não percebe quedas**: anda até 12 blocos de desnível sem hesitar. Buraco fundo é armadilha.
 - **Nunca se perde**: se passar 20 segundos longe de todos, ele se enterra e ressurge perto de alguém com a mesma vida.
-- **Ao amanhecer se enterra.** Se for morto, só volta na noite seguinte e dropa a **Orelha do Ouvinte**.
+- **Ouve de qualquer distância**: barulho Audível ou ALTO chega até ele onde quer que esteja. Se estiver longe demais (mais de 128 blocos), ele se enterra e ressurge a 32–45 blocos de quem fez barulho (no máximo uma vez a cada 30 s).
+- **Ao amanhecer se enterra** e volta na próxima noite com o dano que já levou. Se for morto, só volta na noite seguinte e dropa a **Orelha do Ouvinte**.
 
 ### Comportamento
 
@@ -61,6 +62,17 @@ Não existe esconderijo perfeito: ele ouve através das paredes.
 - **Fazendo barulho dentro de casa**, ele vem e **arromba portas de madeira** (leva uns 5 segundos, batendo alto). Você ouve as pancadas antes.
 - **Portas de ferro aguentam.** Uma casa de pedra com porta de ferro é o refúgio de verdade.
 
+### Dormir
+
+Ele é cego: se você está em silêncio, ele não sabe que você está ali e **a cama funciona** mesmo com ele rondando a casa. Ele só impede o sono quando:
+
+- está **caçando** você ou em **alerta**;
+- está **desconfiado** (orelhas tremendo) ou **farejando** por perto;
+- está investigando um barulho seu ali do lado;
+- a sua barra está em **5 ou mais**.
+
+Chegue em casa, fique parado até a barra zerar e deite.
+
 ---
 
 ## 3. A barra de ruído (0 a 100)
@@ -82,8 +94,8 @@ Medidor redondo no **canto superior esquerdo**, só à noite: o anel enche com a
 | Faixa | O Ouvinte... |
 |---|---|
 | **1–30 (Baixo)** | Ouve de 16 a 46 blocos. Só sabe a região, mas **vem rondar**. Zerado ele não ouve. |
-| **31–70 (Audível)** | Ouve de 48 a 96 blocos e vem **investigar** perto de você. |
-| **71+ (ALTO!)** | Ouve a 128 blocos, ruge e **caça você**. Se estiver longe, você ouve o eco do rugido vindo da direção dele. |
+| **31–70 (Audível)** | Ouve **de qualquer distância** e vem **investigar** perto de você. |
+| **71+ (ALTO!)** | Ouve **de qualquer distância**, ruge e **caça você**. Se estiver longe, você ouve o eco do rugido vindo da direção dele. |
 
 ### Modificadores
 

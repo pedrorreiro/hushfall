@@ -98,6 +98,13 @@ public class Listener extends Monster {
 	public static final int REPOSITION_TICKS = 400;
 	private static final double LOST_DISTANCE = 56;
 	private static final double LOST_HEIGHT = 14;
+	/**
+	 * Até essa distância ele vai andando atrás do barulho. Mais longe que isso (ele ouve de qualquer
+	 * distância), se enterra e ressurge perto de quem fez o barulho.
+	 */
+	public static final double FAR_HEARING = 128;
+	/** Intervalo mínimo entre dois reposicionamentos por barulho distante. */
+	private static final int FAR_RELOCATE_COOLDOWN = 600;
 	/** Depois de ir duas vezes ao mesmo lugar sem achar nada, ignora sons dali por 3 minutos. */
 	private static final int HABITUATION_VISITS = 2;
 	private static final int HABITUATION_TICKS = 3600;
@@ -133,6 +140,7 @@ public class Listener extends Monster {
 	private long suspiciousUntil;
 	private long stunnedUntil;
 	private @Nullable Vec3 stunSource;
+	private long nextFarRelocate;
 
 	private record Habituation(Vec3 pos, int visits, long expires) {
 	}
@@ -155,7 +163,7 @@ public class Listener extends Monster {
 				.add(Attributes.ATTACK_DAMAGE, 12.0)
 				.add(Attributes.ATTACK_KNOCKBACK, 0.8)
 				.add(Attributes.KNOCKBACK_RESISTANCE, 0.7)
-				.add(Attributes.FOLLOW_RANGE, 64.0)
+				.add(Attributes.FOLLOW_RANGE, FAR_HEARING)
 				.add(Attributes.STEP_HEIGHT, 1.0);
 	}
 
@@ -275,6 +283,26 @@ public class Listener extends Monster {
 		Vec3 guess = player.position().add(
 				(random.nextDouble() * 2 - 1) * spread, 0, (random.nextDouble() * 2 - 1) * spread);
 		investigate(guess, noise, true);
+	}
+
+	/**
+	 * Barulho audível ou alto vindo de longe demais para ir andando. Ele se enterra e ressurge perto
+	 * de quem fez o barulho; de lá vai investigar (o rugido e a caçada vêm se o barulho continuar).
+	 */
+	public void hearPlayerFromAfar(ServerPlayer player, float noise) {
+		if (isStunned() || getState() == HUNT || getState() == ALERT || !(level() instanceof ServerLevel level)) {
+			return;
+		}
+		long now = level.getGameTime();
+		if (now < nextFarRelocate) {
+			return;
+		}
+		nextFarRelocate = now + FAR_RELOCATE_COOLDOWN;
+		Listener moved = ListenerSpawner.relocateNear(level, this, player);
+		if (moved != null) {
+			moved.nextFarRelocate = now + FAR_RELOCATE_COOLDOWN;
+			moved.hearPlayer(player, Math.min(noise, NoiseLevel.HIGH_FROM - 1));
+		}
 	}
 
 	/** Um som no mundo (distração, explosão, raio...) com a força dada em blocos de alcance. */
@@ -618,10 +646,6 @@ public class Listener extends Monster {
 				if (tickCount % 5 == 0) {
 					senseNearby(level);
 				}
-				// Fora da caçada ele se recupera devagar: bater e fugir não funciona.
-				if (tickCount % 20 == 0 && getHealth() < getMaxHealth()) {
-					heal(1.0f);
-				}
 			}
 		}
 	}
@@ -657,8 +681,8 @@ public class Listener extends Monster {
 		return stuckTicks >= CORNERED_TICKS;
 	}
 
-	/** Ao amanhecer ele se enterra e some. */
-	private void burrow(ServerLevel level) {
+	/** Ao amanhecer (ou para ressurgir em outro lugar) ele se enterra e some. */
+	public void burrow(ServerLevel level) {
 		BlockState ground = level.getBlockState(getOnPos());
 		if (!ground.isAir()) {
 			level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground), getX(), getY() + 0.2, getZ(), 40, 0.4, 0.2, 0.4, 0.1);
@@ -666,6 +690,27 @@ public class Listener extends Monster {
 		level.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY() + 1, getZ(), 10, 0.3, 0.6, 0.3, 0.01);
 		level.playSound(null, getX(), getY(), getZ(), ModSounds.LISTENER_BURROW, SoundSource.HOSTILE, 1.5f, 1.0f);
 		discard();
+	}
+
+	/**
+	 * Cego: se você está em silêncio e ele só está patrulhando, ele não sabe que você está ali e a
+	 * cama funciona. Ele só impede o sono quando está atrás de você: caçando, alerta, desconfiado,
+	 * farejando por perto ou investigando um som seu ali do lado.
+	 */
+	@Override
+	public boolean isPreventingPlayerRest(ServerLevel level, Player player) {
+		if (isStunned()) {
+			return false;
+		}
+		int state = getState();
+		if (state == HUNT || state == ALERT || isSuspicious()) {
+			return true;
+		}
+		if (player instanceof ServerPlayer serverPlayer && NoiseTracker.get(serverPlayer) >= SUSPICIOUS_NOISE) {
+			return true;
+		}
+		Vec3 near = isProwling() ? prowlCenter : state == INVESTIGATE && soundFromPlayer ? soundTarget : null;
+		return near != null && near.closerThan(player.position(), SENSE_RADIUS + PROWL_RADIUS);
 	}
 
 	// ------------------------------------------------------------------ combate
@@ -678,7 +723,11 @@ public class Listener extends Monster {
 			damage *= SURPRISE_MULTIPLIER;
 			level.sendParticles(ParticleTypes.CRIT, getX(), getY(1.0), getZ(), 15, 0.3, 0.4, 0.3, 0.2);
 		}
+		float before = getHealth();
 		boolean hurt = super.hurtServer(level, source, damage);
+		if (hurt && isAlive()) {
+			addScars(level, before - getHealth());
+		}
 		if (hurt && isAlive() && !isStunned() && attacker instanceof ServerPlayer player && isHuntable(player)) {
 			// Quem bate denuncia onde está: caça imediata.
 			alertTarget = null;
@@ -686,6 +735,17 @@ public class Listener extends Monster {
 			startHunt(player);
 		}
 		return hurt;
+	}
+
+	/** Ele não regenera: todo dano vira cicatriz e fica, de uma noite para outra, até ele morrer. */
+	private void addScars(ServerLevel level, float lost) {
+		MinecraftServer server = level.getServer();
+		ListenerState state = ListenerSpawner.state(server);
+		if (lost <= 0 || !state.isCurrent(getUUID())) {
+			return;
+		}
+		float scars = Math.min(state.scars() + lost, getMaxHealth() - 1);
+		ListenerSpawner.setState(server, state.withScars(scars).withHealth(getHealth()));
 	}
 
 	@Override
@@ -833,10 +893,17 @@ public class Listener extends Monster {
 	private static class InvestigateGoal extends Goal {
 		private static final int SNIFF_TICKS = 50;
 		private static final int GIVE_UP_TICKS = 400;
+		/** Som ouvido de longe: tempo máximo de viagem até lá. */
+		private static final int GIVE_UP_FAR_TICKS = 1800;
+		/** Mais longe que isso, vai por etapas (o caminho até lá pode não caber numa busca só). */
+		private static final double LEG = 40;
 		private final Listener listener;
 		private int version = -1;
 		private int sniffTicks = -1;
 		private int repathCooldown;
+		/** Tempo desde que chegou perto do som (a viagem desde longe não conta). */
+		private int nearTicks;
+		private boolean far;
 
 		InvestigateGoal(Listener listener) {
 			this.listener = listener;
@@ -874,6 +941,8 @@ public class Listener extends Monster {
 				version = listener.soundVersion;
 				sniffTicks = -1;
 				repathCooldown = 0;
+				nearTicks = 0;
+				far = false;
 			}
 			if (sniffTicks >= 0) {
 				sniff(target);
@@ -881,8 +950,31 @@ public class Listener extends Monster {
 			}
 			double dx = target.x - listener.getX();
 			double dz = target.z - listener.getZ();
-			boolean arrived = dx * dx + dz * dz < 2.5 * 2.5;
-			if (arrived || listener.stateTicks > GIVE_UP_TICKS || listener.getNavigation().isDone() && repathCooldown > 0) {
+			double distanceSqr = dx * dx + dz * dz;
+			boolean arrived = distanceSqr < 2.5 * 2.5;
+			if (distanceSqr > LEG * LEG && listener.stateTicks <= GIVE_UP_FAR_TICKS) {
+				// Longe: anda em etapas na direção do som.
+				far = true;
+				if (listener.getNavigation().isDone() || --repathCooldown <= 0) {
+					repathCooldown = 40;
+					Vec3 step = LandRandomPos.getPosTowards(listener, (int) LEG, 10, target);
+					if (step != null) {
+						listener.getNavigation().moveTo(step.x, step.y, step.z, INVESTIGATE_SPEED);
+					} else {
+						listener.getNavigation().moveTo(target.x, target.y, target.z, INVESTIGATE_SPEED);
+					}
+				}
+				listener.getLookControl().setLookAt(target.x, target.y + 1, target.z);
+				return;
+			}
+			if (far) {
+				// Acabou de chegar perto: refaz o caminho até o ponto exato.
+				far = false;
+				repathCooldown = 0;
+			}
+			nearTicks++;
+			boolean tooLong = nearTicks > GIVE_UP_TICKS || listener.stateTicks > GIVE_UP_FAR_TICKS;
+			if (arrived || tooLong || listener.getNavigation().isDone() && repathCooldown > 0) {
 				listener.getNavigation().stop();
 				sniffTicks = 0;
 				listener.playSound(ModSounds.LISTENER_SNIFF, 1.0f, 0.9f + listener.getRandom().nextFloat() * 0.2f);

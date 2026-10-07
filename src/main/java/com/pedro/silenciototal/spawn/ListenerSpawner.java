@@ -30,7 +30,10 @@ import org.jspecify.annotations.Nullable;
  * blocos, nunca a menos de 30 de ninguém), e solta um rosnado distante: o primeiro aviso da noite.
  *
  * <ul>
- *   <li>Ao amanhecer ele se enterra e volta na noite seguinte com a vida cheia.</li>
+ *   <li>Ao amanhecer ele se enterra. Ele não regenera: na noite seguinte volta com todo o dano que
+ *   já levou, até morrer.</li>
+ *   <li>Ouve barulho de qualquer distância: se o jogador barulhento está longe demais, ele se enterra
+ *   e ressurge perto dele.</li>
  *   <li>Se for morto, só volta na noite seguinte.</li>
  *   <li>Se ficar longe de todo mundo (chunk descarregado), ressurge perto de um jogador com a mesma vida.</li>
  * </ul>
@@ -86,8 +89,32 @@ public final class ListenerSpawner {
 			return;
 		}
 		ServerPlayer target = candidates.get(level.getRandom().nextInt(candidates.size()));
-		float health = state.night() == night ? state.health() : -1;
+		float health = state.night() == night ? state.health() : healedHealth(state);
 		spawnNear(level, target, health);
+	}
+
+	/** Vida no começo de uma noite nova: a máxima menos todo dano já levado. -1 = vida cheia. */
+	private static float healedHealth(ListenerState state) {
+		return state.scars() > 0 ? (float) Listener.MAX_HEALTH - state.scars() : -1;
+	}
+
+	/**
+	 * Ouviu barulho longe demais para ir andando: se enterra onde está e ressurge perto de quem fez
+	 * o barulho (respeitando a distância mínima de todo mundo), com a mesma vida.
+	 *
+	 * @return o Ouvinte novo, ou {@code null} se não achou lugar (o antigo continua onde estava)
+	 */
+	public static @Nullable Listener relocateNear(ServerLevel level, Listener listener, ServerPlayer player) {
+		MinecraftServer server = level.getServer();
+		float health = listener.getHealth();
+		Listener moved = spawnNear(level, player, health);
+		if (moved == null) {
+			// Sem lugar para surgir agora: o antigo continua sendo "o" Ouvinte.
+			setState(server, state(server).withCurrent(listener.getUUID(), NightCycle.day(level), health));
+			return null;
+		}
+		listener.burrow(level);
+		return moved;
 	}
 
 	public static boolean canSpawn(ServerLevel level) {

@@ -20,7 +20,10 @@ public enum NoiseLevel {
 		return noise >= MEDIUM_FROM ? MEDIUM : LOW;
 	}
 
-	/** Até que distância (em blocos) o Ouvinte escuta um jogador com esse ruído. */
+	/**
+	 * Até que distância (em blocos) o Ouvinte escuta um jogador com esse ruído e vai andando atrás.
+	 * Médio e alto ele ouve de qualquer distância (ver {@link NoiseTracker}); o raio aqui só vale para o baixo.
+	 */
 	public static double hearingRadius(float noise) {
 		if (noise <= 0.5f) {
 			return 0;
