@@ -52,27 +52,20 @@
   .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
   .hero .meta { margin-top: 28px; font-size: 13px; color: var(--muted); }
 
-  .stage-box { position: relative; aspect-ratio: 1 / 1; max-height: 560px; width: 100%; border-radius: 20px; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, #1a2234 0%, #0b0f17 70%); border: 1px solid var(--line); }
-  #stage { position: absolute; inset: 0; }
+  /* O Ouvinte solto na página: sem caixa, só ele e a sombra. */
+  .stage-box { position: relative; width: 100%; }
+  #stage { position: relative; aspect-ratio: 1 / 1; max-height: 540px; width: 100%; cursor: grab; }
+  #stage:active { cursor: grabbing; }
   #stage canvas { display: block; width: 100%; height: 100%; }
-  .stage-ui { position: absolute; left: 12px; right: 12px; bottom: 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-  .stage-ui .mc-btn { justify-content: center; padding-left: 4px; padding-right: 4px; font-size: 14px; }
-  /* Botões no estilo dos menus do Minecraft: pedra cinza em relevo, contorno preto, texto com sombra. */
-  .mc-btn { position: relative; display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
-    padding: 5px 11px 7px; border: 2px solid #000; border-radius: 0;
-    background: #6f6f6f linear-gradient(#7a7a7a, #6a6a6a);
-    box-shadow: inset 2px 2px 0 #a9a9a9, inset -2px -3px 0 #4c4c4c;
-    font: 500 15px/1 "Pixelify Sans", monospace; color: #e0e0e0; text-shadow: 2px 2px 0 #383838;
-    image-rendering: pixelated; user-select: none; }
-  .mc-btn:hover { background: #7f87b8 linear-gradient(#8e96c9, #7179aa); box-shadow: inset 2px 2px 0 #b9c0ee, inset -2px -3px 0 #4f5585; color: #ffffa0; }
-  .mc-btn:active { box-shadow: inset 2px 2px 0 #4c4c4c, inset -2px -2px 0 #a9a9a9; padding: 6px 11px 6px; }
-  .mc-btn.on { background: #3f3f3f; box-shadow: inset 2px 2px 0 #222, inset -2px -2px 0 #5a5a5a; color: #fff; outline: 2px solid #fff; outline-offset: -4px; }
-  .mc-btn i { width: 8px; height: 8px; background: var(--c); box-shadow: 1px 1px 0 #000; display: inline-block; }
-  .sound-btn { position: absolute; top: 12px; right: 12px; z-index: 2; }
-  .stage-caption { position: absolute; top: 12px; left: 12px; max-width: 58%; padding: 5px 8px 6px; background: #100010f0; border: 2px solid #28007a;
-    font: 500 13px/1.3 "Pixelify Sans", monospace; color: #a8a8a8; }
-  .stage-caption b { color: #fff; font-weight: 500; display: block; font-size: 15px; }
-  #subtitle { position: absolute; left: 50%; bottom: 58px; transform: translateX(-50%); background: rgba(0,0,0,.72); padding: 3px 10px; font: 500 14px "Pixelify Sans", monospace; border-radius: 2px; opacity: 0; transition: opacity .3s; white-space: nowrap; pointer-events: none; }
+  .stage-ui { margin-top: 8px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
+  .st-btn { display: inline-flex; align-items: center; gap: 7px; padding: 4px 2px; background: none; border: 0; border-bottom: 1px solid transparent;
+    color: var(--muted); font: 500 13.5px Inter, sans-serif; cursor: pointer; transition: color .15s, border-color .15s; }
+  .st-btn:hover { color: var(--text); }
+  .st-btn.on { color: var(--text); border-bottom-color: var(--c); }
+  .st-btn i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+  .sound-btn { position: absolute; top: 0; right: 0; z-index: 2; color: var(--muted); font-size: 12.5px; }
+  .stage-caption { text-align: center; font-size: 14px; color: var(--muted); }
+  #subtitle { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); background: rgba(0,0,0,.6); padding: 3px 10px; font: 500 14px "Pixelify Sans", monospace; border-radius: 2px; opacity: 0; transition: opacity .3s; white-space: nowrap; color: #fff; }
 
   section { padding: 120px 0; scroll-margin-top: 60px; }
   section.alt { background: #0f1218; }
@@ -219,7 +212,6 @@
     .state-row p { grid-column: 1 / -1; grid-row: 2; }
   }
   @media (max-width: 520px) {
-    .stage-ui { grid-template-columns: repeat(3, 1fr); }
     .wrap { padding: 0 16px; }
     .steps, .traits, .fight { grid-template-columns: 1fr; }
     .item, .reward { flex-direction: column; align-items: flex-start; }
@@ -270,15 +262,15 @@
     </div>
     <div class="stage-box">
       <div id="stage"></div>
-      <div class="stage-caption"><b>O Ouvinte</b><span id="stateText">Ronda a sua área, orelhas balançando.</span></div>
-      <button class="mc-btn sound-btn" id="soundBtn">Som: Desligado</button>
+      <div class="stage-caption" id="stateText">Ronda a sua área, orelhas balançando.</div>
+      <button class="st-btn sound-btn" id="soundBtn">Som: Desligado</button>
       <div id="subtitle"></div>
       <div class="stage-ui">
-        <button class="mc-btn on" data-state="0" style="--c: var(--low)"><i></i>Patrulha</button>
-        <button class="mc-btn" data-state="1" style="--c: var(--mid)"><i></i>Investiga</button>
-        <button class="mc-btn" data-state="2" style="--c: #ff8a4c"><i></i>Alerta</button>
-        <button class="mc-btn" data-state="3" style="--c: var(--high)"><i></i>Caça</button>
-        <button class="mc-btn" data-state="4" style="--c: var(--accent)"><i></i>Atordoado</button>
+        <button class="st-btn on" data-state="0" style="--c: var(--low)"><i></i>Patrulha</button>
+        <button class="st-btn" data-state="1" style="--c: var(--mid)"><i></i>Investiga</button>
+        <button class="st-btn" data-state="2" style="--c: #ff8a4c"><i></i>Alerta</button>
+        <button class="st-btn" data-state="3" style="--c: var(--high)"><i></i>Caça</button>
+        <button class="st-btn" data-state="4" style="--c: var(--accent)"><i></i>Atordoado</button>
       </div>
     </div>
   </div>
@@ -496,7 +488,7 @@ stage.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x0b0f17, 9, 22);
 const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-camera.position.set(-3.4, 2.2, -8.6);
+camera.position.set(-2.9, 2.1, -7.4);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 1.55, 0);
 controls.enableDamping = true;
@@ -513,7 +505,7 @@ scene.add(moon);
 const rim = new THREE.DirectionalLight(0x6fb8ff, 1.0);
 rim.position.set(3, 3, 5);
 scene.add(rim);
-const ground = new THREE.Mesh(new THREE.CircleGeometry(6, 48), new THREE.MeshLambertMaterial({ color: 0x1a2416 }));
+const ground = new THREE.Mesh(new THREE.CircleGeometry(6, 48), new THREE.ShadowMaterial({ opacity: 0.45 }));
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
