@@ -74,14 +74,18 @@
   .stage-caption b { color: #fff; font-weight: 500; display: block; font-size: 15px; }
   #subtitle { position: absolute; left: 50%; bottom: 58px; transform: translateX(-50%); background: rgba(0,0,0,.72); padding: 3px 10px; font: 500 14px "Pixelify Sans", monospace; border-radius: 2px; opacity: 0; transition: opacity .3s; white-space: nowrap; pointer-events: none; }
 
-  section { padding: 88px 0; border-top: 1px solid var(--line); scroll-margin-top: 60px; }
+  section { padding: 120px 0; scroll-margin-top: 60px; }
+  section.alt { background: #0f1218; }
   .head { margin-bottom: 40px; max-width: 640px; }
+  .head.center { margin: 0 auto 64px; text-align: center; }
   .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
   .head h2 { font-size: clamp(32px, 4vw, 44px); }
   .head p { color: var(--muted); margin-top: 12px; font-size: 17px; }
 
-  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
-  .step { padding: 20px 0 0; border-top: 1px solid var(--line); }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+  .step { text-align: center; }
+  .step .ico { width: 48px; height: 48px; margin: 0 auto 18px; }
+  .step p { max-width: 24ch; margin: 0 auto; }
   .step .n { font: 700 14px "Pixelify Sans", monospace; color: var(--accent); }
   .step h3 { font-size: 20px; margin: 10px 0 8px; }
   .step p { color: var(--muted); font-size: 15px; }
@@ -92,8 +96,10 @@
   td { padding: 11px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
   td:last-child { text-align: right; color: var(--text); font-weight: 600; white-space: nowrap; padding-left: 16px; }
 
-  .tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; }
-  .tip { padding: 20px 0 0; border-top: 1px solid var(--line); }
+  .tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+  .tip { text-align: center; }
+  .tip .ico { width: 48px; height: 48px; margin: 0 auto 18px; }
+  .tip p { max-width: 28ch; margin: 0 auto; }
   .tip h3 { font-size: 19px; margin-bottom: 8px; }
   .tip p { color: var(--muted); font-size: 15px; }
   .tip b { color: var(--text); font-weight: 600; }
@@ -111,12 +117,14 @@
   .trait b { display: block; font: 700 22px "Pixelify Sans", monospace; margin-bottom: 6px; }
   .trait span { color: var(--muted); font-size: 14px; }
 
-  .fight { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 40px; }
-  .fight .card { padding: 20px 0 0; border-top: 1px solid var(--line); }
+  .fight { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+  .fight .card { text-align: center; }
+  .fight .card .ico { width: 44px; height: 44px; margin: 0 auto 16px; }
+  .fight .card p { max-width: 30ch; margin: 0 auto; }
   .fight .card h3 { font-size: 21px; margin-bottom: 8px; }
   .fight .card p { color: var(--muted); font-size: 15px; }
   .fight .card b { color: var(--text); font-weight: 600; }
-  .reward { margin-top: 48px; display: flex; gap: 28px; align-items: center; padding-top: 28px; border-top: 1px solid var(--line); }
+  .reward { margin: 96px auto 0; max-width: 640px; display: flex; gap: 28px; align-items: center; justify-content: center; }
   .reward h3 { font-size: 21px; margin-bottom: 6px; }
   .reward p { color: var(--muted); font-size: 15px; }
   .reward b { color: var(--text); font-weight: 600; }
@@ -136,20 +144,21 @@
     background: #8b8b8b; border: 3px solid; border-color: #373737 #fff #fff #373737; }
   .step .ico, .tip .ico, .fight .ico { margin-bottom: 14px; }
 
-  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-  .tiles h4 { margin: 0 0 18px; font: 600 15px Inter, sans-serif; display: flex; align-items: center; gap: 8px; }
+  .tiles { display: grid; gap: 48px; max-width: 640px; margin: 96px auto 0; }
+  .tiles h4 { margin: 0 0 20px; font: 600 15px Inter, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .tiles h4 i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
   .tile-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
   .tile { display: grid; justify-items: center; gap: 10px; text-align: center; font-size: 13px; color: var(--muted); line-height: 1.3; }
-  .tiles-foot { margin-top: 18px; font-size: 14px; color: var(--muted); }
+  .tiles-foot { margin-top: 40px; font-size: 14px; color: var(--muted); text-align: center; }
 
-  .meters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; }
-  .meter { display: flex; align-items: center; gap: 16px; }
-  .meter svg { width: 76px; height: 76px; flex-shrink: 0; }
+  .meters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; max-width: 860px; margin: 0 auto; }
+  .meter { display: grid; justify-items: center; gap: 14px; text-align: center; }
+  .meter svg { width: 104px; height: 104px; }
   .meter b { display: block; font: 700 19px "Pixelify Sans", monospace; color: var(--c); }
   .meter span { color: var(--muted); font-size: 14.5px; }
 
-  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 56px; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 96px; }
+  .states { max-width: 860px; margin: 0 auto; }
   figure { margin: 0; }
   figure img { width: 100%; display: block; border-radius: 12px; border: 1px solid var(--line); image-rendering: auto; }
   figcaption { margin-top: 10px; font-size: 14px; color: var(--muted); }
@@ -209,16 +218,16 @@
   @media (max-width: 900px) {
     nav ul { display: none; }
     .hero .wrap, .two, .install, .bell { grid-template-columns: 1fr; }
-    .steps, .stats, .traits { grid-template-columns: repeat(2, 1fr); }
-    .tips, .items, .fight, .lists, .tiles, .meters, .shots { grid-template-columns: 1fr; }
+    .steps, .traits, .fight { grid-template-columns: repeat(2, 1fr); }
+    section { padding: 80px 0; }
+    .tips, .items, .meters, .shots { grid-template-columns: 1fr; }
     .state-row { grid-template-columns: 1fr auto; }
     .state-row p { grid-column: 1 / -1; grid-row: 2; }
-    section { padding: 64px 0; }
   }
   @media (max-width: 520px) {
     .stage-ui { grid-template-columns: repeat(3, 1fr); }
     .wrap { padding: 0 16px; }
-    .steps, .stats, .traits { grid-template-columns: 1fr; }
+    .steps, .traits, .fight { grid-template-columns: 1fr; }
     .item, .reward { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -230,11 +239,11 @@
     <a class="logo" href="#top">Hushfall</a>
     <ul>
       <li><a href="#como-jogar">Como jogar</a></li>
+      <li><a href="#barulho">Barulho</a></li>
       <li><a href="#criatura">O Ouvinte</a></li>
       <li><a href="#combate">Combate</a></li>
       <li><a href="#sino">O Sino</a></li>
       <li><a href="#itens">Itens</a></li>
-      <li><a href="#instalar">Instalar</a></li>
     </ul>
     <div class="dl right">
       <button class="btn small" aria-haspopup="true" aria-expanded="false">Baixar <span class="caret">▼</span></button>
@@ -283,9 +292,9 @@
 
 <section id="como-jogar">
   <div class="wrap">
-    <div class="head">
+    <div class="head center">
       <div class="eyebrow">Como jogar</div>
-      <h2>De dia você constrói. De noite, você escuta.</h2>
+      <h2>De dia você constrói.<br>De noite, você escuta.</h2>
       <p>Ele não enxerga nada, mas ouve tudo.</p>
     </div>
     <div class="steps">
@@ -294,14 +303,23 @@
       <div class="step"><img class="ico" data-icon="heart" alt=""><h3>Coração disparou?</h3><p>Ele está perto. Agache e espere passar.</p></div>
       <div class="step"><img class="ico" data-icon="iron_door" alt=""><h3>Ouviu o rugido?</h3><p>Corra e se tranque atrás de ferro.</p></div>
     </div>
+  </div>
+</section>
 
+<section id="barulho" class="alt">
+  <div class="wrap">
+    <div class="head center">
+      <div class="eyebrow">O barulho</div>
+      <h2>Fique de olho no medidor</h2>
+      <p>Quanto mais cheio o anel, mais ele se interessa por você.</p>
+    </div>
     <div class="meters">
       <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" stroke-dasharray="49 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Baixinho</b><span>Ele vem rondar a região.</span></div></div>
       <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" stroke-dasharray="107 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Audível</b><span>Ele vem investigar, de onde estiver.</span></div></div>
       <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" stroke-dasharray="176 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Alto!</b><span>Ele ruge e caça você.</span></div></div>
     </div>
 
-    <div class="tiles" style="margin-top:64px">
+    <div class="tiles">
       <div style="--c: var(--high)"><h4><i></i>Faz barulho</h4><div class="tile-row">
         <div class="tile"><span class="slot-ico"><img class="ico" data-icon="rabbit_foot" alt=""></span>Correr e pular</div>
         <div class="tile"><span class="slot-ico"><img class="ico" data-icon="pickaxe" alt=""></span>Quebrar blocos</div>
@@ -318,7 +336,15 @@
       </div></div>
     </div>
     <p class="tiles-foot">Chuva e trovoada abafam tudo.</p>
+  </div>
+</section>
 
+<section id="dicas">
+  <div class="wrap">
+    <div class="head center">
+      <div class="eyebrow">Dicas</div>
+      <h2>Para sobreviver à noite</h2>
+    </div>
     <div class="tips">
       <div class="tip"><img class="ico" data-icon="iron_door" alt=""><h3>Em casa</h3><p>Ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
       <div class="tip"><img class="ico" data-icon="bed" alt=""><h3>Hora de dormir</h3><p>Em silêncio, ele nem sabe que você está ali. <b>Pode deitar.</b></p></div>
@@ -327,9 +353,9 @@
   </div>
 </section>
 
-<section id="criatura">
+<section id="criatura" class="alt">
   <div class="wrap">
-    <div class="head">
+    <div class="head center">
       <div class="eyebrow">A criatura</div>
       <h2>O Ouvinte</h2>
       <p>Surge longe de você ao anoitecer e se enterra quando o sol nasce.</p>
@@ -337,12 +363,6 @@
     <div class="shots">
       <figure><img data-shot="alerta" alt="O Ouvinte rugindo na chuva, com o medidor no vermelho"><figcaption><b>Ele ouviu você.</b> O rugido é o aviso.</figcaption></figure>
       <figure><img data-shot="de_perto" alt="O Ouvinte farejando o jogador de pertinho"><figcaption><b>Em silêncio</b>, ele fareja e segue em frente.</figcaption></figure>
-    </div>
-    <div class="traits">
-      <div class="trait"><b>Cego</b><span>Só o som importa.</span></div>
-      <div class="trait"><b>Único</b><span>Só existe um no mundo.</span></div>
-      <div class="trait"><b>Veloz</b><span>Corre mais que você.</span></div>
-      <div class="trait"><b>Avisa</b><span>Sempre dá um sinal antes.</span></div>
     </div>
     <div class="states">
       <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
@@ -356,7 +376,7 @@
 
 <section id="combate">
   <div class="wrap">
-    <div class="head">
+    <div class="head center">
       <div class="eyebrow">Combate</div>
       <h2>Dá para vencer. Só não de primeira.</h2>
       <p>Ele bate forte, mas cada golpe seu fica marcado nele.</p>
@@ -374,7 +394,7 @@
   </div>
 </section>
 
-<section id="sino">
+<section id="sino" class="alt">
   <div class="wrap bell">
     <div class="bell-shot">
       <figure><img data-shot="sino" alt="O Ouvinte atordoado depois do toque do Sino Ensurdecedor"><figcaption><b>Tonto com o sino.</b> Hora de sair dali.</figcaption></figure>
@@ -399,7 +419,7 @@
 
 <section id="itens">
   <div class="wrap">
-    <div class="head">
+    <div class="head center">
       <div class="eyebrow">Itens</div>
       <h2>Ferramentas para o silêncio</h2>
       <p>Passe o mouse sobre os quadradinhos para ver o nome de cada ingrediente.</p>
@@ -411,7 +431,7 @@
   </div>
 </section>
 
-<section id="instalar">
+<section id="instalar" class="alt">
   <div class="wrap install">
     <div>
       <div class="head" style="margin-bottom:28px">
