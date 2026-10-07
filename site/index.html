@@ -242,24 +242,7 @@
   .cta h3 { font-size: 26px; margin-bottom: 8px; }
   .cta p { color: var(--muted); margin-bottom: 22px; }
 
-  /* menu de download */
-  .dl { position: relative; display: inline-block; }
-  .dl-menu { position: absolute; top: calc(100% + 8px); left: 0; z-index: 30; width: 300px; padding: 6px;
-    background: #161b25; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 50px rgba(0,0,0,.5);
-    display: none; text-align: left; }
-  .dl.right .dl-menu { left: auto; right: 0; }
-  .dl.center .dl-menu { left: 50%; transform: translateX(-50%); }
-  .dl.open .dl-menu { display: block; }
-  .dl-for { margin: 4px 12px 6px; font-size: 12px; color: var(--muted); }
-  .dl-menu a { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 10px; text-decoration: none; }
-  .dl-menu a:hover, .dl-menu a:focus-visible { background: rgba(255,255,255,.06); outline: none; }
-  .dl-menu .ext { font: 700 12px "Pixelify Sans", monospace; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
-    background: rgba(127,214,232,.12); color: var(--accent); flex-shrink: 0; }
-  .dl-menu b { display: block; font-weight: 600; font-size: 14px; color: var(--text); }
-  .dl-menu small { color: var(--muted); font-size: 12.5px; }
-  .dl-menu .badge { font-size: 10.5px; color: var(--low); border: 1px solid rgba(111,207,138,.4); border-radius: 99px; padding: 0 6px; margin-left: 6px; vertical-align: 1px; }
-  .dl-menu .all { display: block; text-align: center; padding: 8px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 4px; border-radius: 0; }
-  .btn .caret { font-size: 10px; opacity: .7; }
+  .btn .ext-ico { width: 14px; height: 14px; opacity: .7; }
 
   footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
   footer .wrap { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
@@ -293,15 +276,7 @@
       <li><a href="#sino">O Sino</a></li>
       <li><a href="#itens">Itens</a></li>
     </ul>
-    <div class="dl right">
-      <button class="btn small" aria-haspopup="true" aria-expanded="false">Baixar <span class="caret">▼</span></button>
-      <div class="dl-menu" role="menu">
-        <p class="dl-for">Para Minecraft Java 26.3 com Fabric</p>
-        <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.zip" download><span class="ext">.zip</span><span><b>Mod + Fabric API<span class="badge">recomendado</span></b><small>Pronto para a pasta mods, com instruções</small></span></a>
-        <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.jar" download><span class="ext">.jar</span><span><b>Só o mod</b><small>Se você já tem o Fabric API</small></span></a>
-        <a class="all" href="https://github.com/pedrorreiro/hushfall/releases" target="_blank" rel="noopener">Todas as versões</a>
-      </div>
-    </div>
+    <a class="btn small" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">Baixar <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
   </div>
 </nav>
 
@@ -314,15 +289,7 @@
       <p class="tag">À noite, uma criatura cega caça pelo som. <b>Fique em silêncio.</b></p>
       <div class="actions">
         <a class="btn primary" href="#como-jogar">Como jogar</a>
-        <div class="dl">
-      <button class="btn" aria-haspopup="true" aria-expanded="false">Baixar o mod <span class="caret">▼</span></button>
-      <div class="dl-menu" role="menu">
-        <p class="dl-for">Para Minecraft Java 26.3 com Fabric</p>
-        <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.zip" download><span class="ext">.zip</span><span><b>Mod + Fabric API<span class="badge">recomendado</span></b><small>Pronto para a pasta mods, com instruções</small></span></a>
-        <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.jar" download><span class="ext">.jar</span><span><b>Só o mod</b><small>Se você já tem o Fabric API</small></span></a>
-        <a class="all" href="https://github.com/pedrorreiro/hushfall/releases" target="_blank" rel="noopener">Todas as versões</a>
-      </div>
-    </div>
+        <a class="btn" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">Baixar no CurseForge <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
       </div>
       <div class="you-noise" id="youNoise">
         <svg viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle class="fill" id="youRing" cx="38" cy="38" r="30" fill="none" stroke="var(--low)" stroke-width="8" stroke-linecap="round" stroke-dasharray="189" stroke-dashoffset="189" transform="rotate(-90 38 38)"/></svg>
@@ -459,10 +426,9 @@
         <p>A sua carta na manga quando ele chega perto demais.</p>
       </div>
       <ol class="install-steps">
-        <li><span>Espere ele <b>chegar perto</b>.</span></li>
-        <li><span>Clique com o <b>botão direito</b> para tocar.</span></li>
-        <li><span>Ele fica <b>tonto</b>: fuja ou ataque.</span></li>
-        <li><span>Quando passar, ele vai <b>até onde o sino tocou</b>. Saia dali.</span></li>
+        <li><span>Abra a <a href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">página do Hushfall no CurseForge</a>.</span></li>
+        <li><span>Clique em <b>Install</b> para instalar pelo app do CurseForge. Ele já cria o perfil com o Fabric e baixa o <b>Fabric API</b> junto.</span></li>
+        <li><span>Sem o app: baixe o arquivo, coloque na pasta <code>mods</code> junto com o <b>Fabric API</b> e abra o jogo pelo perfil do <b>Fabric</b> para o Minecraft <b>26.3</b>.</span></li>
       </ol>
       <p class="note">Funciona <b>uma vez por noite</b>.</p>
     </div>
@@ -498,16 +464,8 @@
     </div>
     <div class="cta">
       <h3>Pronto para ficar quieto?</h3>
-      <p>Código aberto, feito por fãs.</p>
-      <div class="dl center">
-      <button class="btn primary" aria-haspopup="true" aria-expanded="false">Baixar o Hushfall <span class="caret">▼</span></button>
-      <div class="dl-menu" role="menu">
-        <p class="dl-for">Para Minecraft Java 26.3 com Fabric</p>
-        <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.zip" download><span class="ext">.zip</span><span><b>Mod + Fabric API<span class="badge">recomendado</span></b><small>Pronto para a pasta mods, com instruções</small></span></a>
-        <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.jar" download><span class="ext">.jar</span><span><b>Só o mod</b><small>Se você já tem o Fabric API</small></span></a>
-        <a class="all" href="https://github.com/pedrorreiro/hushfall/releases" target="_blank" rel="noopener">Todas as versões</a>
-      </div>
-    </div>
+      <p>Para Minecraft Java 26.3 com Fabric.</p>
+      <a class="btn primary" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">Baixar no CurseForge <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
       <p style="margin:14px 0 0;font-size:13px"><a class="muted" href="https://github.com/pedrorreiro/hushfall" target="_blank" rel="noopener">Ver no GitHub</a></p>
     </div>
   </div>
@@ -1027,21 +985,6 @@ const spy = new IntersectionObserver(entries => {
   }
 }, { rootMargin: "-45% 0px -50% 0px" });
 document.querySelectorAll("section[id], header[id]").forEach(sec => spy.observe(sec));
-
-// ------------------------------------------------------------------ menu de download
-document.querySelectorAll(".dl").forEach(dl => {
-  const btn = dl.querySelector("button");
-  btn.addEventListener("click", e => {
-    e.stopPropagation();
-    const open = !dl.classList.contains("open");
-    document.querySelectorAll(".dl.open").forEach(o => { o.classList.remove("open"); o.querySelector("button").setAttribute("aria-expanded", "false"); });
-    dl.classList.toggle("open", open);
-    btn.setAttribute("aria-expanded", String(open));
-  });
-  dl.querySelectorAll(".dl-menu a").forEach(a => a.addEventListener("click", () => dl.classList.remove("open")));
-});
-document.addEventListener("click", () => document.querySelectorAll(".dl.open").forEach(o => o.classList.remove("open")));
-document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".dl.open").forEach(o => o.classList.remove("open")); });
 
 // ------------------------------------------------------------------ receitas (estilo wiki)
 const RECIPES = {
