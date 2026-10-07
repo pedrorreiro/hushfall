@@ -44,13 +44,41 @@
   .btn.primary:hover { background: #fff; }
   .btn.small { padding: 8px 14px; font-size: 14px; }
 
-  .hero { padding: 56px 0 72px; }
+  .hero { position: relative; overflow: hidden; min-height: calc(100svh - 60px); display: grid; align-items: center; padding: 40px 0 88px; }
+  /* céu: estrelas pequenas piscando e um brilho de lua atrás do Ouvinte */
+  .hero::before, .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+  .hero::before { opacity: .55; animation: twinkle 6s ease-in-out infinite alternate;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 27% 72%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 41% 9%, #cfe 50%, transparent 51%), radial-gradient(1.5px 1.5px at 58% 28%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 66% 84%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 79% 13%, #dff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 91% 56%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 7% 61%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 35% 40%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 86% 33%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 50% 92%, #cfe 50%, transparent 51%), radial-gradient(1px 1px at 19% 90%, #fff 50%, transparent 51%); }
+  .hero::after { background: radial-gradient(circle at 74% 38%, rgba(127,214,232,.09), transparent 38%); }
+  @keyframes twinkle { from { opacity: .3; } to { opacity: .65; } }
+  .hero .wrap { position: relative; z-index: 1; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 99px;
+    font-size: 12.5px; color: var(--muted); margin-bottom: 22px; }
+  .chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--low); box-shadow: 0 0 8px var(--low); animation: blink 2.4s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: .35; } }
+  .hero h1 span { display: inline-block; transition: transform .08s linear; }
+  #wave { display: block; width: 100%; max-width: 440px; height: 44px; margin-top: 6px; }
+  .you-noise { display: flex; align-items: center; gap: 12px; margin-top: 36px; font-size: 13.5px; color: var(--muted); }
+  .you-noise svg { width: 34px; height: 34px; flex-shrink: 0; }
+  .you-noise .fill { transition: stroke .3s; }
+  .you-noise b { color: var(--c, var(--text)); font-weight: 600; transition: color .3s; }
+  .you-noise small { display: block; font-size: 12.5px; opacity: .8; }
+  .scroll-hint { position: absolute; left: 50%; bottom: 22px; z-index: 1; width: 28px; height: 28px; margin-left: -14px; color: var(--muted);
+    animation: hint 2s ease-in-out infinite; }
+  .scroll-hint:hover { color: var(--text); }
+  @keyframes hint { 50% { transform: translateY(6px); } }
+  @media (prefers-reduced-motion: reduce) { .hero::before, .chip i, .scroll-hint { animation: none; } }
   .hero .wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
   .hero h1 { font-size: clamp(48px, 8vw, 84px); letter-spacing: .01em; }
   .hero .tag { font-size: 20px; color: var(--muted); margin: 18px 0 32px; max-width: 30ch; }
   .hero .tag b { color: var(--text); font-weight: 600; }
   .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
-  .hero .meta { margin-top: 28px; font-size: 13px; color: var(--muted); }
 
   /* O Ouvinte solto na página: sem caixa, só ele e a sombra. */
   .stage-box { position: relative; width: 100%; }
@@ -278,7 +306,9 @@
 <header class="hero" id="top">
   <div class="wrap">
     <div>
-      <h1>Hushfall</h1>
+      <span class="chip"><i></i>Mod para Minecraft Java 26.3</span>
+      <h1 id="title">Hushfall</h1>
+      <canvas id="wave" aria-hidden="true"></canvas>
       <p class="tag">À noite, uma criatura cega caça pelo som. <b>Fique em silêncio.</b></p>
       <div class="actions">
         <a class="btn primary" href="#como-jogar">Como jogar</a>
@@ -291,7 +321,10 @@
       </div>
     </div>
       </div>
-      <p class="meta">Mod Fabric · Minecraft Java 26.3 · também conhecido como Silêncio Total</p>
+      <div class="you-noise" id="youNoise">
+        <svg viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle class="fill" id="youRing" cx="38" cy="38" r="30" fill="none" stroke="var(--low)" stroke-width="8" stroke-linecap="round" stroke-dasharray="189" stroke-dashoffset="189" transform="rotate(-90 38 38)"/></svg>
+        <div><span>Seu barulho: <b id="youLevel">Silêncio</b></span><small>Mexa o mouse perto dele… com cuidado.</small></div>
+      </div>
     </div>
     <div class="stage-box">
       <div id="stage"></div>
@@ -307,14 +340,15 @@
       </div>
     </div>
   </div>
+  <a class="scroll-hint" href="#como-jogar" aria-label="Rolar para baixo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></a>
 </header>
 
 <section id="como-jogar">
   <div class="wrap">
     <div class="head center">
       <div class="eyebrow">Como jogar</div>
-      <h2>De dia você constrói.<br>De noite, você escuta.</h2>
-      <p>Ele não enxerga nada, mas ouve tudo.</p>
+      <h2>Ele não vê. Ele ouve.</h2>
+      <p>Quatro coisas para lembrar quando escurecer.</p>
     </div>
     <div class="steps">
       <div class="step"><img class="ico" data-icon="moon" alt=""><h3>Nem toda noite</h3><p>Ao anoitecer, uma mensagem avisa se ele vem.</p></div>
@@ -855,11 +889,71 @@ renderer.setAnimationLoop(() => {
     if (speed > 0 && step !== lastStep) play("step", { volume: mode === 3 ? 0.5 : 0.25, ripple: false });
     lastStep = step;
   }
-  listener.rotation.y += dt * 0.25 * (1 - attention);
+  // Sem giro sozinho: sem ninguém fazendo barulho, ele volta devagar a ficar de frente para você.
+  if (!reduceMotion) {
+    let back = Math.atan2(camera.position.x - controls.target.x, camera.position.z - controls.target.z) - (listener.rotation.y + Math.PI);
+    back = Math.atan2(Math.sin(back), Math.cos(back));
+    listener.rotation.y += back * Math.min(1, dt * 0.8) * (1 - attention);
+  }
   updateRipples(dt);
   controls.update();
   renderer.render(scene, camera);
 });
+
+// ------------------------------------------------------------------ topo: onda sonora, seu barulho, título
+const title = $("#title");
+title.innerHTML = [...title.textContent].map(c => `<span>${c}</span>`).join("");
+const letters = [...title.children];
+const wave = $("#wave"), wctx = wave.getContext("2d");
+const youRing = $("#youRing"), youLevel = $("#youLevel");
+const LEVELS = [[0.05, "Silêncio", "var(--muted)"], [0.3, "Baixinho", "var(--low)"], [0.7, "Audível", "var(--mid)"], [2, "Alto!", "var(--high)"]];
+const LEVEL_RGB = { "var(--muted)": "141,150,166", "var(--low)": "111,207,138", "var(--mid)": "232,189,74", "var(--high)": "255,90,100" };
+let heroVisible = true, waveT = 0, lastLevel = "", nextRoar = 0, roarTimer = null;
+new IntersectionObserver(e => heroVisible = e[0].isIntersecting).observe(hero);
+function sizeWave() {
+  const r = wave.getBoundingClientRect(), dpr = Math.min(devicePixelRatio, 2);
+  wave.width = r.width * dpr; wave.height = r.height * dpr; wctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+new ResizeObserver(sizeWave).observe(wave);
+function heroFrame(t) {
+  requestAnimationFrame(heroFrame);
+  if (!heroVisible) return;
+  const dt = Math.min(0.05, (t - waveT) / 1000 || 0); waveT = t;
+  if (!visible) mouseNoise = Math.max(0, mouseNoise - dt * 0.35);
+  const n = mouseNoise;
+  const [, label, color] = LEVELS.find(l => n < l[0]);
+  // Medidor "seu barulho".
+  youRing.style.strokeDashoffset = 189 * (1 - Math.min(1, n));
+  youRing.style.stroke = color === "var(--muted)" ? "var(--low)" : color;
+  if (label !== lastLevel) { youLevel.textContent = label; youLevel.style.setProperty("--c", color); lastLevel = label; }
+  // Onda: quase reta em silêncio, cresce com o barulho.
+  const w = wave.clientWidth, h = wave.clientHeight, mid = h / 2;
+  wctx.clearRect(0, 0, w, h);
+  const amp = reduceMotion ? 1 : 1 + n * (h / 2 - 3);
+  const time = t / 1000;
+  wctx.beginPath();
+  for (let x = 0; x <= w; x += 2) {
+    const k = x / w, env = Math.sin(Math.PI * k);
+    const y = mid + env * amp * (Math.sin(k * 22 + time * 6) * 0.6 + Math.sin(k * 51 - time * 9) * 0.3 + Math.sin(k * 7 + time * 2) * 0.25);
+    x ? wctx.lineTo(x, y) : wctx.moveTo(x, y);
+  }
+  wctx.strokeStyle = `rgba(${LEVEL_RGB[color]},${0.35 + n * 0.6})`;
+  wctx.lineWidth = 1.6;
+  wctx.stroke();
+  // Título treme quando o barulho está alto.
+  const shake = reduceMotion ? 0 : Math.max(0, n - 0.6) * 6;
+  letters.forEach(l => l.style.transform = shake ? `translate(${(Math.random() - .5) * shake}px, ${(Math.random() - .5) * shake}px)` : "");
+  // Alto demais: ele te ouviu. Alerta e rugido, como no jogo.
+  if (n >= 0.92 && mode <= 1 && time >= nextRoar) {
+    nextRoar = time + 8;
+    stopAutoCycle();
+    emitRipple(0xff5a64, 1.4);
+    setMode(2);
+    clearTimeout(roarTimer);
+    roarTimer = setTimeout(() => { if (mode === 2) setMode(0); }, 3500);
+  }
+}
+requestAnimationFrame(heroFrame);
 
 // ------------------------------------------------------------------ aparecer ao rolar
 const revealGroups = [".head", ".steps > *", ".meters > *", ".tiles > *", ".tiles-foot", ".tips > *", ".states > *",
