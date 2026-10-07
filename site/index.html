@@ -797,19 +797,11 @@ function setMode(m) {
   name.textContent = STATE_NAMES[m];
   playState();
 }
-// Sozinho, ele passa pelos estados para mostrar tudo o que faz. Para quando a pessoa escolhe um ou liga o som.
-let autoCycle = setInterval(() => {
-  if (soundOn) return stopAutoCycle();
-  if (document.hidden || window.scrollY > innerHeight) return;
-  setMode((mode + 1) % STATE_NAMES.length);
-}, 5000);
-function stopAutoCycle() { clearInterval(autoCycle); autoCycle = null; }
-const step = d => { stopAutoCycle(); chase = null; setMode((mode + d + STATE_NAMES.length) % STATE_NAMES.length); };
+const step = d => { chase = null; setMode((mode + d + STATE_NAMES.length) % STATE_NAMES.length); };
 $("#statePrev").onclick = () => step(-1);
 $("#stateNext").onclick = () => step(1);
 // "Ver e ouvir" na seção da criatura: liga o som, troca o estado e sobe até o modelo.
 document.querySelectorAll("[data-sound]").forEach(b => b.onclick = async () => {
-  stopAutoCycle();
   await enableSound();
   setMode(+b.dataset.sound);
   $("#top").scrollIntoView({ behavior: "smooth" });
@@ -951,7 +943,6 @@ function heroFrame(t) {
   letters.forEach(l => l.style.transform = shake ? `translate(${(Math.random() - .5) * shake}px, ${(Math.random() - .5) * shake}px)` : "");
   // Alto demais: ele te ouviu. Alerta e rugido, como no jogo.
   if (!chase && n >= 0.92 && mode <= 1 && time >= nextRoar) {
-    stopAutoCycle();
     emitRipple(0xff5a64, 1.4);
     setMode(2);
     chase = "alert"; chaseSince = time;
