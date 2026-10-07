@@ -154,6 +154,37 @@
   .bell-recipe { display: grid; justify-items: center; gap: 14px; }
   .bell-recipe small { color: var(--muted); font-size: 13.5px; text-align: center; }
   .bell-recipe small b { color: var(--text); font-weight: 600; }
+  /* ---------- animações */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--d, 0) * 80ms); }
+  .reveal.in { opacity: 1; transform: none; }
+  .step .ico, .tip .ico, .fight .card .ico, .tile .ico { transition: transform .3s cubic-bezier(.3,1.7,.5,1); }
+  .step:hover .ico, .tip:hover .ico, .fight .card:hover .ico { transform: translateY(-5px) rotate(-8deg) scale(1.12); }
+  .tile { transition: padding-left .2s ease, color .2s; }
+  .tile:hover { padding-left: 6px; }
+  .tile:hover .ico { transform: rotate(-10deg) scale(1.15); }
+  .meter svg { transition: transform .35s cubic-bezier(.3,1.6,.5,1); }
+  .meter:hover svg { transform: scale(1.08); }
+  .meter .fill { transition: stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1) .2s; }
+  .meter:hover .fill { animation: meter-pulse .9s ease-in-out infinite; }
+  @keyframes meter-pulse { 50% { opacity: .55; } }
+  .state-row { transition: background .2s; }
+  .state-row:hover { background: rgba(255,255,255,.02); }
+  .state-row h3 i { transition: box-shadow .25s; }
+  .state-row:hover h3 i { box-shadow: 0 0 0 5px color-mix(in srgb, var(--c) 25%, transparent); }
+  nav ul a { position: relative; }
+  nav ul a.active { color: var(--text); }
+  nav ul a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 1px; background: var(--text); transform: scaleX(0); transition: transform .25s; }
+  nav ul a.active::after { transform: scaleX(1); }
+  /* clique = barulho: uma onda sai de onde você clicou */
+  .click-ring { position: fixed; z-index: 60; pointer-events: none; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+    border: 1.5px solid var(--accent); animation: click-ring .8s ease-out forwards; }
+  @keyframes click-ring { from { opacity: .8; } to { transform: scale(5); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .click-ring { display: none; }
+    .meter .fill { transition: none; }
+  }
+
   .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 40px; }
   .item { display: flex; gap: 22px; align-items: center; padding: 24px 0 0; border-top: 1px solid var(--line); }
   .item h3 { font-size: 20px; margin-bottom: 6px; }
@@ -302,9 +333,9 @@
       <p>Quanto mais cheio o anel, mais ele se interessa por você.</p>
     </div>
     <div class="meters">
-      <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" stroke-dasharray="49 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Baixinho</b><span>Ele só ouve de perto e vem rondar.</span></div></div>
-      <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" stroke-dasharray="107 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Audível</b><span>Ele ouve de qualquer lugar e vem investigar.</span></div></div>
-      <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" stroke-dasharray="176 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Alto!</b><span>Ele ruge e vem caçar você.</span></div></div>
+      <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="49" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Baixinho</b><span>Ele só ouve de perto e vem rondar.</span></div></div>
+      <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="107" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Audível</b><span>Ele ouve de qualquer lugar e vem investigar.</span></div></div>
+      <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="176" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Alto!</b><span>Ele ruge e vem caçar você.</span></div></div>
     </div>
 
     <div class="tiles">
@@ -577,6 +608,8 @@ P.rightLeg = part(space, [-1.5, 0, -1.5, 3, 11, 3, 40, 15, true], [-2.2, 13, 0.5
 scene.add(listener);
 
 const sin = Math.sin, cos = Math.cos;
+/** Sinal do giro da cabeça em y (o modelo é montado espelhado em space.scale). */
+const HEAD_YAW_SIGN = 1;
 function setupAnim(mode, age, walkPos, walkSpeed) {
   for (const p of Object.values(P)) { const b = p.userData.base; p.rotation.set(b.x, b.y, b.z); }
   const legSwing = cos(walkPos * 0.6662) * 1.3 * walkSpeed;
@@ -755,6 +788,53 @@ resize();
 
 const clock = new THREE.Clock();
 let age = 0, walkPos = 0, lastStep = 0, visible = true;
+
+// ------------------------------------------------------------------ ele ouve o seu mouse
+// Mexer o mouse perto dele faz "barulho": ele vira a cabeça para o cursor e levanta as orelhas.
+// Mexendo rápido, ele estala as orelhas (ondas de som). Parado, perde o interesse.
+const hero = $("#top");
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let mouseNoise = 0, attention = 0, lookX = 0, lookY = 0, lastPointer = null, nextMouseClick = 0;
+hero.addEventListener("pointermove", e => {
+  const r = stage.getBoundingClientRect();
+  lookX = Math.max(-1.5, Math.min(1.5, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+  lookY = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height * 0.3)) / (r.height / 2)));
+  if (lastPointer) {
+    const dist = Math.hypot(e.clientX - lastPointer.x, e.clientY - lastPointer.y);
+    mouseNoise = Math.min(1, mouseNoise + dist / 900);
+  }
+  lastPointer = { x: e.clientX, y: e.clientY };
+});
+hero.addEventListener("pointerleave", () => { lastPointer = null; });
+let headYaw = 0, headPitch = 0;
+function lookAtMouse(dt, now) {
+  if (reduceMotion) return;
+  mouseNoise = Math.max(0, mouseNoise - dt * 0.35);
+  const target = mode <= 1 ? Math.min(1, mouseNoise * 4) : 0;
+  attention += (target - attention) * Math.min(1, dt * 3);
+  // Para onde o cursor está, no mundo: a direção da câmera desviada pela posição do mouse.
+  const cam = Math.atan2(camera.position.x - controls.target.x, camera.position.z - controls.target.z);
+  // O corpo também se vira devagar para o som; a cabeça faz o resto.
+  // De frente (rotação 0) ele olha para -z, por isso o + PI.
+  let turn = cam - lookX * 0.45 - (listener.rotation.y + Math.PI);
+  turn = Math.atan2(Math.sin(turn), Math.cos(turn));
+  listener.rotation.y += turn * Math.min(1, dt * 1.5) * attention;
+  let yaw = cam - lookX * 0.9 - (listener.rotation.y + Math.PI);
+  yaw = Math.atan2(Math.sin(yaw), Math.cos(yaw));
+  yaw = Math.max(-1.1, Math.min(1.1, yaw));
+  headYaw += (yaw - headYaw) * Math.min(1, dt * 6);
+  headPitch += (lookY * 0.35 - headPitch) * Math.min(1, dt * 6);
+  P.head.rotation.y += HEAD_YAW_SIGN * headYaw * attention;
+  P.head.rotation.x += headPitch * attention;
+  // Orelhas em pé, viradas para o som.
+  P.leftEar.rotation.z += (0.12 - P.leftEar.rotation.z) * attention * 0.8;
+  P.rightEar.rotation.z += (-0.12 - P.rightEar.rotation.z) * attention * 0.8;
+  if (mouseNoise > 0.5 && now >= nextMouseClick && mode <= 1) {
+    nextMouseClick = now + 1.1;
+    emitRipple(mouseNoise > 0.8 ? 0xff8a4c : 0xe8bd4a, 0.8);
+    play("click", { volume: 0.6, ripple: false });
+  }
+}
 new IntersectionObserver(e => visible = e[0].isIntersecting).observe(stage);
 renderer.setAnimationLoop(() => {
   const dt = Math.min(clock.getDelta(), 0.1);
@@ -764,6 +844,7 @@ renderer.setAnimationLoop(() => {
   const speed = mode === 2 || mode === 4 ? 0 : mode === 3 ? 1 : 0.6;
   walkPos += dt * 20 * speed * (mode === 3 ? 1.6 : 1);
   setupAnim(mode, age, walkPos, speed);
+  lookAtMouse(dt, now);
   if (soundOn) {
     const s = STATE_SOUNDS[mode];
     if (s.loop.length && now >= nextAmbient) {
@@ -774,11 +855,57 @@ renderer.setAnimationLoop(() => {
     if (speed > 0 && step !== lastStep) play("step", { volume: mode === 3 ? 0.5 : 0.25, ripple: false });
     lastStep = step;
   }
-  listener.rotation.y += dt * 0.25;
+  listener.rotation.y += dt * 0.25 * (1 - attention);
   updateRipples(dt);
   controls.update();
   renderer.render(scene, camera);
 });
+
+// ------------------------------------------------------------------ aparecer ao rolar
+const revealGroups = [".head", ".steps > *", ".meters > *", ".tiles > *", ".tiles-foot", ".tips > *", ".states > *",
+  ".fight > *", ".reward", ".bell > *", ".items > *", ".install > *"];
+const revealer = new IntersectionObserver(entries => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add("in");
+    for (const fill of e.target.querySelectorAll(".fill")) fill.style.strokeDashoffset = 195 - fill.dataset.v;
+    revealer.unobserve(e.target);
+  }
+}, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+for (const sel of revealGroups) {
+  document.querySelectorAll(sel).forEach(el => {
+    const siblings = [...el.parentElement.children].filter(c => c.matches(sel));
+    el.style.setProperty("--d", Math.max(0, siblings.indexOf(el)));
+    el.classList.add("reveal");
+    revealer.observe(el);
+  });
+}
+
+// ------------------------------------------------------------------ clique = barulho
+if (!reduceMotion) {
+  document.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return;
+    for (let i = 0; i < 2; i++) {
+      const ring = document.createElement("span");
+      ring.className = "click-ring";
+      ring.style.left = e.clientX + "px";
+      ring.style.top = e.clientY + "px";
+      ring.style.animationDelay = i * 0.15 + "s";
+      document.body.appendChild(ring);
+      ring.addEventListener("animationend", () => ring.remove());
+    }
+  });
+}
+
+// ------------------------------------------------------------------ menu acende a seção atual
+const navLinks = [...document.querySelectorAll("nav ul a")];
+const spy = new IntersectionObserver(entries => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+  }
+}, { rootMargin: "-45% 0px -50% 0px" });
+document.querySelectorAll("section[id], header[id]").forEach(sec => spy.observe(sec));
 
 // ------------------------------------------------------------------ menu de download
 document.querySelectorAll(".dl").forEach(dl => {
