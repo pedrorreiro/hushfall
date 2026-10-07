@@ -1,9 +1,7 @@
 **Hushfall (Silêncio Total)**: à noite, uma criatura cega caça pelo som.
 
-### Novidades da 1.2.0
-- **Dá para dormir**: em silêncio, com o Ouvinte só patrulhando, a cama funciona. Ele só impede o sono quando está atrás de você.
-- **Ele não se cura**: todo dano que você causa fica, inclusive de uma noite para a outra. Dá para vencê-lo aos poucos.
-- **Ele ouve de qualquer lugar**: barulho audível ou alto chega até ele onde estiver. Longe demais, ele ressurge perto de você.
+### Novidades da 1.2.1
+- **Ícone novo**: o rosto do Ouvinte agora aparece na lista de mods do jogo.
 
 ### Qual baixar?
 - **`hushfall.zip`**: o mod + Fabric API + instruções. Descompacte e copie os `.jar` para a pasta `mods`.
