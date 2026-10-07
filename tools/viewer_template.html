@@ -91,12 +91,6 @@
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
   td { padding: 11px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
   td:last-child { text-align: right; color: var(--text); font-weight: 600; white-space: nowrap; padding-left: 16px; }
-  .bands { display: grid; gap: 10px; }
-  .bands { gap: 0 !important; }
-  .band { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
-  .band .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 8px; flex-shrink: 0; background: var(--c); }
-  .band b { display: block; font-weight: 600; }
-  .band span { color: var(--muted); font-size: 14px; }
 
   .tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; }
   .tip { padding: 20px 0 0; border-top: 1px solid var(--line); }
@@ -104,10 +98,6 @@
   .tip p { color: var(--muted); font-size: 15px; }
   .tip b { color: var(--text); font-weight: 600; }
 
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
-  .stat { padding: 20px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
-  .stat b { display: block; font: 700 30px "Pixelify Sans", monospace; }
-  .stat span { color: var(--muted); font-size: 14px; }
   .state-row { display: grid; grid-template-columns: 180px 1fr auto; gap: 24px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
   .state-row h3 { font-size: 20px; display: flex; align-items: center; gap: 10px; }
   .state-row h3 i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
@@ -115,13 +105,6 @@
   .play { border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 99px; padding: 6px 14px; font: 500 13px Inter, sans-serif; cursor: pointer; white-space: nowrap; }
   .play:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
 
-  .lists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .list { padding: 0; }
-  .list h4 { margin: 0 0 12px; font: 600 15px Inter, sans-serif; display: flex; align-items: center; gap: 8px; }
-  .list h4 i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
-  .list ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
-  .list li { color: var(--muted); font-size: 15px; padding-left: 18px; position: relative; }
-  .list li::before { content: "–"; position: absolute; left: 0; top: 0; color: var(--line); color: rgba(160,180,210,.35); }
 
   .traits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-bottom: 56px; }
   .trait { padding: 20px 0 0; border-top: 1px solid var(--line); }
@@ -145,6 +128,34 @@
   .note { margin-top: 20px; color: var(--muted); font-size: 14.5px; }
   .note b { color: var(--text); font-weight: 600; }
 
+
+  /* ícones do jogo e capturas */
+  .ico { width: 32px; height: 32px; image-rendering: pixelated; display: block; }
+  .ico.lg { width: 40px; height: 40px; }
+  .slot-ico { width: 52px; height: 52px; display: grid; place-items: center; flex-shrink: 0;
+    background: #8b8b8b; border: 3px solid; border-color: #373737 #fff #fff #373737; }
+  .step .ico, .tip .ico, .fight .ico { margin-bottom: 14px; }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .tiles h4 { margin: 0 0 18px; font: 600 15px Inter, sans-serif; display: flex; align-items: center; gap: 8px; }
+  .tiles h4 i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .tile-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .tile { display: grid; justify-items: center; gap: 10px; text-align: center; font-size: 13px; color: var(--muted); line-height: 1.3; }
+  .tiles-foot { margin-top: 18px; font-size: 14px; color: var(--muted); }
+
+  .meters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 64px; }
+  .meter { display: flex; align-items: center; gap: 16px; }
+  .meter svg { width: 76px; height: 76px; flex-shrink: 0; }
+  .meter b { display: block; font: 700 19px "Pixelify Sans", monospace; color: var(--c); }
+  .meter span { color: var(--muted); font-size: 14.5px; }
+
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 56px; }
+  figure { margin: 0; }
+  figure img { width: 100%; display: block; border-radius: 12px; border: 1px solid var(--line); image-rendering: auto; }
+  figcaption { margin-top: 10px; font-size: 14px; color: var(--muted); }
+  figcaption b { color: var(--text); font-weight: 600; }
+  .bell-shot { display: grid; gap: 20px; }
+  .bell-shot .mc-craft { justify-self: start; }
   .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 40px; }
   .item { display: flex; gap: 22px; align-items: center; padding: 24px 0 0; border-top: 1px solid var(--line); }
   .item h3 { font-size: 20px; margin-bottom: 6px; }
@@ -199,7 +210,7 @@
     nav ul { display: none; }
     .hero .wrap, .two, .install, .bell { grid-template-columns: 1fr; }
     .steps, .stats, .traits { grid-template-columns: repeat(2, 1fr); }
-    .tips, .items, .fight, .lists { grid-template-columns: 1fr; }
+    .tips, .items, .fight, .lists, .tiles, .meters, .shots { grid-template-columns: 1fr; }
     .state-row { grid-template-columns: 1fr auto; }
     .state-row p { grid-column: 1 / -1; grid-row: 2; }
     section { padding: 64px 0; }
@@ -275,49 +286,43 @@
     <div class="head">
       <div class="eyebrow">Como jogar</div>
       <h2>De dia você constrói. De noite, você escuta.</h2>
-      <p>Quando escurece, às vezes algo acorda. Ele não enxerga nada, mas ouve tudo. Seu trabalho é simples: não fazer barulho.</p>
+      <p>Ele não enxerga nada, mas ouve tudo.</p>
     </div>
     <div class="steps">
-      <div class="step"><span class="n">01</span><h3>Nem toda noite</h3><p>A primeira noite é tranquila. Depois, ele vem em algumas noites e em outras não. Ao anoitecer uma mensagem avisa. Noite calma é hora de explorar.</p></div>
-      <div class="step"><span class="n">02</span><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra quanto barulho você está fazendo. Verde é tranquilo, amarelo chama atenção, vermelho é perigo.</p></div>
-      <div class="step"><span class="n">03</span><h3>Perto dele, nada de barulho</h3><p>Ouviu o próprio coração batendo forte? Ele está perto. Agache e espere: em silêncio ele só fareja e segue em frente.</p></div>
-      <div class="step"><span class="n">04</span><h3>Se ele rugir, suma</h3><p>O rugido é o aviso. Ele corre mais que você, então se tranque atrás de ferro, faça um barulho longe dali ou toque o sino.</p></div>
+      <div class="step"><img class="ico" data-icon="moon" alt=""><h3>Nem toda noite</h3><p>Uma mensagem ao anoitecer avisa se ele vem.</p></div>
+      <div class="step"><img class="ico" data-icon="ear" alt=""><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra o seu barulho.</p></div>
+      <div class="step"><img class="ico" data-icon="heart" alt=""><h3>Coração disparou?</h3><p>Ele está perto. Agache e espere passar.</p></div>
+      <div class="step"><img class="ico" data-icon="iron_door" alt=""><h3>Ouviu o rugido?</h3><p>Corra e se tranque atrás de ferro.</p></div>
     </div>
 
-    <div class="two">
-      <div>
-        <h3 class="sub">Barulho e silêncio</h3>
-        <div class="lists">
-          <div class="list" style="--c: var(--high)"><h4><i></i>Faz barulho</h4><ul>
-            <li>Correr e pular</li>
-            <li>Quebrar blocos, principalmente pedra</li>
-            <li>Abrir baús, portas e portões</li>
-            <li>Lutar ou levar golpes</li>
-            <li>Pisar em cascalho ou vidro</li>
-          </ul></div>
-          <div class="list" style="--c: var(--low)"><h4><i></i>Ajuda a ficar quieto</h4><ul>
-            <li>Agachar ou ficar parado</li>
-            <li>Andar sobre lã, tapete ou neve</li>
-            <li>Andar na água</li>
-            <li>Chuva e trovoada</li>
-            <li>Botas de Feltro</li>
-          </ul></div>
-        </div>
-      </div>
-      <div>
-        <h3 class="sub">O que ele faz</h3>
-        <div class="bands">
-          <div class="band" style="--c: var(--low)"><span class="dot"></span><div><b>Baixinho</b><span>Ele só tem uma ideia vaga de onde você está e vem rondar a região.</span></div></div>
-          <div class="band" style="--c: var(--mid)"><span class="dot"></span><div><b>Audível</b><span>Ele te ouve de qualquer lugar do mundo e vem investigar perto de você.</span></div></div>
-          <div class="band" style="--c: var(--high)"><span class="dot"></span><div><b>Alto</b><span>Ele ruge e vem direto caçar você, esteja onde estiver.</span></div></div>
-        </div>
-      </div>
+    <div class="meters">
+      <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" stroke-dasharray="49 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Baixinho</b><span>Ele vem rondar a região.</span></div></div>
+      <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" stroke-dasharray="107 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Audível</b><span>Ele vem investigar, de onde estiver.</span></div></div>
+      <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" stroke-dasharray="176 195" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Alto!</b><span>Ele ruge e caça você.</span></div></div>
     </div>
+
+    <div class="tiles" style="margin-top:64px">
+      <div style="--c: var(--high)"><h4><i></i>Faz barulho</h4><div class="tile-row">
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="rabbit_foot" alt=""></span>Correr e pular</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="pickaxe" alt=""></span>Quebrar blocos</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="oak_door" alt=""></span>Abrir portas e baús</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="sword" alt=""></span>Lutar</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="gravel" alt=""></span>Pisar em cascalho</div>
+      </div></div>
+      <div style="--c: var(--low)"><h4><i></i>Ajuda a ficar quieto</h4><div class="tile-row">
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="feather" alt=""></span>Agachar</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="wool" alt=""></span>Lã e tapete</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="snowball" alt=""></span>Neve</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="water_bucket" alt=""></span>Água</div>
+        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="felt_boots" alt=""></span>Botas de Feltro</div>
+      </div></div>
+    </div>
+    <p class="tiles-foot">Chuva e trovoada abafam tudo.</p>
 
     <div class="tips">
-      <div class="tip"><h3>Em casa</h3><p>Em silêncio, ele não tem motivo para entrar. Fazendo barulho lá dentro, ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
-      <div class="tip"><h3>Hora de dormir</h3><p>Ele é cego: se você está quieto, ele nem sabe que você está ali. <b>Chegue em casa, espere o medidor zerar e deite.</b> Só não dá se ele estiver atrás de você.</p></div>
-      <div class="tip"><h3>Distrações</h3><p>Sinos, note blocks, pistões ou uma flecha caindo longe atraem ele para lá. Mas cuidado: <b>ele aprende</b> com alarmes falsos.</p></div>
+      <div class="tip"><img class="ico" data-icon="iron_door" alt=""><h3>Em casa</h3><p>Ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
+      <div class="tip"><img class="ico" data-icon="bed" alt=""><h3>Hora de dormir</h3><p>Em silêncio, ele nem sabe que você está ali. <b>Pode deitar.</b></p></div>
+      <div class="tip"><img class="ico" data-icon="note_block" alt=""><h3>Distrações</h3><p>Sinos e note blocks atraem ele para longe. <b>Ele aprende</b> com alarmes falsos.</p></div>
     </div>
   </div>
 </section>
@@ -327,20 +332,24 @@
     <div class="head">
       <div class="eyebrow">A criatura</div>
       <h2>O Ouvinte</h2>
-      <p>Alto, magro e com orelhas enormes. Ele surge longe de você ao anoitecer, com um rosnado distante, e se enterra quando o sol nasce. Fugir costuma ser a melhor ideia.</p>
+      <p>Surge longe de você ao anoitecer e se enterra quando o sol nasce.</p>
+    </div>
+    <div class="shots">
+      <figure><img data-shot="alerta" alt="O Ouvinte rugindo na chuva, com o medidor no vermelho"><figcaption><b>Ele ouviu você.</b> O rugido é o aviso.</figcaption></figure>
+      <figure><img data-shot="de_perto" alt="O Ouvinte farejando o jogador de pertinho"><figcaption><b>Em silêncio</b>, ele fareja e segue em frente.</figcaption></figure>
     </div>
     <div class="traits">
-      <div class="trait"><b>Cego</b><span>Luz, invisibilidade e esconderijos não enganam. Só o som importa.</span></div>
-      <div class="trait"><b>Único</b><span>Só existe um no mundo inteiro, e ele sempre te encontra.</span></div>
-      <div class="trait"><b>Veloz</b><span>Corre mais que você. Fugir em linha reta não resolve.</span></div>
-      <div class="trait"><b>Avisa</b><span>Ele sempre dá um sinal antes do perigo: rosnado, estalo ou rugido.</span></div>
+      <div class="trait"><b>Cego</b><span>Só o som importa.</span></div>
+      <div class="trait"><b>Único</b><span>Só existe um no mundo.</span></div>
+      <div class="trait"><b>Veloz</b><span>Corre mais que você.</span></div>
+      <div class="trait"><b>Avisa</b><span>Sempre dá um sinal antes.</span></div>
     </div>
     <div class="states">
-      <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar, mesmo sem ouvir nada. Dá para ouvir as orelhas estalando de tempos em tempos.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até onde ouviu o som, fareja e ronda o lugar. Em silêncio, ele passa do seu lado.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você. Para um instante e ruge. É o aviso: corra ou se esconda.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Vem direto em você. Se você ficar quieto e sumir do caminho, ele perde o rastro.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Tonto com o Sino Ensurdecedor: não ouve nem ataca por um tempinho.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até o som e fareja.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você e ruge.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Vem direto em você.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Tonto com o sino.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
     </div>
   </div>
 </section>
@@ -350,40 +359,40 @@
     <div class="head">
       <div class="eyebrow">Combate</div>
       <h2>Dá para vencer. Só não de primeira.</h2>
-      <p>Ele é um chefe e bate muito forte. Mas cada golpe seu fica marcado nele, então a vitória pode vir aos poucos, noite após noite.</p>
+      <p>Ele bate forte, mas cada golpe seu fica marcado nele.</p>
     </div>
     <div class="fight">
-      <div class="card" style="--c: var(--mid)"><h3>Cada golpe conta</h3><p>Ele <b>não se cura</b>. O dano que você causa fica de uma noite para outra. Bata, fuja, durma e volte amanhã.</p></div>
-      <div class="card" style="--c: var(--accent)"><h3>Ataque de surpresa</h3><p>Golpes quando ele <b>não está te caçando</b>, está <b>tonto</b> com o sino ou <b>encurralado</b> machucam bem mais.</p></div>
-      <div class="card" style="--c: var(--high)"><h3>Bater denuncia você</h3><p>Levou um golpe, ele sabe onde você está e vem atrás. <b>Tenha sempre uma rota de fuga</b> antes de atacar.</p></div>
-      <div class="card" style="--c: var(--low)"><h3>Use o terreno</h3><p>Ele não percebe buracos. Atraia ele com um som para perto de um <b>buraco fundo</b>, ou acerte de longe com flechas.</p></div>
+      <div class="card"><img class="ico" data-icon="sword" alt=""><h3>Cada golpe conta</h3><p>Ele <b>não se cura</b>, nem de uma noite para outra.</p></div>
+      <div class="card"><img class="ico" data-icon="dagger" alt=""><h3>Ataque de surpresa</h3><p>Golpes quando ele está distraído ou tonto <b>machucam mais</b>.</p></div>
+      <div class="card"><img class="ico" data-icon="goat_horn" alt=""><h3>Bater denuncia você</h3><p>Bateu, ele vem atrás. <b>Tenha uma rota de fuga.</b></p></div>
+      <div class="card"><img class="ico" data-icon="bow" alt=""><h3>Use o terreno</h3><p>Ele não vê <b>buracos</b>. Flechas acertam de longe.</p></div>
     </div>
     <div class="reward">
       <div data-recipe="listener_ear"></div>
-      <div><h3>A recompensa</h3><p>Derrotado, ele deixa cair a <b>Orelha do Ouvinte</b> e só volta na noite seguinte, com a vida cheia. A orelha é o ingrediente do Sino Ensurdecedor.</p></div>
+      <div><h3>A recompensa</h3><p>Derrotado, ele deixa a <b>Orelha do Ouvinte</b>, o ingrediente do sino.</p></div>
     </div>
   </div>
 </section>
 
 <section id="sino">
   <div class="wrap bell">
-    <div class="bell-recipes">
+    <div class="bell-shot">
+      <figure><img data-shot="sino" alt="O Ouvinte atordoado depois do toque do Sino Ensurdecedor"><figcaption><b>Tonto com o sino.</b> Hora de sair dali.</figcaption></figure>
       <div data-recipe="deafening_bell"></div>
-      <small>Feito com ouro, um graveto e a <b style="color:var(--text)">Orelha do Ouvinte</b>.<br>Passe o mouse nos quadradinhos para ver os ingredientes.</small>
     </div>
     <div>
       <div class="head" style="margin-bottom:28px">
         <div class="eyebrow">O Sino</div>
         <h2>Sino Ensurdecedor</h2>
-        <p>Um toque bem alto, feito para machucar os ouvidos dele. É a sua carta na manga quando ele chega perto demais.</p>
+        <p>A sua carta na manga quando ele chega perto demais.</p>
       </div>
       <ol class="install-steps">
-        <li><span>Espere ele <b>chegar perto</b>. De longe, o sino não alcança.</span></li>
-        <li><span>Clique com o <b>botão direito</b> para tocar.</span></li>
-        <li><span>Ele fica <b>tonto</b> por alguns segundos: aproveite para fugir ou dar golpes de surpresa.</span></li>
-        <li><span>Quando passa, ele vai até <b>onde o sino tocou</b>. Não fique lá.</span></li>
+        <li><span>Espere ele <b>chegar perto</b>.</span></li>
+        <li><span>Toque com o <b>botão direito</b>.</span></li>
+        <li><span>Ele fica <b>tonto</b>: fuja ou ataque.</span></li>
+        <li><span>Depois ele vai <b>até onde o sino tocou</b>.</span></li>
       </ol>
-      <p class="note">Funciona <b>uma vez por noite</b>, e o toque não conta como barulho seu.</p>
+      <p class="note">Funciona <b>uma vez por noite</b>.</p>
     </div>
   </div>
 </section>
@@ -451,6 +460,13 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 const TEX = __TEXTURES__;
 const SOUNDS = __SOUNDS__;
 const ITEMS = __ITEMS__;
+const ICONS = __ICONS__;
+const SHOTS = __SHOTS__;
+document.querySelectorAll("[data-icon]").forEach(el => {
+  const src = ICONS[el.dataset.icon];
+  if (el.tagName.toLowerCase() === "image") el.setAttribute("href", src); else el.src = src;
+});
+document.querySelectorAll("[data-shot]").forEach(el => { el.src = SHOTS[el.dataset.shot]; el.loading = "lazy"; });
 const $ = s => document.querySelector(s);
 const COLORS = [0x6fcf8a, 0xe8bd4a, 0xff8a4c, 0xff5a64, 0x7fd6e8];
 const STATE_TEXT = [
