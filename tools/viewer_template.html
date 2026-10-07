@@ -56,12 +56,12 @@
       radial-gradient(1px 1px at 35% 40%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 86% 33%, #fff 50%, transparent 51%),
       radial-gradient(1px 1px at 50% 92%, #cfe 50%, transparent 51%), radial-gradient(1px 1px at 19% 90%, #fff 50%, transparent 51%); }
   .hero::after { background: radial-gradient(circle at 74% 38%, rgba(127,214,232,.09), transparent 38%); }
+  /* Caçando: um brilho vermelho que acende e apaga devagar. */
+  .hero-glow { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .8s;
+    background: radial-gradient(circle at 74% 45%, rgba(255,90,100,.18), transparent 55%); }
+  .hero.hunting .hero-glow { opacity: 1; }
   @keyframes twinkle { from { opacity: .3; } to { opacity: .65; } }
   .hero .wrap { position: relative; z-index: 1; }
-  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 99px;
-    font-size: 12.5px; color: var(--muted); margin-bottom: 22px; }
-  .chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--low); box-shadow: 0 0 8px var(--low); animation: blink 2.4s ease-in-out infinite; }
-  @keyframes blink { 50% { opacity: .35; } }
   .hero h1 span { display: inline-block; transition: transform .08s linear; }
   #wave { display: block; width: 100%; max-width: 440px; height: 44px; margin-top: 6px; }
   .you-noise { display: flex; align-items: center; gap: 12px; margin-top: 36px; font-size: 13.5px; color: var(--muted); }
@@ -73,7 +73,7 @@
     animation: hint 2s ease-in-out infinite; }
   .scroll-hint:hover { color: var(--text); }
   @keyframes hint { 50% { transform: translateY(6px); } }
-  @media (prefers-reduced-motion: reduce) { .hero::before, .chip i, .scroll-hint { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .hero::before, .scroll-hint { animation: none; } }
   .hero .wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
   .hero h1 { font-size: clamp(48px, 8vw, 84px); letter-spacing: .01em; }
   .hero .tag { font-size: 20px; color: var(--muted); margin: 18px 0 32px; max-width: 30ch; }
@@ -250,6 +250,7 @@
   .dl.right .dl-menu { left: auto; right: 0; }
   .dl.center .dl-menu { left: 50%; transform: translateX(-50%); }
   .dl.open .dl-menu { display: block; }
+  .dl-for { margin: 4px 12px 6px; font-size: 12px; color: var(--muted); }
   .dl-menu a { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 10px; text-decoration: none; }
   .dl-menu a:hover, .dl-menu a:focus-visible { background: rgba(255,255,255,.06); outline: none; }
   .dl-menu .ext { font: 700 12px "Pixelify Sans", monospace; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
@@ -295,6 +296,7 @@
     <div class="dl right">
       <button class="btn small" aria-haspopup="true" aria-expanded="false">Baixar <span class="caret">▼</span></button>
       <div class="dl-menu" role="menu">
+        <p class="dl-for">Para Minecraft Java 26.3 com Fabric</p>
         <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.zip" download><span class="ext">.zip</span><span><b>Mod + Fabric API<span class="badge">recomendado</span></b><small>Pronto para a pasta mods, com instruções</small></span></a>
         <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.jar" download><span class="ext">.jar</span><span><b>Só o mod</b><small>Se você já tem o Fabric API</small></span></a>
         <a class="all" href="https://github.com/pedrorreiro/hushfall/releases" target="_blank" rel="noopener">Todas as versões</a>
@@ -304,9 +306,9 @@
 </nav>
 
 <header class="hero" id="top">
+  <div class="hero-glow"></div>
   <div class="wrap">
     <div>
-      <span class="chip"><i></i>Mod para Minecraft Java 26.3</span>
       <h1 id="title">Hushfall</h1>
       <canvas id="wave" aria-hidden="true"></canvas>
       <p class="tag">À noite, uma criatura cega caça pelo som. <b>Fique em silêncio.</b></p>
@@ -315,6 +317,7 @@
         <div class="dl">
       <button class="btn" aria-haspopup="true" aria-expanded="false">Baixar o mod <span class="caret">▼</span></button>
       <div class="dl-menu" role="menu">
+        <p class="dl-for">Para Minecraft Java 26.3 com Fabric</p>
         <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.zip" download><span class="ext">.zip</span><span><b>Mod + Fabric API<span class="badge">recomendado</span></b><small>Pronto para a pasta mods, com instruções</small></span></a>
         <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.jar" download><span class="ext">.jar</span><span><b>Só o mod</b><small>Se você já tem o Fabric API</small></span></a>
         <a class="all" href="https://github.com/pedrorreiro/hushfall/releases" target="_blank" rel="noopener">Todas as versões</a>
@@ -499,6 +502,7 @@
       <div class="dl center">
       <button class="btn primary" aria-haspopup="true" aria-expanded="false">Baixar o Hushfall <span class="caret">▼</span></button>
       <div class="dl-menu" role="menu">
+        <p class="dl-for">Para Minecraft Java 26.3 com Fabric</p>
         <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.zip" download><span class="ext">.zip</span><span><b>Mod + Fabric API<span class="badge">recomendado</span></b><small>Pronto para a pasta mods, com instruções</small></span></a>
         <a role="menuitem" href="https://github.com/pedrorreiro/hushfall/releases/latest/download/hushfall.jar" download><span class="ext">.jar</span><span><b>Só o mod</b><small>Se você já tem o Fabric API</small></span></a>
         <a class="all" href="https://github.com/pedrorreiro/hushfall/releases" target="_blank" rel="noopener">Todas as versões</a>
@@ -511,7 +515,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Hushfall · Silêncio Total</span>
+    <span>Hushfall · Silêncio Total · Minecraft Java 26.3</span>
     <span>Projeto de fã, não oficial. Não aprovado nem associado à Mojang ou à Microsoft. Minecraft é marca da Mojang AB.</span>
   </div>
 </footer>
@@ -800,7 +804,7 @@ let autoCycle = setInterval(() => {
   setMode((mode + 1) % STATE_NAMES.length);
 }, 5000);
 function stopAutoCycle() { clearInterval(autoCycle); autoCycle = null; }
-const step = d => { stopAutoCycle(); setMode((mode + d + STATE_NAMES.length) % STATE_NAMES.length); };
+const step = d => { stopAutoCycle(); chase = null; setMode((mode + d + STATE_NAMES.length) % STATE_NAMES.length); };
 $("#statePrev").onclick = () => step(-1);
 $("#stateNext").onclick = () => step(1);
 // "Ver e ouvir" na seção da criatura: liga o som, troca o estado e sobe até o modelo.
@@ -908,7 +912,9 @@ const wave = $("#wave"), wctx = wave.getContext("2d");
 const youRing = $("#youRing"), youLevel = $("#youLevel");
 const LEVELS = [[0.05, "Silêncio", "var(--muted)"], [0.3, "Baixinho", "var(--low)"], [0.7, "Audível", "var(--mid)"], [2, "Alto!", "var(--high)"]];
 const LEVEL_RGB = { "var(--muted)": "141,150,166", "var(--low)": "111,207,138", "var(--mid)": "232,189,74", "var(--high)": "255,90,100" };
-let heroVisible = true, waveT = 0, lastLevel = "", nextRoar = 0, roarTimer = null;
+let heroVisible = true, waveT = 0, lastLevel = "", nextRoar = 0;
+// Caçada pelo mouse, como no jogo: barulho alto → alerta (rugido) → se continuar, caça → em silêncio, perde o rastro.
+let chase = null, chaseSince = 0, quietSince = null;
 new IntersectionObserver(e => heroVisible = e[0].isIntersecting).observe(hero);
 function sizeWave() {
   const r = wave.getBoundingClientRect(), dpr = Math.min(devicePixelRatio, 2);
@@ -944,14 +950,28 @@ function heroFrame(t) {
   const shake = reduceMotion ? 0 : Math.max(0, n - 0.6) * 6;
   letters.forEach(l => l.style.transform = shake ? `translate(${(Math.random() - .5) * shake}px, ${(Math.random() - .5) * shake}px)` : "");
   // Alto demais: ele te ouviu. Alerta e rugido, como no jogo.
-  if (n >= 0.92 && mode <= 1 && time >= nextRoar) {
-    nextRoar = time + 8;
+  if (!chase && n >= 0.92 && mode <= 1 && time >= nextRoar) {
     stopAutoCycle();
     emitRipple(0xff5a64, 1.4);
     setMode(2);
-    clearTimeout(roarTimer);
-    roarTimer = setTimeout(() => { if (mode === 2) setMode(0); }, 3500);
+    chase = "alert"; chaseSince = time;
+  } else if (chase === "alert" && mode === 2 && time - chaseSince > 1.3) {
+    // Depois do rugido: continuou fazendo barulho, ele caça; ficou quieto, desiste.
+    if (n >= 0.35) { setMode(3); chase = "hunt"; chaseSince = time; quietSince = null; }
+    else if (time - chaseSince > 3) { setMode(0); chase = null; nextRoar = time + 4; }
+  } else if (chase === "hunt" && mode === 3) {
+    quietSince = n < 0.12 ? quietSince ?? time : null;
+    if (quietSince !== null && time - quietSince > 3) { setMode(1); chase = "lost"; chaseSince = time; }
+  } else if (chase === "lost" && mode === 1 && time - chaseSince > 4) {
+    setMode(0); chase = null; nextRoar = time + 4;
+  } else if (chase && ![2, 3, 1].includes(mode)) {
+    chase = null;
   }
+  hero.classList.toggle("hunting", chase === "hunt");
+  // Caçando, ele avança na sua direção; depois volta para o lugar.
+  const dir = new THREE.Vector3().subVectors(camera.position, controls.target).setY(0).normalize();
+  const advance = chase === "hunt" ? Math.min(2.2, (time - chaseSince) * 0.9) : 0;
+  listener.position.lerp(dir.multiplyScalar(advance), Math.min(1, dt * 2));
 }
 requestAnimationFrame(heroFrame);
 
