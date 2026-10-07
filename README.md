@@ -71,9 +71,11 @@ Envie uma tag de versão. O workflow `.github/workflows/release.yml` compila o m
 - `hushfall.zip`: o mod + Fabric API + LEIA-ME, pronto para a pasta `mods`;
 - `hushfall.jar`: só o mod.
 
+O mesmo workflow envia o `hushfall.jar` ao [CurseForge](https://www.curseforge.com/) (projeto 1732438), com Fabric, Minecraft 26.3 e Fabric API como dependência, usando as notas de `.github/release-notes.md` como changelog. Para isso, o repositório precisa do secret `CURSEFORGE_TOKEN` (token de API do CurseForge); sem ele, esse passo é pulado.
+
 ```bash
-git tag v1.1.0
-git push origin v1.1.0
+git tag v1.2.2
+git push origin v1.2.2
 ```
 
 ## Site
