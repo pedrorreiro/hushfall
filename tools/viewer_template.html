@@ -57,14 +57,21 @@
   #stage { position: relative; aspect-ratio: 1 / 1; max-height: 540px; width: 100%; cursor: grab; }
   #stage:active { cursor: grabbing; }
   #stage canvas { display: block; width: 100%; height: 100%; }
-  .stage-ui { margin-top: 8px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
-  .st-btn { display: inline-flex; align-items: center; gap: 7px; padding: 4px 2px; background: none; border: 0; border-bottom: 1px solid transparent;
-    color: var(--muted); font: 500 13.5px Inter, sans-serif; cursor: pointer; transition: color .15s, border-color .15s; }
+  .hero .wrap > * { min-width: 0; }
+  .stage-ui { display: flex; width: fit-content; max-width: 100%; margin: 14px auto 0; padding: 4px; gap: 2px; overflow-x: auto; scrollbar-width: none;
+    border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.02); }
+  .stage-ui::-webkit-scrollbar { display: none; }
+  .st-btn { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border: 0; border-radius: 999px; background: none; flex-shrink: 0;
+    color: var(--muted); font: 500 13px Inter, sans-serif; cursor: pointer; transition: color .15s, background .15s; }
   .st-btn:hover { color: var(--text); }
-  .st-btn.on { color: var(--text); border-bottom-color: var(--c); }
+  .st-btn.on { color: var(--text); background: rgba(255,255,255,.08); }
   .st-btn i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
-  .sound-btn { position: absolute; top: 0; right: 0; z-index: 2; color: var(--muted); font-size: 12.5px; }
-  .stage-caption { text-align: center; font-size: 14px; color: var(--muted); }
+  .sound-btn { position: absolute; top: 0; right: 0; z-index: 2; width: 40px; height: 40px; display: grid; place-items: center; padding: 0;
+    border: 1px solid var(--line); border-radius: 50%; background: rgba(11,13,18,.6); color: var(--muted); cursor: pointer; transition: color .15s, border-color .15s; }
+  .sound-btn:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
+  .sound-btn.on { color: var(--accent); border-color: rgba(127,214,232,.45); }
+  .sound-btn svg { width: 18px; height: 18px; }
+  .stage-caption { text-align: center; font-size: 14px; color: var(--muted); min-height: 1.6em; }
   #subtitle { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); background: rgba(0,0,0,.6); padding: 3px 10px; font: 500 14px "Pixelify Sans", monospace; border-radius: 2px; opacity: 0; transition: opacity .3s; white-space: nowrap; color: #fff; }
 
   section { padding: 120px 0; scroll-margin-top: 60px; }
@@ -133,15 +140,12 @@
   /* ícones do jogo e capturas */
   .ico { width: 32px; height: 32px; image-rendering: pixelated; display: block; }
   .ico.lg { width: 40px; height: 40px; }
-  .slot-ico { width: 52px; height: 52px; display: grid; place-items: center; flex-shrink: 0;
-    background: #8b8b8b; border: 3px solid; border-color: #373737 #fff #fff #373737; }
-  .step .ico, .tip .ico, .fight .ico { margin-bottom: 14px; }
-
-  .tiles { display: grid; gap: 48px; max-width: 640px; margin: 96px auto 0; }
-  .tiles h4 { margin: 0 0 20px; font: 600 15px Inter, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; max-width: 760px; margin: 112px auto 0; }
+  .tiles h4 { margin: 0 0 8px; padding-bottom: 14px; font: 600 15px Inter, sans-serif; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--c); }
   .tiles h4 i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
-  .tile-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-  .tile { display: grid; justify-items: center; gap: 10px; text-align: center; font-size: 13px; color: var(--muted); line-height: 1.3; }
+  .tile-row { display: grid; }
+  .tile { display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--text); }
+  .tile .ico { width: 28px; height: 28px; }
   .tiles-foot { margin-top: 40px; font-size: 14px; color: var(--muted); text-align: center; }
 
   .meters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; max-width: 860px; margin: 0 auto; }
@@ -207,7 +211,7 @@
     .hero .wrap, .two, .install, .bell { grid-template-columns: 1fr; }
     .steps, .traits, .fight { grid-template-columns: repeat(2, 1fr); }
     section { padding: 80px 0; }
-    .tips, .items, .meters { grid-template-columns: 1fr; }
+    .tips, .items, .meters, .tiles { grid-template-columns: 1fr; }
     .state-row { grid-template-columns: 1fr auto; }
     .state-row p { grid-column: 1 / -1; grid-row: 2; }
   }
@@ -263,7 +267,7 @@
     <div class="stage-box">
       <div id="stage"></div>
       <div class="stage-caption" id="stateText">Ronda a sua área, orelhas balançando.</div>
-      <button class="st-btn sound-btn" id="soundBtn">Som: Desligado</button>
+      <button class="sound-btn" id="soundBtn" aria-label="Ligar o som" title="Ligar o som"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg></button>
       <div id="subtitle"></div>
       <div class="stage-ui">
         <button class="st-btn on" data-state="0" style="--c: var(--low)"><i></i>Patrulha</button>
@@ -307,18 +311,18 @@
 
     <div class="tiles">
       <div style="--c: var(--high)"><h4><i></i>Faz barulho</h4><div class="tile-row">
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="rabbit_foot" alt=""></span>Correr e pular</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="pickaxe" alt=""></span>Quebrar blocos</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="oak_door" alt=""></span>Abrir portas e baús</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="sword" alt=""></span>Lutar</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="gravel" alt=""></span>Pisar em cascalho</div>
+        <div class="tile"><img class="ico" data-icon="rabbit_foot" alt="">Correr e pular</div>
+        <div class="tile"><img class="ico" data-icon="pickaxe" alt="">Quebrar blocos</div>
+        <div class="tile"><img class="ico" data-icon="oak_door" alt="">Abrir portas e baús</div>
+        <div class="tile"><img class="ico" data-icon="sword" alt="">Lutar</div>
+        <div class="tile"><img class="ico" data-icon="gravel" alt="">Pisar em cascalho</div>
       </div></div>
       <div style="--c: var(--low)"><h4><i></i>Ajuda a ficar quieto</h4><div class="tile-row">
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="feather" alt=""></span>Agachar</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="wool" alt=""></span>Lã e tapete</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="snowball" alt=""></span>Neve</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="water_bucket" alt=""></span>Água</div>
-        <div class="tile"><span class="slot-ico"><img class="ico" data-icon="felt_boots" alt=""></span>Botas de Feltro</div>
+        <div class="tile"><img class="ico" data-icon="feather" alt="">Agachar</div>
+        <div class="tile"><img class="ico" data-icon="wool" alt="">Lã e tapete</div>
+        <div class="tile"><img class="ico" data-icon="snowball" alt="">Neve</div>
+        <div class="tile"><img class="ico" data-icon="water_bucket" alt="">Água</div>
+        <div class="tile"><img class="ico" data-icon="felt_boots" alt="">Botas de Feltro</div>
       </div></div>
     </div>
     <p class="tiles-foot">Chuva e trovoada abafam tudo.</p>
@@ -644,6 +648,14 @@ function updateRipples(dt) {
 let audio = null, master = null, soundOn = false;
 const buffers = {};
 const soundBtn = $("#soundBtn");
+const SOUND_ICONS = { on: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19.5 5.5a9 9 0 0 1 0 13"/></svg>', off: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg>' };
+function showSound(on) {
+  soundBtn.innerHTML = on ? SOUND_ICONS.on : SOUND_ICONS.off;
+  soundBtn.classList.toggle("on", on);
+  const label = on ? "Desligar o som" : "Ligar o som";
+  soundBtn.setAttribute("aria-label", label);
+  soundBtn.title = label;
+}
 async function enableSound() {
   if (!audio) {
     audio = new (window.AudioContext || window.webkitAudioContext)();
@@ -653,10 +665,10 @@ async function enableSound() {
   }
   if (audio.state === "suspended") await audio.resume();
   soundOn = true;
-  soundBtn.textContent = "Som: Ligado";
+  showSound(true);
 }
 soundBtn.onclick = async () => {
-  if (soundOn) { soundOn = false; soundBtn.textContent = "Som: Desligado"; return; }
+  if (soundOn) { soundOn = false; showSound(false); return; }
   await enableSound();
   playState();
 };
