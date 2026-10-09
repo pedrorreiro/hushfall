@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hushfall · Silêncio Total</title>
-<meta name="description" content="Hushfall (Silêncio Total): mod de Minecraft em que, à noite, uma criatura cega caça pelo som. Como jogar, a criatura, itens e download.">
+<meta name="description" content="Hushfall (Silêncio Total): mod de Minecraft em que, à noite, uma criatura cega caça pelo som. Como jogar, a criatura, itens e download." data-en-content="Hushfall: a Minecraft mod where, at night, a blind creature hunts by sound. How to play, the creature, items and download.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -244,6 +244,41 @@
 
   .btn .ext-ico { width: 14px; height: 14px; opacity: .7; }
 
+  .nav-end { display: flex; align-items: center; gap: 14px; }
+  .lang { display: flex; gap: 2px; }
+  .lang-btn { padding: 5px; border: 1px solid transparent; border-radius: 7px; background: none; cursor: pointer; opacity: .45; transition: opacity .15s, border-color .15s; }
+  .lang-btn:hover { opacity: .85; }
+  .lang-btn[aria-pressed="true"] { opacity: 1; border-color: var(--line); }
+  .lang-btn svg { display: block; width: 22px; height: 15px; border-radius: 2px; }
+  /* feedback */
+  .fb-fab { position: fixed; right: 20px; bottom: 20px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px;
+    border-radius: 99px; background: var(--accent); color: var(--bg); font: 600 14px Inter, sans-serif; text-decoration: none;
+    box-shadow: 0 8px 28px rgba(0,0,0,.45); transition: opacity .25s, transform .25s, background .15s; }
+  .fb-fab:hover { background: #a6e6f2; }
+  .fb-fab svg { width: 18px; height: 18px; }
+  .fb-fab.hide { opacity: 0; transform: translateY(14px); pointer-events: none; }
+  @media (max-width: 520px) { .fb-fab { right: 16px; bottom: 16px; } }
+  .fb { max-width: 560px; margin: 0 auto; display: grid; gap: 22px; }
+  .fb-label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+  .fb-rate { display: flex; gap: 10px; border: 0; margin: 0; padding: 0; }
+  .fb-rate legend { padding: 0; }
+  .fb-rate input { position: absolute; opacity: 0; pointer-events: none; }
+  .fb-rate label { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 10px;
+    font: 700 18px "Pixelify Sans", monospace; color: var(--muted); cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+  .fb-rate label:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
+  .fb-rate input:checked + label { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+  .fb-rate input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .fb-scale { display: flex; justify-content: space-between; max-width: 280px; margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+  .fb textarea, .fb input[type=text] { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; color: var(--text);
+    font: 15px/1.5 Inter, sans-serif; padding: 12px 14px; transition: border-color .15s; }
+  .fb textarea { min-height: 120px; resize: vertical; }
+  .fb textarea:focus, .fb input[type=text]:focus { outline: none; border-color: rgba(127,214,232,.6); }
+  .fb .hp { position: absolute; left: -9999px; }
+  .fb-foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .fb-status { font-size: 14px; color: var(--muted); }
+  .fb-status.ok { color: var(--low); }
+  .fb-status.err { color: var(--high); }
+  .fb button[disabled] { opacity: .6; cursor: default; }
   footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
   footer .wrap { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 
@@ -262,6 +297,10 @@
     .item, .reward { flex-direction: column; align-items: flex-start; }
   }
 </style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -269,14 +308,21 @@
   <div class="wrap">
     <a class="logo" href="#top">Hushfall</a>
     <ul>
-      <li><a href="#como-jogar">Como jogar</a></li>
-      <li><a href="#barulho">Barulho</a></li>
-      <li><a href="#criatura">O Ouvinte</a></li>
-      <li><a href="#combate">Combate</a></li>
-      <li><a href="#sino">O Sino</a></li>
-      <li><a href="#itens">Itens</a></li>
+      <li><a href="#como-jogar" data-en="How to play">Como jogar</a></li>
+      <li><a href="#barulho" data-en="Noise">Barulho</a></li>
+      <li><a href="#criatura" data-en="The Listener">O Ouvinte</a></li>
+      <li><a href="#combate" data-en="Combat">Combate</a></li>
+      <li><a href="#sino" data-en="The Bell">O Sino</a></li>
+      <li><a href="#itens" data-en="Items">Itens</a></li>
+      <li><a href="#feedback">Feedback</a></li>
     </ul>
-    <a class="btn small" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">Baixar <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    <div class="nav-end">
+      <div class="lang" role="group" aria-label="Idioma / Language">
+        <button class="lang-btn" type="button" data-lang="pt" aria-label="Português" title="Português"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#009c3b"/><path d="M11 1.6L20.4 7.5 11 13.4 1.6 7.5z" fill="#ffdf00"/><circle cx="11" cy="7.5" r="3.5" fill="#002776"/></svg></button>
+        <button class="lang-btn" type="button" data-lang="en" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#fff"/><rect y="0.000" width="22" height="1.154" fill="#b22234"/><rect y="2.308" width="22" height="1.154" fill="#b22234"/><rect y="4.616" width="22" height="1.154" fill="#b22234"/><rect y="6.924" width="22" height="1.154" fill="#b22234"/><rect y="9.232" width="22" height="1.154" fill="#b22234"/><rect y="11.540" width="22" height="1.154" fill="#b22234"/><rect y="13.848" width="22" height="1.154" fill="#b22234"/><rect width="9.4" height="8.08" fill="#3c3b6e"/></svg></button>
+      </div>
+    <a class="btn small" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener"><span data-en="Download">Baixar</span> <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </div>
   </div>
 </nav>
 
@@ -286,14 +332,14 @@
     <div>
       <h1 id="title">Hushfall</h1>
       <canvas id="wave" aria-hidden="true"></canvas>
-      <p class="tag">À noite, uma criatura cega caça pelo som. <b>Fique em silêncio.</b></p>
+      <p class="tag" data-en="At night, a blind creature hunts by sound. &lt;b&gt;Stay quiet.&lt;/b&gt;">À noite, uma criatura cega caça pelo som. <b>Fique em silêncio.</b></p>
       <div class="actions">
-        <a class="btn primary" href="#como-jogar">Como jogar</a>
-        <a class="btn" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">Baixar no CurseForge <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+        <a class="btn primary" href="#como-jogar" data-en="How to play">Como jogar</a>
+        <a class="btn" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener"><span data-en="Download on CurseForge">Baixar no CurseForge</span> <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
       </div>
       <div class="you-noise" id="youNoise">
         <svg viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle class="fill" id="youRing" cx="38" cy="38" r="30" fill="none" stroke="var(--low)" stroke-width="8" stroke-linecap="round" stroke-dasharray="189" stroke-dashoffset="189" transform="rotate(-90 38 38)"/></svg>
-        <div><span>Seu barulho: <b id="youLevel">Silêncio</b></span><small>Mexa o mouse perto dele… com cuidado.</small></div>
+        <div><span><span data-en="Your noise:">Seu barulho:</span> <b id="youLevel">Silêncio</b></span><small data-en="Move your mouse near it… carefully.">Mexa o mouse perto dele… com cuidado.</small></div>
       </div>
     </div>
     <div class="stage-box">
@@ -302,29 +348,29 @@
       <div id="subtitle"></div>
       <div class="stage-info">
         <div class="stage-nav">
-          <button class="st-arrow" id="statePrev" aria-label="Estado anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button class="st-arrow" id="statePrev" aria-label="Estado anterior" data-en-aria-label="Previous state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
           <div class="stage-state" id="stateName" style="--c: var(--low)" aria-live="polite">Patrulha</div>
-          <button class="st-arrow" id="stateNext" aria-label="Próximo estado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+          <button class="st-arrow" id="stateNext" aria-label="Próximo estado" data-en-aria-label="Next state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
         </div>
         <div class="stage-caption" id="stateText">Ronda a sua área, com as orelhas balançando.</div>
       </div>
     </div>
   </div>
-  <a class="scroll-hint" href="#como-jogar" aria-label="Rolar para baixo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></a>
+  <a class="scroll-hint" href="#como-jogar" aria-label="Rolar para baixo" data-en-aria-label="Scroll down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></a>
 </header>
 
 <section id="como-jogar">
   <div class="wrap">
     <div class="head center">
-      <div class="eyebrow">Como jogar</div>
-      <h2>Ele não vê. Ele ouve.</h2>
-      <p>Quatro coisas para lembrar quando escurecer.</p>
+      <div class="eyebrow" data-en="How to play">Como jogar</div>
+      <h2 data-en="It can&#x27;t see. It listens.">Ele não vê. Ele ouve.</h2>
+      <p data-en="Four things to remember when it gets dark.">Quatro coisas para lembrar quando escurecer.</p>
     </div>
     <div class="steps">
-      <div class="step"><img class="ico" data-icon="moon" alt=""><h3>Nem toda noite</h3><p>Ao anoitecer, uma mensagem avisa se ele vem.</p></div>
-      <div class="step"><img class="ico" data-icon="ear" alt=""><h3>Olhe o medidor</h3><p>O anel no canto da tela mostra quanto barulho você faz.</p></div>
-      <div class="step"><img class="ico" data-icon="heart" alt=""><h3>Coração disparou?</h3><p>Ele está perto. Agache e espere ele passar.</p></div>
-      <div class="step"><img class="ico" data-icon="iron_door" alt=""><h3>Ouviu o rugido?</h3><p>Corra e se tranque atrás de uma porta de ferro.</p></div>
+      <div class="step"><img class="ico" data-icon="moon" alt=""><h3 data-en="Not every night">Nem toda noite</h3><p data-en="At dusk, a message tells you if it&#x27;s coming.">Ao anoitecer, uma mensagem avisa se ele vem.</p></div>
+      <div class="step"><img class="ico" data-icon="ear" alt=""><h3 data-en="Watch the meter">Olhe o medidor</h3><p data-en="The ring in the corner of the screen shows how much noise you make.">O anel no canto da tela mostra quanto barulho você faz.</p></div>
+      <div class="step"><img class="ico" data-icon="heart" alt=""><h3 data-en="Heart racing?">Coração disparou?</h3><p data-en="It&#x27;s close. Crouch and wait for it to pass.">Ele está perto. Agache e espere ele passar.</p></div>
+      <div class="step"><img class="ico" data-icon="iron_door" alt=""><h3 data-en="Heard the roar?">Ouviu o rugido?</h3><p data-en="Run and lock yourself behind an iron door.">Corra e se tranque atrás de uma porta de ferro.</p></div>
     </div>
   </div>
 </section>
@@ -332,46 +378,46 @@
 <section id="barulho" class="alt">
   <div class="wrap">
     <div class="head center">
-      <div class="eyebrow">O barulho</div>
-      <h2>Fique de olho no medidor</h2>
-      <p>Quanto mais cheio o anel, mais ele se interessa por você.</p>
+      <div class="eyebrow" data-en="Noise">O barulho</div>
+      <h2 data-en="Keep an eye on the meter">Fique de olho no medidor</h2>
+      <p data-en="The fuller the ring, the more interested it gets.">Quanto mais cheio o anel, mais ele se interessa por você.</p>
     </div>
     <div class="meters">
-      <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="49" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Baixinho</b><span>Ele só ouve de perto e vem rondar.</span></div></div>
-      <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="107" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Audível</b><span>Ele ouve de qualquer lugar e vem investigar.</span></div></div>
-      <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="176" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b>Alto!</b><span>Ele ruge e vem caçar você.</span></div></div>
+      <div class="meter" style="--c: var(--low)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--low)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="49" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b data-en="Quiet">Baixinho</b><span data-en="It only hears you up close and comes to prowl.">Ele só ouve de perto e vem rondar.</span></div></div>
+      <div class="meter" style="--c: var(--mid)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--mid)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="107" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b data-en="Audible">Audível</b><span data-en="It hears you from anywhere and comes to investigate.">Ele ouve de qualquer lugar e vem investigar.</span></div></div>
+      <div class="meter" style="--c: var(--high)"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="#0b0d12" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="38" cy="38" r="31" fill="none" stroke="var(--high)" stroke-width="7" class="fill" stroke-dasharray="195" stroke-dashoffset="195" data-v="176" transform="rotate(-90 38 38)"/><image data-icon="ear" x="22" y="22" width="32" height="32" style="image-rendering:pixelated"/></svg><div><b data-en="LOUD!">Alto!</b><span data-en="It roars and comes to hunt you.">Ele ruge e vem caçar você.</span></div></div>
     </div>
 
     <div class="tiles">
-      <div style="--c: var(--high)"><h4><i></i>Faz barulho</h4><div class="tile-row">
-        <div class="tile"><img class="ico" data-icon="rabbit_foot" alt="">Correr e pular</div>
-        <div class="tile"><img class="ico" data-icon="pickaxe" alt="">Quebrar blocos</div>
-        <div class="tile"><img class="ico" data-icon="oak_door" alt="">Abrir portas e baús</div>
-        <div class="tile"><img class="ico" data-icon="sword" alt="">Lutar</div>
-        <div class="tile"><img class="ico" data-icon="gravel" alt="">Pisar em cascalho ou vidro</div>
+      <div style="--c: var(--high)"><h4 data-en="&lt;i&gt;&lt;/i&gt;Makes noise"><i></i>Faz barulho</h4><div class="tile-row">
+        <div class="tile"><img class="ico" data-icon="rabbit_foot" alt=""><span data-en="Running and jumping">Correr e pular</span></div>
+        <div class="tile"><img class="ico" data-icon="pickaxe" alt=""><span data-en="Breaking blocks">Quebrar blocos</span></div>
+        <div class="tile"><img class="ico" data-icon="oak_door" alt=""><span data-en="Opening doors and chests">Abrir portas e baús</span></div>
+        <div class="tile"><img class="ico" data-icon="sword" alt=""><span data-en="Fighting">Lutar</span></div>
+        <div class="tile"><img class="ico" data-icon="gravel" alt=""><span data-en="Walking on gravel or glass">Pisar em cascalho ou vidro</span></div>
       </div></div>
-      <div style="--c: var(--low)"><h4><i></i>Ajuda a ficar quieto</h4><div class="tile-row">
-        <div class="tile"><img class="ico" data-icon="feather" alt="">Agachar</div>
-        <div class="tile"><img class="ico" data-icon="wool" alt="">Andar em lã ou tapete</div>
-        <div class="tile"><img class="ico" data-icon="snowball" alt="">Andar na neve</div>
-        <div class="tile"><img class="ico" data-icon="water_bucket" alt="">Andar na água</div>
-        <div class="tile"><img class="ico" data-icon="felt_boots" alt="">Usar Botas de Feltro</div>
+      <div style="--c: var(--low)"><h4 data-en="&lt;i&gt;&lt;/i&gt;Helps you stay quiet"><i></i>Ajuda a ficar quieto</h4><div class="tile-row">
+        <div class="tile"><img class="ico" data-icon="feather" alt=""><span data-en="Crouching">Agachar</span></div>
+        <div class="tile"><img class="ico" data-icon="wool" alt=""><span data-en="Walking on wool or carpet">Andar em lã ou tapete</span></div>
+        <div class="tile"><img class="ico" data-icon="snowball" alt=""><span data-en="Walking on snow">Andar na neve</span></div>
+        <div class="tile"><img class="ico" data-icon="water_bucket" alt=""><span data-en="Walking in water">Andar na água</span></div>
+        <div class="tile"><img class="ico" data-icon="felt_boots" alt=""><span data-en="Wearing Felt Boots">Usar Botas de Feltro</span></div>
       </div></div>
     </div>
-    <p class="tiles-foot">Chuva e trovoada abafam tudo.</p>
+    <p class="tiles-foot" data-en="Rain and thunder muffle everything.">Chuva e trovoada abafam tudo.</p>
   </div>
 </section>
 
 <section id="dicas">
   <div class="wrap">
     <div class="head center">
-      <div class="eyebrow">Dicas</div>
-      <h2>Para sobreviver à noite</h2>
+      <div class="eyebrow" data-en="Tips">Dicas</div>
+      <h2 data-en="Surviving the night">Para sobreviver à noite</h2>
     </div>
     <div class="tips">
-      <div class="tip"><img class="ico" data-icon="iron_door" alt=""><h3>Em casa</h3><p>Se você fizer barulho, ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
-      <div class="tip"><img class="ico" data-icon="bed" alt=""><h3>Hora de dormir</h3><p>Em silêncio, ele nem sabe que você está ali. <b>Pode deitar.</b></p></div>
-      <div class="tip"><img class="ico" data-icon="note_block" alt=""><h3>Distrações</h3><p>Sinos e note blocks chamam a atenção dele para longe. Mas <b>ele aprende</b> com alarmes falsos.</p></div>
+      <div class="tip"><img class="ico" data-icon="iron_door" alt=""><h3 data-en="At home">Em casa</h3><p data-en="If you make noise, it breaks down wooden doors. &lt;b&gt;Iron doors hold.&lt;/b&gt;">Se você fizer barulho, ele arromba portas de madeira. <b>Porta de ferro aguenta.</b></p></div>
+      <div class="tip"><img class="ico" data-icon="bed" alt=""><h3 data-en="Bedtime">Hora de dormir</h3><p data-en="If you&#x27;re quiet, it doesn&#x27;t even know you&#x27;re there. &lt;b&gt;Go ahead and sleep.&lt;/b&gt;">Em silêncio, ele nem sabe que você está ali. <b>Pode deitar.</b></p></div>
+      <div class="tip"><img class="ico" data-icon="note_block" alt=""><h3 data-en="Distractions">Distrações</h3><p data-en="Bells and note blocks lure its attention away. But &lt;b&gt;it learns&lt;/b&gt; from false alarms.">Sinos e note blocks chamam a atenção dele para longe. Mas <b>ele aprende</b> com alarmes falsos.</p></div>
     </div>
   </div>
 </section>
@@ -379,16 +425,16 @@
 <section id="criatura" class="alt">
   <div class="wrap">
     <div class="head center">
-      <div class="eyebrow">A criatura</div>
-      <h2>O Ouvinte</h2>
-      <p>Ele aparece longe de você ao anoitecer e se enterra quando o sol nasce.</p>
+      <div class="eyebrow" data-en="The creature">A criatura</div>
+      <h2 data-en="The Listener">O Ouvinte</h2>
+      <p data-en="It surfaces far from you at dusk and burrows back down at sunrise.">Ele aparece longe de você ao anoitecer e se enterra quando o sol nasce.</p>
     </div>
     <div class="states">
-      <div class="state-row" style="--c: var(--low)"><h3><i></i>Patrulha</h3><p>Ronda a sua área devagar.</p><button class="play" data-sound="0">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--mid)"><h3><i></i>Investiga</h3><p>Vai até onde ouviu o som e fareja.</p><button class="play" data-sound="1">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: #ff8a4c"><h3><i></i>Alerta</h3><p>Ouviu você e ruge. É o aviso.</p><button class="play" data-sound="2">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--high)"><h3><i></i>Caça</h3><p>Corre direto atrás de você.</p><button class="play" data-sound="3">▶ Ver e ouvir</button></div>
-      <div class="state-row" style="--c: var(--accent)"><h3><i></i>Atordoado</h3><p>Ficou tonto com o sino.</p><button class="play" data-sound="4">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--low)"><h3 data-en="&lt;i&gt;&lt;/i&gt;Patrol"><i></i>Patrulha</h3><p data-en="Slowly prowls your area.">Ronda a sua área devagar.</p><button class="play" data-sound="0" data-en="▶ See and hear">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--mid)"><h3 data-en="&lt;i&gt;&lt;/i&gt;Investigate"><i></i>Investiga</h3><p data-en="Goes to where it heard the sound and sniffs around.">Vai até onde ouviu o som e fareja.</p><button class="play" data-sound="1" data-en="▶ See and hear">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: #ff8a4c"><h3 data-en="&lt;i&gt;&lt;/i&gt;Alert"><i></i>Alerta</h3><p data-en="It heard you and roars. That&#x27;s the warning.">Ouviu você e ruge. É o aviso.</p><button class="play" data-sound="2" data-en="▶ See and hear">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--high)"><h3 data-en="&lt;i&gt;&lt;/i&gt;Hunt"><i></i>Caça</h3><p data-en="Runs straight at you.">Corre direto atrás de você.</p><button class="play" data-sound="3" data-en="▶ See and hear">▶ Ver e ouvir</button></div>
+      <div class="state-row" style="--c: var(--accent)"><h3 data-en="&lt;i&gt;&lt;/i&gt;Stunned"><i></i>Atordoado</h3><p data-en="Dazed by the bell.">Ficou tonto com o sino.</p><button class="play" data-sound="4" data-en="▶ See and hear">▶ Ver e ouvir</button></div>
     </div>
   </div>
 </section>
@@ -396,19 +442,19 @@
 <section id="combate">
   <div class="wrap">
     <div class="head center">
-      <div class="eyebrow">Combate</div>
-      <h2>Dá para vencer. Só não de primeira.</h2>
-      <p>Ele bate forte, mas todo dano que você causa fica nele.</p>
+      <div class="eyebrow" data-en="Combat">Combate</div>
+      <h2 data-en="You can win. Just not on the first try.">Dá para vencer. Só não de primeira.</h2>
+      <p data-en="It hits hard, but every bit of damage you deal sticks.">Ele bate forte, mas todo dano que você causa fica nele.</p>
     </div>
     <div class="fight">
-      <div class="card"><img class="ico" data-icon="sword" alt=""><h3>Cada golpe conta</h3><p>Ele <b>não se cura</b>, nem de uma noite para a outra.</p></div>
-      <div class="card"><img class="ico" data-icon="dagger" alt=""><h3>Ataque de surpresa</h3><p>Atacar quando ele está distraído ou tonto <b>causa mais dano</b>.</p></div>
-      <div class="card"><img class="ico" data-icon="goat_horn" alt=""><h3>Atacar entrega você</h3><p>Bateu nele, ele vem atrás de você. <b>Tenha uma rota de fuga.</b></p></div>
-      <div class="card"><img class="ico" data-icon="bow" alt=""><h3>Use o terreno</h3><p>Ele não percebe <b>buracos</b> e cai neles. Com arco, dá para atacar de longe.</p></div>
+      <div class="card"><img class="ico" data-icon="sword" alt=""><h3 data-en="Every hit counts">Cada golpe conta</h3><p data-en="It &lt;b&gt;doesn&#x27;t heal&lt;/b&gt;, not even from one night to the next.">Ele <b>não se cura</b>, nem de uma noite para a outra.</p></div>
+      <div class="card"><img class="ico" data-icon="dagger" alt=""><h3 data-en="Surprise attack">Ataque de surpresa</h3><p data-en="Hitting it while it&#x27;s distracted or dazed &lt;b&gt;deals more damage&lt;/b&gt;.">Atacar quando ele está distraído ou tonto <b>causa mais dano</b>.</p></div>
+      <div class="card"><img class="ico" data-icon="goat_horn" alt=""><h3 data-en="Attacking gives you away">Atacar entrega você</h3><p data-en="Hit it and it comes after you. &lt;b&gt;Have an escape route.&lt;/b&gt;">Bateu nele, ele vem atrás de você. <b>Tenha uma rota de fuga.</b></p></div>
+      <div class="card"><img class="ico" data-icon="bow" alt=""><h3 data-en="Use the terrain">Use o terreno</h3><p data-en="It doesn&#x27;t notice &lt;b&gt;holes&lt;/b&gt; and falls into them. With a bow, you can attack from afar.">Ele não percebe <b>buracos</b> e cai neles. Com arco, dá para atacar de longe.</p></div>
     </div>
     <div class="reward">
       <div data-recipe="listener_ear"></div>
-      <div><h3>A recompensa</h3><p>Quando você o derrota, ele deixa cair a <b>Orelha do Ouvinte</b>, usada para fazer o sino.</p></div>
+      <div><h3 data-en="The reward">A recompensa</h3><p data-en="When you defeat it, it drops the &lt;b&gt;Listener&#x27;s Ear&lt;/b&gt;, used to craft the bell.">Quando você o derrota, ele deixa cair a <b>Orelha do Ouvinte</b>, usada para fazer o sino.</p></div>
     </div>
   </div>
 </section>
@@ -417,20 +463,21 @@
   <div class="wrap bell">
     <div class="bell-recipe">
       <div data-recipe="deafening_bell"></div>
-      <small>Feito com ouro, um graveto e a <b>Orelha do Ouvinte</b>.</small>
+      <small data-en="Made with gold, a stick and the &lt;b&gt;Listener&#x27;s Ear&lt;/b&gt;.">Feito com ouro, um graveto e a <b>Orelha do Ouvinte</b>.</small>
     </div>
     <div>
       <div class="head" style="margin-bottom:28px">
-        <div class="eyebrow">O Sino</div>
-        <h2>Sino Ensurdecedor</h2>
-        <p>A sua carta na manga quando ele chega perto demais.</p>
+        <div class="eyebrow" data-en="The Bell">O Sino</div>
+        <h2 data-en="Deafening Bell">Sino Ensurdecedor</h2>
+        <p data-en="Your ace in the hole when it gets too close.">A sua carta na manga quando ele chega perto demais.</p>
       </div>
       <ol class="install-steps">
-        <li><span>Abra a <a href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">página do Hushfall no CurseForge</a>.</span></li>
-        <li><span>Clique em <b>Install</b> para instalar pelo app do CurseForge. Ele já cria o perfil com o Fabric e baixa o <b>Fabric API</b> junto.</span></li>
-        <li><span>Sem o app: baixe o arquivo, coloque na pasta <code>mods</code> junto com o <b>Fabric API</b> e abra o jogo pelo perfil do <b>Fabric</b> para o Minecraft <b>26.3</b>.</span></li>
+        <li><span data-en="Wait for it to &lt;b&gt;get close&lt;/b&gt;.">Espere ele <b>chegar perto</b>.</span></li>
+        <li><span data-en="&lt;b&gt;Right-click&lt;/b&gt; to ring it.">Clique com o <b>botão direito</b> para tocar.</span></li>
+        <li><span data-en="It gets &lt;b&gt;dazed&lt;/b&gt;: run or attack.">Ele fica <b>tonto</b>: fuja ou ataque.</span></li>
+        <li><span data-en="When it recovers, it goes &lt;b&gt;to where the bell rang&lt;/b&gt;. Get out of there.">Quando passar, ele vai <b>até onde o sino tocou</b>. Saia dali.</span></li>
       </ol>
-      <p class="note">Funciona <b>uma vez por noite</b>.</p>
+      <p class="note" data-en="Works &lt;b&gt;once per night&lt;/b&gt;.">Funciona <b>uma vez por noite</b>.</p>
     </div>
   </div>
 </section>
@@ -438,13 +485,13 @@
 <section id="itens">
   <div class="wrap">
     <div class="head center">
-      <div class="eyebrow">Itens</div>
-      <h2>Ferramentas para o silêncio</h2>
-      <p>Passe o mouse nas receitas para ver os ingredientes.</p>
+      <div class="eyebrow" data-en="Items">Itens</div>
+      <h2 data-en="Tools for silence">Ferramentas para o silêncio</h2>
+      <p data-en="Hover over the recipes to see the ingredients.">Passe o mouse nas receitas para ver os ingredientes.</p>
     </div>
     <div class="items">
-      <div class="item"><div data-recipe="felt_boots"></div><div><h3>Botas de Feltro</h3><p>Deixam seus passos bem mais silenciosos. <b>Faça logo no começo.</b></p></div></div>
-      <div class="item"><div data-recipe="silent_dagger"></div><div><h3>Adaga Silenciosa</h3><p>Ataca <b>sem fazer barulho</b>. Para matar zumbis sem chamar a atenção do Ouvinte.</p></div></div>
+      <div class="item"><div data-recipe="felt_boots"></div><div><h3 data-en="Felt Boots">Botas de Feltro</h3><p data-en="Make your footsteps much quieter. &lt;b&gt;Craft them early.&lt;/b&gt;">Deixam seus passos bem mais silenciosos. <b>Faça logo no começo.</b></p></div></div>
+      <div class="item"><div data-recipe="silent_dagger"></div><div><h3 data-en="Silent Dagger">Adaga Silenciosa</h3><p data-en="Strikes &lt;b&gt;without making noise&lt;/b&gt;. For killing zombies without drawing the Listener&#x27;s attention.">Ataca <b>sem fazer barulho</b>. Para matar zumbis sem chamar a atenção do Ouvinte.</p></div></div>
     </div>
   </div>
 </section>
@@ -453,31 +500,144 @@
   <div class="wrap install">
     <div>
       <div class="head" style="margin-bottom:28px">
-        <div class="eyebrow">Instalar</div>
-        <h2>Em 3 passos</h2>
+        <div class="eyebrow" data-en="Install">Instalar</div>
+        <h2 data-en="In 3 steps">Em 3 passos</h2>
       </div>
       <ol class="install-steps">
-        <li><span>Instale o <b>Fabric Loader</b> para o Minecraft <b>26.3</b> pelo <a href="https://fabricmc.net/use/installer/" target="_blank" rel="noopener">instalador oficial</a>.</span></li>
-        <li><span>Baixe o <b>.zip</b> (já vem com o Fabric API) e descompacte.</span></li>
-        <li><span>Coloque os dois arquivos <code>.jar</code> na pasta <code>mods</code> e abra o jogo pelo perfil do Fabric.</span></li>
+        <li><span data-en="Open the &lt;a href=&quot;https://www.curseforge.com/minecraft/mc-mods/hushfall&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hushfall page on CurseForge&lt;/a&gt;.">Abra a <a href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">página do Hushfall no CurseForge</a>.</span></li>
+        <li><span data-en="Click &lt;b&gt;Install&lt;/b&gt; to install through the CurseForge app. It sets up the Fabric profile and downloads &lt;b&gt;Fabric API&lt;/b&gt; for you.">Clique em <b>Install</b> para instalar pelo app do CurseForge. Ele já cria o perfil com o Fabric e baixa o <b>Fabric API</b> junto.</span></li>
+        <li><span data-en="Without the app: download the file, put it in the &lt;code&gt;mods&lt;/code&gt; folder along with &lt;b&gt;Fabric API&lt;/b&gt; and launch the game with the &lt;b&gt;Fabric&lt;/b&gt; profile for Minecraft &lt;b&gt;26.3&lt;/b&gt;.">Sem o app: baixe o arquivo, coloque na pasta <code>mods</code> junto com o <b>Fabric API</b> e abra o jogo pelo perfil do <b>Fabric</b> para o Minecraft <b>26.3</b>.</span></li>
       </ol>
     </div>
     <div class="cta">
-      <h3>Pronto para ficar quieto?</h3>
-      <p>Para Minecraft Java 26.3 com Fabric.</p>
-      <a class="btn primary" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener">Baixar no CurseForge <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-      <p style="margin:14px 0 0;font-size:13px"><a class="muted" href="https://github.com/pedrorreiro/hushfall" target="_blank" rel="noopener">Ver no GitHub</a></p>
+      <h3 data-en="Ready to keep quiet?">Pronto para ficar quieto?</h3>
+      <p data-en="For Minecraft Java 26.3 with Fabric.">Para Minecraft Java 26.3 com Fabric.</p>
+      <a class="btn primary" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener"><span data-en="Download on CurseForge">Baixar no CurseForge</span> <svg class="ext-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+      <p style="margin:14px 0 0;font-size:13px"><a class="muted" href="https://github.com/pedrorreiro/hushfall" target="_blank" rel="noopener" data-en="View on GitHub">Ver no GitHub</a></p>
     </div>
   </div>
 </section>
 
+<section id="feedback">
+  <div class="wrap">
+    <div class="head center">
+      <div class="eyebrow">Feedback</div>
+      <h2 data-en="What did you think?">O que você achou?</h2>
+      <p data-en="Bugs, ideas, scares. Everything helps make Hushfall better.">Bugs, ideias, sustos. Tudo ajuda a deixar o Hushfall melhor.</p>
+    </div>
+    <form class="fb" id="fbForm" action="https://formspree.io/f/xdeagrar" method="POST">
+      <fieldset class="fb-rate">
+        <legend class="fb-label" data-en="Rate the mod">Nota para o mod</legend>
+        <input type="radio" name="nota" id="n1" value="1"><label for="n1">1</label>
+        <input type="radio" name="nota" id="n2" value="2"><label for="n2">2</label>
+        <input type="radio" name="nota" id="n3" value="3"><label for="n3">3</label>
+        <input type="radio" name="nota" id="n4" value="4"><label for="n4">4</label>
+        <input type="radio" name="nota" id="n5" value="5"><label for="n5">5</label>
+      </fieldset>
+      <div class="fb-scale" aria-hidden="true"><span data-en="Didn&#x27;t like it">Não gostei</span><span data-en="Loved it">Adorei</span></div>
+      <div>
+        <label class="fb-label" for="fbMsg" data-en="Comment">Comentário</label>
+        <textarea id="fbMsg" name="mensagem" maxlength="2000" placeholder="O que funcionou, o que travou, o que você mudaria…" data-en-placeholder="What worked, what broke, what you'd change…"></textarea>
+      </div>
+      <div>
+        <label class="fb-label" for="fbContato" data-en="Discord or email (optional, if you&#x27;d like a reply)">Discord ou e-mail (opcional, se quiser resposta)</label>
+        <input type="text" id="fbContato" name="contato" maxlength="120">
+      </div>
+      <input type="hidden" name="origem" id="fbOrigem">
+      <input type="hidden" name="idioma" id="fbIdioma">
+      <input type="text" name="_gotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="fb-foot">
+        <button class="btn primary" type="submit" data-en="Send">Enviar</button>
+        <span class="fb-status" id="fbStatus" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<a class="fb-fab" id="fbFab" href="#feedback" aria-label="Deixar feedback" data-en-aria-label="Leave feedback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></svg><span>Feedback</span></a>
+
+<script>
+  // De onde a pessoa veio: ?ref=curseforge / ?ref=modrinth, ou o site anterior.
+  (function () {
+    var ref = new URLSearchParams(location.search).get('ref');
+    if (!ref && document.referrer) { try { ref = new URL(document.referrer).hostname; } catch (e) {} }
+    document.getElementById('fbOrigem').value = ref || 'direto';
+
+    var form = document.getElementById('fbForm'), status = document.getElementById('fbStatus');
+    function tr(pt, en) { return document.documentElement.lang === 'en' ? en : pt; }
+
+    // Esconde o botão fixo quando o formulário já está na tela.
+    var fab = document.getElementById('fbFab');
+    new IntersectionObserver(function (e) { fab.classList.toggle('hide', e[0].isIntersecting); }, { threshold: 0.2 })
+      .observe(document.getElementById('feedback'));
+    form.addEventListener('submit', function () { document.getElementById('fbIdioma').value = document.documentElement.lang; });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.nota.value && !form.mensagem.value.trim()) {
+        status.className = 'fb-status err'; status.textContent = tr('Dê uma nota ou escreva algo antes de enviar.', 'Pick a rating or write something before sending.'); return;
+      }
+      var btn = form.querySelector('button'); btn.disabled = true;
+      status.className = 'fb-status'; status.textContent = tr('Enviando…', 'Sending…');
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+        .then(function (r) {
+          if (!r.ok) throw 0;
+          form.reset(); document.getElementById('fbOrigem').value = ref || 'direto';
+          status.className = 'fb-status ok'; status.textContent = tr('Valeu! Recebemos seu feedback.', 'Thanks! We got your feedback.');
+        })
+        .catch(function () { status.className = 'fb-status err'; status.textContent = tr('Não deu para enviar. Tente de novo em instantes.', 'Couldn\'t send it. Please try again in a moment.'); })
+        .finally(function () { btn.disabled = false; });
+    });
+  })();
+</script>
+
 <footer>
   <div class="wrap">
-    <span>Hushfall · Silêncio Total · Minecraft Java 26.3</span>
-    <span>Projeto de fã, não oficial. Não aprovado nem associado à Mojang ou à Microsoft. Minecraft é marca da Mojang AB.</span>
+    <span data-en="Hushfall · Minecraft Java 26.3">Hushfall · Silêncio Total · Minecraft Java 26.3</span>
+    <span data-en="Unofficial fan project. Not approved by or associated with Mojang or Microsoft. Minecraft is a trademark of Mojang AB.">Projeto de fã, não oficial. Não aprovado nem associado à Mojang ou à Microsoft. Minecraft é marca da Mojang AB.</span>
   </div>
 </footer>
 
+<script>
+  // Idioma: ?lang=pt|en > escolha salva > idioma do navegador (português -> pt, o resto -> en).
+  (function () {
+    var KEY = 'hushfall-lang', ATTRS = ['aria-label', 'placeholder', 'content'];
+    var TITLE = { pt: 'Hushfall · Silêncio Total', en: 'Hushfall' };
+    function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+    function detect() {
+      var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+      for (var i = 0; i < langs.length; i++) {
+        if (/^pt/i.test(langs[i])) return 'pt';
+        if (/^en/i.test(langs[i])) return 'en';
+      }
+      return 'en';
+    }
+    function apply(lang) {
+      var en = lang === 'en';
+      document.documentElement.lang = en ? 'en' : 'pt-br';
+      document.title = TITLE[lang];
+      document.querySelectorAll('[data-en]').forEach(function (el) {
+        if (el.dataset.pt == null) el.dataset.pt = el.innerHTML;
+        el.innerHTML = en ? el.dataset.en : el.dataset.pt;
+      });
+      ATTRS.forEach(function (a) {
+        document.querySelectorAll('[data-en-' + a + ']').forEach(function (el) {
+          if (!el.hasAttribute('data-pt-' + a)) el.setAttribute('data-pt-' + a, el.getAttribute(a));
+          el.setAttribute(a, el.getAttribute((en ? 'data-en-' : 'data-pt-') + a));
+        });
+      });
+      document.querySelectorAll('.lang-btn').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang); });
+      document.dispatchEvent(new Event('langchange'));
+    }
+    document.querySelectorAll('.lang-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        try { localStorage.setItem(KEY, b.dataset.lang); } catch (e) {}
+        apply(b.dataset.lang);
+      });
+    });
+    var param = new URLSearchParams(location.search).get('lang');
+    apply(param === 'pt' || param === 'en' ? param : saved() || detect());
+  })();
+</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -499,7 +659,9 @@ document.querySelectorAll("[data-icon]").forEach(el => {
 
 const $ = s => document.querySelector(s);
 const COLORS = [0x6fcf8a, 0xe8bd4a, 0xff8a4c, 0xff5a64, 0x7fd6e8];
+const tr = (pt, en) => document.documentElement.lang === "en" ? en : pt;
 const STATE_NAMES = ["Patrulha", "Investiga", "Alerta", "Caça", "Atordoado"];
+const STATE_NAMES_EN = ["Patrol", "Investigate", "Alert", "Hunt", "Stunned"];
 const STATE_COLORS = ["var(--low)", "var(--mid)", "#ff8a4c", "var(--high)", "var(--accent)"];
 const STATE_TEXT = [
   "Ronda a sua área, com as orelhas balançando.",
@@ -508,6 +670,14 @@ const STATE_TEXT = [
   "Corre direto atrás de você.",
   "Ficou tonto com o sino. Hora de fugir.",
 ];
+const STATE_TEXT_EN = [
+  "Prowls your area, ears twitching.",
+  "Heard something. Goes to the sound and sniffs.",
+  "Heard you. The roar is the warning.",
+  "Runs straight at you.",
+  "Dazed by the bell. Time to run.",
+];
+const SUBTITLES_EN = { click: "Listener clicks its ears", growl: "Listener growls", alert: "Listener heard you!", sniff: "Listener sniffs", hurt: "Listener staggers", attack: "Listener attacks" };
 const SUBTITLES = { click: "Ouvinte estala as orelhas", growl: "Ouvinte rosna", alert: "Ouvinte ouviu você!", sniff: "Ouvinte fareja", hurt: "Ouvinte cambaleia", attack: "Ouvinte ataca" };
 
 // ------------------------------------------------------------------ cena
@@ -682,7 +852,7 @@ const SOUND_ICONS = { on: '<svg viewBox="0 0 24 24" fill="none" stroke="currentC
 function showSound(on) {
   soundBtn.innerHTML = on ? SOUND_ICONS.on : SOUND_ICONS.off;
   soundBtn.classList.toggle("on", on);
-  const label = on ? "Desligar o som" : "Ligar o som";
+  const label = on ? tr("Desligar o som", "Turn sound off") : tr("Ligar o som", "Turn sound on");
   soundBtn.setAttribute("aria-label", label);
   soundBtn.title = label;
 }
@@ -726,7 +896,7 @@ async function play(name, { volume = 1, ripple = true, pitchScale = 1 } = {}) {
   src.start();
   if (SUBTITLES[name]) {
     const sub = $("#subtitle");
-    sub.textContent = "< " + SUBTITLES[name] + " >";
+    sub.textContent = "< " + tr(SUBTITLES[name], SUBTITLES_EN[name]) + " >";
     sub.style.opacity = 1;
     clearTimeout(subTimer);
     subTimer = setTimeout(() => sub.style.opacity = 0, 2200);
@@ -747,14 +917,19 @@ function playState() {
   s.intro.forEach((n, i) => setTimeout(() => play(n, { pitchScale: mode === 4 ? 0.6 : 1 }), i * 650));
   nextAmbient = performance.now() / 1000 + s.every;
 }
+function showState() {
+  $("#stateText").textContent = tr(STATE_TEXT[mode], STATE_TEXT_EN[mode]);
+  const name = $("#stateName");
+  name.style.setProperty("--c", STATE_COLORS[mode]);
+  name.textContent = tr(STATE_NAMES[mode], STATE_NAMES_EN[mode]);
+}
 function setMode(m) {
   mode = m;
-  $("#stateText").textContent = STATE_TEXT[m];
-  const name = $("#stateName");
-  name.style.setProperty("--c", STATE_COLORS[m]);
-  name.textContent = STATE_NAMES[m];
+  showState();
   playState();
 }
+document.addEventListener("langchange", () => { showState(); showSound(soundOn); });
+showState(); showSound(soundOn);
 const step = d => { chase = null; manualUntil = performance.now() / 1000 + 4; setMode((mode + d + STATE_NAMES.length) % STATE_NAMES.length); };
 $("#statePrev").onclick = () => step(-1);
 $("#stateNext").onclick = () => step(1);
@@ -862,7 +1037,7 @@ title.innerHTML = [...title.textContent].map(c => `<span>${c}</span>`).join("");
 const letters = [...title.children];
 const wave = $("#wave"), wctx = wave.getContext("2d");
 const youRing = $("#youRing"), youLevel = $("#youLevel");
-const LEVELS = [[0.05, "Silêncio", "var(--muted)"], [0.3, "Baixinho", "var(--low)"], [0.7, "Audível", "var(--mid)"], [2, "Alto!", "var(--high)"]];
+const LEVELS = [[0.05, "Silêncio", "var(--muted)", "Silent"], [0.3, "Baixinho", "var(--low)", "Quiet"], [0.7, "Audível", "var(--mid)", "Audible"], [2, "Alto!", "var(--high)", "LOUD!"]];
 const LEVEL_RGB = { "var(--muted)": "141,150,166", "var(--low)": "111,207,138", "var(--mid)": "232,189,74", "var(--high)": "255,90,100" };
 let heroVisible = true, waveT = 0, lastLevel = "", nextRoar = 0;
 // Caçada pelo mouse, como no jogo: barulho alto → alerta (rugido) → se continuar, caça → em silêncio, perde o rastro.
@@ -879,7 +1054,8 @@ function heroFrame(t) {
   const dt = Math.min(0.05, (t - waveT) / 1000 || 0); waveT = t;
   if (!visible) mouseNoise = Math.max(0, mouseNoise - dt * NOISE_DECAY);
   const n = mouseNoise;
-  const [, label, color] = LEVELS.find(l => n < l[0]);
+  const [, labelPt, color, labelEn] = LEVELS.find(l => n < l[0]);
+  const label = tr(labelPt, labelEn);
   // Medidor "seu barulho".
   youRing.style.strokeDashoffset = 189 * (1 - Math.min(1, n));
   youRing.style.stroke = color === "var(--muted)" ? "var(--low)" : color;
@@ -991,7 +1167,7 @@ const RECIPES = {
   felt_boots: { grid: ["wool", null, "wool", "leather", null, "leather", null, null, null], result: "felt_boots" },
   silent_dagger: { grid: [null, null, "iron", null, "wool", null, "stick", null, null], result: "silent_dagger" },
   deafening_bell: { grid: [null, "stick", null, "gold", "listener_ear", "gold", "gold", null, "gold"], result: "deafening_bell" },
-  listener_ear: { drop: "Derrote o Ouvinte", result: "listener_ear" },
+  listener_ear: { drop: "Derrote o Ouvinte", dropEn: "Defeat the Listener", result: "listener_ear" },
 };
 const ARROW = "data:image/svg+xml," + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15" shape-rendering="crispEdges"><path fill="#8b8b8b" d="M0 5h13V0h2v1h1v1h1v1h1v1h1v1h1v1h1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-2V10H0z"/></svg>');
@@ -999,6 +1175,12 @@ const tip = document.createElement("div");
 tip.className = "mc-tip";
 document.body.appendChild(tip);
 const cycling = [];
+const ITEM_NAMES_EN = { wool: "Any Wool", leather: "Leather", iron: "Iron Ingot", stick: "Stick", felt_boots: "Felt Boots",
+  silent_dagger: "Silent Dagger", listener_ear: "Listener's Ear", gold: "Gold Ingot", deafening_bell: "Deafening Bell", listener_spawn_egg: "Listener Spawn Egg" };
+const itemName = key => tr(ITEMS[key].name, ITEM_NAMES_EN[key] || ITEMS[key].name);
+// Textos das receitas que mudam com o idioma.
+const recipeTexts = [];
+document.addEventListener("langchange", () => recipeTexts.forEach(f => f()));
 function slot(key, big = false) {
   const el = document.createElement("div");
   el.className = "mc-slot" + (big ? " big" : "");
@@ -1006,11 +1188,12 @@ function slot(key, big = false) {
   const item = ITEMS[key];
   const img = document.createElement("img");
   img.src = item.icons[0];
-  img.alt = item.name;
+  const setAlt = () => img.alt = itemName(key);
+  setAlt(); recipeTexts.push(setAlt);
   el.appendChild(img);
   if (item.icons.length > 1) cycling.push({ img, icons: item.icons });
   el.addEventListener("mousemove", e => {
-    tip.innerHTML = item.name + (key === "wool" ? "<small>qualquer cor</small>" : "");
+    tip.innerHTML = itemName(key) + (key === "wool" ? "<small>" + tr("qualquer cor", "any color") + "</small>" : "");
     tip.style.display = "block";
     tip.style.left = e.clientX + 14 + "px";
     tip.style.top = e.clientY - 28 + "px";
@@ -1030,7 +1213,8 @@ document.querySelectorAll("[data-recipe]").forEach(host => {
   } else {
     const label = document.createElement("div");
     label.className = "mc-label";
-    label.textContent = r.drop;
+    const setLabel = () => label.textContent = tr(r.drop, r.dropEn);
+    setLabel(); recipeTexts.push(setLabel);
     box.appendChild(label);
   }
   const arrow = document.createElement("img");
