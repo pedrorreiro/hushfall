@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Novidades · Hushfall</title>
+<meta name="description" content="O que mudou em cada versão do Hushfall (Silêncio Total)." data-en-content="What changed in each version of Hushfall.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --surface: #12161e;
+    --line: rgba(160, 180, 210, 0.12);
+    --text: #e6e9ef;
+    --muted: #8d96a6;
+    --accent: #7fd6e8;
+    --max: 880px;
+  }
+  * { box-sizing: border-box; }
+  * { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  h1, h2 { font-family: "Pixelify Sans", monospace; font-weight: 700; line-height: 1.1; margin: 0; }
+  p { margin: 0; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(11, 13, 18, 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; max-width: 1080px; }
+  nav .logo { font: 700 20px "Pixelify Sans", monospace; text-decoration: none; letter-spacing: .02em; }
+  .nav-end { display: flex; align-items: center; gap: 14px; }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; transition: color .15s; }
+  .back:hover { color: var(--text); }
+  .lang { display: flex; gap: 2px; }
+  .lang-btn { padding: 5px; border: 1px solid transparent; border-radius: 7px; background: none; cursor: pointer; opacity: .45; transition: opacity .15s, border-color .15s; }
+  .lang-btn:hover { opacity: .85; }
+  .lang-btn[aria-pressed="true"] { opacity: 1; border-color: var(--line); }
+  .lang-btn svg { display: block; width: 22px; height: 15px; border-radius: 2px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; font: 600 14px Inter, sans-serif; text-decoration: none; border: 1px solid var(--line); color: var(--text); transition: border-color .15s; }
+  .btn:hover { border-color: rgba(255,255,255,.3); }
+  .btn svg { width: 14px; height: 14px; opacity: .7; }
+
+  header { position: relative; padding: 96px 0 56px; overflow: hidden; }
+  header::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .45;
+    background-image:
+      radial-gradient(1px 1px at 12% 22%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 31% 70%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 58% 26%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 79% 14%, #dff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 90% 60%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 44% 88%, #cfe 50%, transparent 51%); }
+  header::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 80% 30%, rgba(127,214,232,.08), transparent 45%); }
+  header::before, header::after { -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+  header .wrap { position: relative; }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  header h1 { font-size: clamp(40px, 7vw, 64px); }
+  header p { color: var(--muted); margin-top: 14px; font-size: 18px; max-width: 46ch; }
+
+  .releases { list-style: none; margin: 0; padding: 0 0 96px; }
+  .rel { display: grid; grid-template-columns: 150px 1fr; gap: 0 36px; }
+  .rel-side { padding-top: 4px; text-align: right; }
+  .ver { display: block; font: 700 26px "Pixelify Sans", monospace; letter-spacing: .02em; }
+  .rel-side time { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .badge { display: inline-block; margin-top: 10px; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 600; letter-spacing: .04em; color: var(--accent); background: rgba(127,214,232,.1); border: 1px solid rgba(127,214,232,.25); }
+
+  .rel-body { position: relative; padding: 0 0 56px 32px; border-left: 1px solid var(--line); }
+  .rel:last-child .rel-body { padding-bottom: 8px; }
+  /* Marcador da linha do tempo: um quadradinho, como um pixel. */
+  .rel-body::before { content: ""; position: absolute; left: -6px; top: 12px; width: 11px; height: 11px; background: var(--bg); border: 2px solid var(--muted); }
+  .rel.latest .rel-body::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 5px rgba(127,214,232,.12), 0 0 18px rgba(127,214,232,.45); }
+  .rel-body h2 { font-size: 26px; margin-bottom: 18px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 6px 22px; }
+  .changes { list-style: none; margin: 0; padding: 0; }
+  .changes li { display: grid; grid-template-columns: 14px 1fr; gap: 12px; padding: 14px 0; color: var(--muted); font-size: 15px; }
+  .changes li + li { border-top: 1px solid var(--line); }
+  .changes li::before { content: ""; width: 6px; height: 6px; margin-top: 9px; background: var(--accent); opacity: .8; }
+  .changes b { color: var(--text); font-weight: 600; }
+  .gh { display: inline-block; margin-top: 12px; font-size: 13px; color: var(--muted); text-decoration: none; }
+  .gh:hover { color: var(--text); }
+
+  footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; max-width: 1080px; }
+
+  @media (max-width: 640px) {
+    header { padding: 64px 0 40px; }
+    .rel { grid-template-columns: 1fr; }
+    .rel-side { text-align: left; padding: 0 0 14px 32px; border-left: 1px solid var(--line); display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+    .rel-side time { margin: 0; }
+    .badge { margin: 0; }
+    .rel-side, .rel-body { position: relative; padding-left: 22px; }
+    .rel-body::before { display: none; }
+    .rel-side::before { content: ""; position: absolute; left: -6px; top: 10px; width: 11px; height: 11px; background: var(--bg); border: 2px solid var(--muted); }
+    .rel.latest .rel-side::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 5px rgba(127,214,232,.12), 0 0 18px rgba(127,214,232,.45); }
+    .card { padding: 4px 16px; }
+    .back { display: none; }
+  }
+</style>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="/">Hushfall</a>
+    <div class="nav-end">
+      <a class="back" href="/" data-en="&larr; Back to the site">&larr; Voltar ao site</a>
+      <div class="lang" role="group" aria-label="Idioma" data-en-aria-label="Language">
+        <button class="lang-btn" type="button" data-lang="pt" aria-label="Português" title="Português"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#009c3b"/><path d="M11 1.6L20.4 7.5 11 13.4 1.6 7.5z" fill="#ffdf00"/><circle cx="11" cy="7.5" r="3.5" fill="#002776"/></svg></button>
+        <button class="lang-btn" type="button" data-lang="en" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#fff"/><rect y="0.000" width="22" height="1.154" fill="#b22234"/><rect y="2.308" width="22" height="1.154" fill="#b22234"/><rect y="4.616" width="22" height="1.154" fill="#b22234"/><rect y="6.924" width="22" height="1.154" fill="#b22234"/><rect y="9.232" width="22" height="1.154" fill="#b22234"/><rect y="11.540" width="22" height="1.154" fill="#b22234"/><rect y="13.848" width="22" height="1.154" fill="#b22234"/><rect width="9.4" height="8.08" fill="#3c3b6e"/></svg></button>
+      </div>
+      <a class="btn" href="https://www.curseforge.com/minecraft/mc-mods/hushfall" target="_blank" rel="noopener"><span data-en="Download">Baixar</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Changelog</div>
+    <h1 data-en="What&#x27;s new">Novidades</h1>
+    <p data-en="What changed in each version of the mod, newest first.">O que mudou em cada versão do mod, da mais nova para a mais antiga.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <ol class="releases">
+
+    <li class="rel latest" id="v1.4.0">
+      <div class="rel-side"><span class="ver">1.4.0</span><time datetime="2026-10-13" data-en="Oct 13, 2026">13 out 2026</time><span class="badge" data-en="Latest">Mais recente</span></div>
+      <div class="rel-body">
+        <h2 data-en="The Listener Pup">O Filhote do Ouvinte</h2>
+        <div class="card"><ul class="changes">
+          <li><span data-en="&lt;b&gt;Listener Pup.&lt;/b&gt; A blind pet that finds ores by listening to the echo. It hatches from the Pup Egg, made with the Golden Ear the Listener drops every 5th death.">
+            <b>Filhote do Ouvinte.</b> Um pet cego que acha minérios ouvindo o eco. Nasce do Ovo do Filhote, feito com a Orelha de Ouro que o Ouvinte deixa a cada 5 mortes.</span></li>
+          <li><span data-en="&lt;b&gt;Killing the Listener ends the night.&lt;/b&gt; The meter fades away and there is no more noise until morning.">
+            <b>Matar o Ouvinte encerra a noite.</b> O medidor some e não há mais ruído até amanhecer.</span></li>
+          <li><span data-en="&lt;b&gt;Fire counts as an attack.&lt;/b&gt; Burning the Listener makes it hunt the nearest player, even in silence.">
+            <b>Fogo conta como ataque.</b> Queimar o Ouvinte faz ele caçar o jogador mais perto, mesmo em silêncio.</span></li>
+        </ul></div>
+        <a class="gh" href="https://github.com/pedrorreiro/hushfall/releases/tag/v1.4.0" target="_blank" rel="noopener" data-en="See on GitHub &rarr;">Ver no GitHub &rarr;</a>
+      </div>
+    </li>
+
+    <li class="rel" id="v1.3.0">
+      <div class="rel-side"><span class="ver">1.3.0</span><time datetime="2026-10-07" data-en="Oct 7, 2026">7 out 2026</time></div>
+      <div class="rel-body">
+        <h2 data-en="No escape">Sem escapatória</h2>
+        <div class="card"><ul class="changes">
+          <li><span data-en="&lt;b&gt;Logging out won&#x27;t save you.&lt;/b&gt; Your noise is saved with you. Leave mid-chase and you come back loud.">
+            <b>Sair do mundo não salva.</b> Seu barulho fica salvo com você. Saiu no meio da caçada, volta fazendo barulho.</span></li>
+          <li><span data-en="&lt;b&gt;It remembers.&lt;/b&gt; The Listener keeps what it was doing when the world is saved.">
+            <b>Ele lembra.</b> O Ouvinte guarda o que estava fazendo quando o mundo é salvo.</span></li>
+          <li><span data-en="&lt;b&gt;Boats and minecarts make noise.&lt;/b&gt; A minecart is as loud as running.">
+            <b>Barco e carrinho fazem barulho.</b> O carrinho faz tanto barulho quanto correr.</span></li>
+          <li><span data-en="&lt;b&gt;Meter settings.&lt;/b&gt; Corner, margins and size, through Mod Menu.">
+            <b>Opções do medidor.</b> Canto, margens e tamanho, pelo Mod Menu.</span></li>
+        </ul></div>
+        <a class="gh" href="https://github.com/pedrorreiro/hushfall/releases/tag/v1.3.0" target="_blank" rel="noopener" data-en="See on GitHub &rarr;">Ver no GitHub &rarr;</a>
+      </div>
+    </li>
+
+    <li class="rel" id="v1.2.1">
+      <div class="rel-side"><span class="ver">1.2.1</span><time datetime="2026-10-07" data-en="Oct 7, 2026">7 out 2026</time></div>
+      <div class="rel-body">
+        <h2 data-en="New icon">Ícone novo</h2>
+        <div class="card"><ul class="changes">
+          <li><span data-en="&lt;b&gt;The Listener&#x27;s face&lt;/b&gt; now shows up in the game&#x27;s mod list.">
+            <b>O rosto do Ouvinte</b> agora aparece na lista de mods do jogo.</span></li>
+        </ul></div>
+        <a class="gh" href="https://github.com/pedrorreiro/hushfall/releases/tag/v1.2.1" target="_blank" rel="noopener" data-en="See on GitHub &rarr;">Ver no GitHub &rarr;</a>
+      </div>
+    </li>
+
+    <li class="rel" id="v1.2.0">
+      <div class="rel-side"><span class="ver">1.2.0</span><time datetime="2026-10-07" data-en="Oct 7, 2026">7 out 2026</time></div>
+      <div class="rel-body">
+        <h2 data-en="Sleep in silence">Dormir em silêncio</h2>
+        <div class="card"><ul class="changes">
+          <li><span data-en="&lt;b&gt;You can sleep.&lt;/b&gt; While the Listener is only prowling, the bed works.">
+            <b>Dá para dormir.</b> Com o Ouvinte só patrulhando, a cama funciona.</span></li>
+          <li><span data-en="&lt;b&gt;It doesn&#x27;t heal.&lt;/b&gt; Damage stays from one night to the next.">
+            <b>Ele não se cura.</b> O dano fica de uma noite para a outra.</span></li>
+          <li><span data-en="&lt;b&gt;It hears from anywhere.&lt;/b&gt; Audible noise reaches it wherever it is. Too far away, it resurfaces near you.">
+            <b>Ele ouve de qualquer lugar.</b> Barulho audível chega até ele onde estiver. Longe demais, ele ressurge perto de você.</span></li>
+        </ul></div>
+        <a class="gh" href="https://github.com/pedrorreiro/hushfall/releases/tag/v1.2.0" target="_blank" rel="noopener" data-en="See on GitHub &rarr;">Ver no GitHub &rarr;</a>
+      </div>
+    </li>
+
+    <li class="rel" id="v1.1.0">
+      <div class="rel-side"><span class="ver">1.1.0</span><time datetime="2026-10-04" data-en="Oct 4, 2026">4 out 2026</time></div>
+      <div class="rel-body">
+        <h2 data-en="Not every night">Nem toda noite</h2>
+        <div class="card"><ul class="changes">
+          <li><span data-en="&lt;b&gt;It comes on half the nights.&lt;/b&gt; The first night is always free. After that, each night has a 50% chance.">
+            <b>Ele vem em metade das noites.</b> A primeira noite é sempre livre. Depois, cada noite tem 50% de chance.</span></li>
+          <li><span data-en="&lt;b&gt;Warning at dusk.&lt;/b&gt; A message tells you if it&#x27;s coming. On calm nights, the meter doesn&#x27;t even show up.">
+            <b>Aviso ao anoitecer.</b> Uma mensagem diz se ele vem. Nas noites calmas, o medidor nem aparece.</span></li>
+        </ul></div>
+        <a class="gh" href="https://github.com/pedrorreiro/hushfall/releases/tag/v1.1.0" target="_blank" rel="noopener" data-en="See on GitHub &rarr;">Ver no GitHub &rarr;</a>
+      </div>
+    </li>
+
+    <li class="rel" id="v1.0.0">
+      <div class="rel-side"><span class="ver">1.0.0</span><time datetime="2026-10-03" data-en="Oct 3, 2026">3 out 2026</time></div>
+      <div class="rel-body">
+        <h2 data-en="Launch">Lançamento</h2>
+        <div class="card"><ul class="changes">
+          <li><span data-en="&lt;b&gt;The Listener.&lt;/b&gt; A blind boss that hunts by sound at night and burrows at dawn.">
+            <b>O Ouvinte.</b> Um chefe cego que caça pelo som à noite e se enterra ao amanhecer.</span></li>
+          <li><span data-en="&lt;b&gt;Noise meter.&lt;/b&gt; A ring in the corner of the screen shows how much noise you make.">
+            <b>Medidor de ruído.</b> Um anel no canto da tela mostra quanto barulho você faz.</span></li>
+          <li><span data-en="&lt;b&gt;Items.&lt;/b&gt; Felt Boots, Silent Dagger and the Deafening Bell, made with the Listener&#x27;s Ear.">
+            <b>Itens.</b> Botas de Feltro, Adaga Silenciosa e o Sino Ensurdecedor, feito com a Orelha do Ouvinte.</span></li>
+        </ul></div>
+        <a class="gh" href="https://github.com/pedrorreiro/hushfall/releases/tag/v1.0.0" target="_blank" rel="noopener" data-en="See on GitHub &rarr;">Ver no GitHub &rarr;</a>
+      </div>
+    </li>
+
+  </ol>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span data-en="Hushfall · Minecraft Java 26.3">Hushfall · Silêncio Total · Minecraft Java 26.3</span>
+    <span data-en="Unofficial fan project. Not approved by or associated with Mojang or Microsoft. Minecraft is a trademark of Mojang AB.">Projeto de fã, não oficial. Não aprovado nem associado à Mojang ou à Microsoft. Minecraft é marca da Mojang AB.</span>
+  </div>
+</footer>
+
+<script>
+  // Mesmo esquema de idioma do site: ?lang=pt|en > escolha salva > idioma do navegador.
+  (function () {
+    var KEY = 'hushfall-lang', ATTRS = ['aria-label', 'content'];
+    var TITLE = { pt: 'Novidades · Hushfall', en: "What's new · Hushfall" };
+    function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+    function detect() {
+      var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+      for (var i = 0; i < langs.length; i++) {
+        if (/^pt/i.test(langs[i])) return 'pt';
+        if (/^en/i.test(langs[i])) return 'en';
+      }
+      return 'en';
+    }
+    function apply(lang) {
+      var en = lang === 'en';
+      document.documentElement.lang = en ? 'en' : 'pt-br';
+      document.title = TITLE[lang];
+      document.querySelectorAll('[data-en]').forEach(function (el) {
+        if (el.dataset.pt == null) el.dataset.pt = el.innerHTML;
+        el.innerHTML = en ? el.dataset.en : el.dataset.pt;
+      });
+      ATTRS.forEach(function (a) {
+        document.querySelectorAll('[data-en-' + a + ']').forEach(function (el) {
+          if (!el.hasAttribute('data-pt-' + a)) el.setAttribute('data-pt-' + a, el.getAttribute(a));
+          el.setAttribute(a, el.getAttribute((en ? 'data-en-' : 'data-pt-') + a));
+        });
+      });
+      document.querySelectorAll('.lang-btn').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang); });
+    }
+    document.querySelectorAll('.lang-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        try { localStorage.setItem(KEY, b.dataset.lang); } catch (e) {}
+        apply(b.dataset.lang);
+      });
+    });
+    var param = new URLSearchParams(location.search).get('lang');
+    apply(param === 'pt' || param === 'en' ? param : saved() || detect());
+  })();
+</script>
+</body>
+</html>

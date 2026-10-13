@@ -37,6 +37,9 @@
   nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
   nav ul a { text-decoration: none; color: var(--muted); transition: color .15s; }
   nav ul a:hover { color: var(--text); }
+  nav ul a { white-space: nowrap; }
+  @media (max-width: 1180px) { nav ul { gap: 18px; } }
+  @media (max-width: 1040px) { nav ul { display: none; } }
 
   .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font: 600 15px Inter, sans-serif; text-decoration: none; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--text); transition: background .15s, border-color .15s; }
   .btn:hover { border-color: rgba(255,255,255,.3); }
@@ -323,6 +326,7 @@
       <li><a href="#sino" data-en="The Bell">O Sino</a></li>
       <li><a href="#filhote" data-en="The Pup">O Filhote</a></li>
       <li><a href="#itens" data-en="Items">Itens</a></li>
+      <li><a href="/changelog" data-en="What&#x27;s new">Novidades</a></li>
       <li><a href="#feedback">Feedback</a></li>
     </ul>
     <div class="nav-end">
@@ -637,7 +641,7 @@
 
 <footer>
   <div class="wrap">
-    <span data-en="Hushfall · Minecraft Java 26.3">Hushfall · Silêncio Total · Minecraft Java 26.3</span>
+    <span><span data-en="Hushfall · Minecraft Java 26.3">Hushfall · Silêncio Total · Minecraft Java 26.3</span> · <a href="/changelog" data-en="What&#x27;s new">Novidades</a></span>
     <span data-en="Unofficial fan project. Not approved by or associated with Mojang or Microsoft. Minecraft is a trademark of Mojang AB.">Projeto de fã, não oficial. Não aprovado nem associado à Mojang ou à Microsoft. Minecraft é marca da Mojang AB.</span>
   </div>
 </footer>
