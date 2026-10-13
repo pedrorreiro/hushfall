@@ -19,5 +19,3 @@
   - São 10 buscas por filhote (`pupSearches` na config). Com o Ouvinte acordado ele não procura. Se a vida dele acabar, ele foge e volta na manhã seguinte.
 - **Matar o Ouvinte encerra a noite**: o medidor some aos poucos e não há ruído pelo resto daquela noite.
 - **Fogo conta como ataque**: botar fogo no Ouvinte (ou atraí-lo para a lava) faz ele caçar o jogador mais perto, mesmo em silêncio.
-
-*Fan project, not official. Not approved by or associated with Mojang or Microsoft. / Projeto de fã, não oficial. Não aprovado nem associado à Mojang ou à Microsoft.*
