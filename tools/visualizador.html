@@ -510,12 +510,11 @@
       <div class="head" style="margin-bottom:28px">
         <div class="eyebrow" data-en="The reward for beating it again and again">A recompensa por vencer de novo e de novo</div>
         <h2 data-en="Listener Pup">Filhote do Ouvinte</h2>
-        <p data-en="A blind pet, like its parent. It finds ores by listening to the echo.">Um pet cego, como o pai. Ele acha minérios ouvindo o eco.</p>
+        <p data-en="A blind pet, like its parent. It finds ores by listening to the echo. Every 5th time the Listener dies, it drops a &lt;b&gt;Golden Ear&lt;/b&gt;, the key to the egg.">Um pet cego, como o pai. Ele acha minérios ouvindo o eco. A cada 5 mortes, o Ouvinte deixa uma <b>Orelha de Ouro</b>, a chave para o ovo.</p>
       </div>
       <ol class="install-steps">
-        <li><span data-en="Every &lt;b&gt;5th time&lt;/b&gt; the Listener dies (5th, 10th, 15th...), it also drops a &lt;b&gt;Golden Ear&lt;/b&gt;.">A cada <b>5 mortes</b> do Ouvinte (5ª, 10ª, 15ª...), ele também deixa uma <b>Orelha de Ouro</b>.</span></li>
-        <li><span data-en="Craft the &lt;b&gt;Pup Egg&lt;/b&gt; and use it on a block. The pup hatches already yours.">Faça o <b>Ovo do Filhote</b> e use num bloco. Ele nasce já seu.</span></li>
-        <li><span data-en="&lt;b&gt;Crouch + right-click&lt;/b&gt; it, put in an ore and click &lt;b&gt;Search&lt;/b&gt;.">Agachado, <b>clique direito</b> nele, coloque um minério e clique em <b>Procurar</b>.</span></li>
+        <li><span data-en="Crack the &lt;b&gt;Pup Egg&lt;/b&gt; and the pup hatches already yours.">Ao quebrar o <b>Ovo do Filhote</b>, ele já nasce seu.</span></li>
+        <li><span data-en="Show it an ore and it &lt;b&gt;searches&lt;/b&gt; for another one of the same kind, up to 64 blocks away.">Mostre um minério e ele <b>procura</b> outro igual, até 64 blocos de distância.</span></li>
         <li><span data-en="It taps the ground, listens and &lt;b&gt;leads you&lt;/b&gt; to the nearest matching ore. A high echo means shallow, a low echo means deep.">Ele bate no chão, ouve e <b>te leva</b> até o minério igual mais perto. Eco agudo é raso, grave é fundo.</span></li>
       </ol>
       <p class="note" data-en="&lt;b&gt;10 searches&lt;/b&gt; per pup. It won&#x27;t search while the Listener is awake. If it gets badly hurt, it runs off and comes back in the morning.">São <b>10 buscas</b> por filhote. Com o Ouvinte acordado ele não procura. Se a vida acabar, ele foge e volta de manhã.</p>
@@ -523,7 +522,6 @@
   </div>
   <div class="wrap">
     <div class="pup-recipes">
-      <div><div data-recipe="golden_ear"></div></div>
       <div><div data-recipe="listener_pup_egg"></div><small data-en="2 &lt;b&gt;Listener&#x27;s Ears&lt;/b&gt;, an egg and the &lt;b&gt;Golden Ear&lt;/b&gt;.">2 <b>Orelhas do Ouvinte</b>, um ovo e a <b>Orelha de Ouro</b>.</small></div>
     </div>
   </div>
@@ -1218,7 +1216,6 @@ const RECIPES = {
   silent_dagger: { grid: [null, null, "iron", null, "wool", null, "stick", null, null], result: "silent_dagger" },
   deafening_bell: { grid: [null, "stick", null, "gold", "listener_ear", "gold", "gold", null, "gold"], result: "deafening_bell" },
   listener_ear: { drop: "Derrote o Ouvinte", dropEn: "Defeat the Listener", result: "listener_ear" },
-  golden_ear: { drop: "A cada 5 mortes do Ouvinte", dropEn: "Every 5th Listener death", result: "golden_ear" },
   listener_pup_egg: { grid: ["listener_ear", null, "listener_ear", null, "egg", null, null, "golden_ear", null], result: "listener_pup_egg" },
 };
 const ARROW = "data:image/svg+xml," + encodeURIComponent(

@@ -2,7 +2,7 @@
 
 ### What's new in 1.4.0
 - **The Listener Pup**: every 5th time the Listener dies, it also drops a **Golden Ear**. Craft it with 2 Listener's Ears and an egg into a **Pup Egg**: a blind pet that finds ores by listening to the echo.
-  - Crouch + right-click it, put in an ore and click **Search**. It taps the ground, listens and leads you to the nearest ore of the same kind within 64 blocks.
+  - Show it an ore and it searches for another one of the same kind within 64 blocks. It taps the ground, listens and leads you there.
   - When it gets there, it echoes and sits to mark the spot. A high echo means shallow, a low echo means deep.
   - 10 searches per pup (`pupSearches` in the config). It won't search while the Listener is awake. If it gets badly hurt, it runs off and comes back the next morning.
 - **Killing the Listener ends the night**: the noise meter fades away and there is no noise for the rest of that night.
@@ -25,7 +25,7 @@ How to play, the creature and the items: see the [README](https://github.com/ped
 
 ### Novidades da 1.4.0
 - **Filhote do Ouvinte**: a cada 5 mortes do Ouvinte cai também uma **Orelha de Ouro**. Com ela, 2 Orelhas do Ouvinte e um ovo, você faz o **Ovo do Filhote**: um pet cego que acha minérios ouvindo o eco.
-  - Agachado, clique direito nele, coloque um minério e clique em **Procurar**. Ele bate no chão, escuta e te leva até o minério igual mais perto, num raio de 64 blocos.
+  - Mostre um minério e ele procura outro igual num raio de 64 blocos. Ele bate no chão, escuta e te leva até lá.
   - Chegando lá, ele dá o eco e senta marcando o lugar. Eco agudo é raso, grave é fundo.
   - São 10 buscas por filhote (`pupSearches` na config). Com o Ouvinte acordado ele não procura. Se a vida dele acabar, ele foge e volta na manhã seguinte.
 - **Matar o Ouvinte encerra a noite**: o medidor some aos poucos e não há ruído pelo resto daquela noite.
