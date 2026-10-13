@@ -26,6 +26,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -85,6 +86,8 @@ public class Listener extends Monster {
 	/** Sem ouvir o alvo por esse tempo, perde o rastro. */
 	public static final int LOSE_TRACK_TICKS = 60;
 	public static final float SURPRISE_MULTIPLIER = 1.5f;
+	/** Queimado (fogo ou lava, sem atacante): caça o jogador mais perto até esta distância. */
+	public static final double FIRE_BLAME_RANGE = 16.0;
 	/** Raio em que ele sente quem está de pé (ou agachado mas ainda barulhento). */
 	public static final double SENSE_RADIUS = 8;
 	/** De perto, com a barra abaixo disso ele só fareja e não ataca. */
@@ -142,6 +145,11 @@ public class Listener extends Monster {
 	private long stunnedUntil;
 	private @Nullable Vec3 stunSource;
 	private long nextFarRelocate;
+	/**
+	 * Surgiu sozinho à noite (pelo {@code ListenerSpawner}). Só a morte desse conta para o contador
+	 * do mundo e para a Orelha de Ouro; o do ovo gerador (criativo) não.
+	 */
+	private boolean natural;
 	/**
 	 * Alvo da caçada (ou do alerta) lido do save: o jogador talvez ainda não tenha entrado no mundo
 	 * quando o chunk carrega, então ele espera um pouco por ele antes de desistir.
@@ -528,6 +536,7 @@ public class Listener extends Monster {
 		output.putLong("stunned_until", isStunned() ? stunnedUntil : 0);
 		output.storeNullable("stun_source", Vec3.CODEC, stunSource);
 		output.putLong("next_far_relocate", nextFarRelocate);
+		output.putBoolean("natural", natural);
 		ServerPlayer target = getState() == HUNT && getTarget() instanceof ServerPlayer hunted ? hunted
 				: getState() == ALERT ? alertTarget : null;
 		output.storeNullable("target", UUIDUtil.CODEC, target != null ? target.getUUID() : savedTarget);
@@ -545,6 +554,8 @@ public class Listener extends Monster {
 		stunnedUntil = input.getLongOr("stunned_until", 0);
 		stunSource = input.read("stun_source", Vec3.CODEC).orElse(null);
 		nextFarRelocate = input.getLongOr("next_far_relocate", 0);
+		// Ouvintes salvos antes deste campo existir só podiam ter surgido sozinhos (ou quase sempre).
+		natural = input.getBooleanOr("natural", true);
 		savedTarget = input.read("target", UUIDUtil.CODEC).orElse(null);
 		if ((state == HUNT || state == ALERT) && savedTarget == null) {
 			state = soundTarget != null ? INVESTIGATE : PATROL;
@@ -769,6 +780,19 @@ public class Listener extends Monster {
 		lastStuckCheck = pos;
 	}
 
+	private @Nullable ServerPlayer nearestHuntable(ServerLevel level, double range) {
+		ServerPlayer nearest = null;
+		double best = range * range;
+		for (ServerPlayer player : level.players()) {
+			double distance = distanceToSqr(player);
+			if (distance <= best && isHuntable(player)) {
+				best = distance;
+				nearest = player;
+			}
+		}
+		return nearest;
+	}
+
 	private boolean isHuntable(ServerPlayer player) {
 		return player.isAlive() && !player.isCreative() && !player.isSpectator() && player.level() == level();
 	}
@@ -835,6 +859,14 @@ public class Listener extends Monster {
 			alertTarget = null;
 			prowlCenter = null;
 			startHunt(player);
+		} else if (hurt && isAlive() && !isStunned() && attacker == null && source.is(DamageTypeTags.IS_FIRE) && getState() != HUNT) {
+			// Fogo e lava também são ataque: caça quem estiver mais perto (quase sempre quem acendeu).
+			ServerPlayer nearest = nearestHuntable(level, FIRE_BLAME_RANGE);
+			if (nearest != null) {
+				alertTarget = null;
+				prowlCenter = null;
+				startHunt(nearest);
+			}
 		}
 		return hurt;
 	}
@@ -860,14 +892,28 @@ public class Listener extends Monster {
 	public void die(DamageSource source) {
 		super.die(source);
 		if (level() instanceof ServerLevel level && ListenerSpawner.state(level.getServer()).isCurrent(getUUID())) {
-			ListenerSpawner.onKilled(level);
+			ListenerSpawner.onKilled(level, natural);
 		}
+	}
+
+	/** Marca este Ouvinte como o que surge sozinho à noite (ver {@link #natural}). */
+	public void markNatural() {
+		natural = true;
+	}
+
+	public boolean isNatural() {
+		return natural;
 	}
 
 	@Override
 	protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
 		super.dropCustomDeathLoot(level, source, killedByPlayer);
 		spawnAtLocation(level, new ItemStack(ModItems.LISTENER_EAR));
+		// O drop vem antes do onKilled (em die), então o contador ainda não inclui esta morte.
+		ListenerState state = ListenerSpawner.state(level.getServer());
+		if (natural && state.isCurrent(getUUID()) && state.nextKillDropsGoldenEar()) {
+			spawnAtLocation(level, new ItemStack(ModItems.GOLDEN_EAR));
+		}
 	}
 
 	@Override

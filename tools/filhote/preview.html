@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filhote do Ouvinte</title>
+<style>
+  :root { --bg: #0b0f17; --panel: #131a26; --line: #243045; --text: #dfe6f2; --muted: #8a97ad; --accent: #7fd6e8; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 15px/1.4 system-ui, sans-serif; }
+  #stage { position: fixed; inset: 0; }
+  #ui { position: fixed; left: 16px; top: 16px; max-width: 300px; background: color-mix(in srgb, var(--panel) 88%, transparent);
+        border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  h1 { font-size: 17px; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+  .poses { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  button { background: #1b2433; color: var(--text); border: 1px solid var(--line); border-radius: 7px; padding: 8px 6px; font: inherit; font-size: 13px; cursor: pointer; }
+  button.on { border-color: var(--accent); color: var(--accent); }
+  label { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  #desc { margin: 12px 0 0; min-height: 36px; }
+  @media (max-width: 520px) { #ui { left: 16px; right: 16px; top: auto; bottom: 16px; max-width: none; } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="ui">
+  <h1>Filhote do Ouvinte</h1>
+  <p>Prévia no tamanho do jogo (cada quadrado do chão = 1 bloco). Arraste para girar, role para aproximar.</p>
+  <div class="poses" id="poses"></div>
+  <p id="desc"></p>
+  <label><input type="checkbox" id="parent" checked> Mostrar o Ouvinte ao lado</label>
+</div>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const PUP_TEX = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADp0lEQVR4nO2Xy2tTURDGT9Kb7oRu7Ns+0goFcaG0CNJ1/wAXbirSjRtBEPtQsWKpFaltdSeCCxc+Fv4Jrosggoi40jZN0qfajYgu2rRXfmO+eHqbtIm47EA4yblzZr6Z+WbOTcwVkamZiZB1PpV2rS3NLhaLuTAMXTwed9vb26YTBEHh+fWrYzG3j9ydHAurqqrcyNDNHbrxYso4yuVyLtne6jLZJXMm54BJJBK2Hu1M2vNyBOdFfbkiIkd8OpJtbnNz0wAg7PEbnY2NDQP53wFsbW1ZlAhp5jAZ8Y2hw1rKcFQ4z5moBKXQUnOc+xECys8OHx9YlEfoKnMCPDk1bvvY4mxM5GCzuanRra59KSBGaW5+wbW3tdhzRStjGAcEpYAnnJFOaiHjat5+cieTLS7T02Vn0CEw2bcSsIlx1tnXb2yT35BLRFxIZ80wzvyI0BM/FK30Ojvazfm7VLaQenTURSpxXEhYIZxabv3buq2NDfX2HSMN9XU7SsBzZU/ABIgV54AgOJVW/JGNuNLIygOAYLi7+4TtLS2vuJ6ek2ZkcWm54FjCGbUtK5FREjKIc+lw7vNcylZ/L1AUlo48GPYeTTxwr2Zf2n5f71nX13/GykEW4IkAyyC/IS3S1nrEBlS2I/EHbD5rlKWu9rAFpXOxKHsHkl1/w8vL8UvnLc0qF9kYHhzdd/ohsB5nBInzc/0X9p+EUSEKEbVSwTE8Avzyyuqu50E5RjiMc9Vb6dtLnj1/HK6srhkZ4Y4IOH3/TkhAymBQDgAOqO1wrlbaS6gzhFSLKouIfz4AUX1drREL4w/HZ3YZO5YfIBo2gNEA0zSM3ogaOmRAxGbPv1dMb+jKjX3zOTw46v5F/EjJBm1IJ/ltHJQ6fG/6tmlBINLJoYZDNbv0Bi5eLhqAZos/N2jP6OUV7IWewxApehuWI0+fvChLLyj1QL1LvcX+SuT9h48xZVJRU/9rI7fKnwPb3gVTKQAJt6JeXorZCPZyjmPGKyOUTsl9/1m2Y0VO/TkLj8gk7wl+18RLGaiurjYQOGeFC5WILigAiMSaCz4RAyFlTvuEU9/inE5gjH799aOQHQyRXma9jDU1Ntg84cLSIEI3nVm0q1482AEgDEPrT12h0VbBCQBETErCGxL7ZEdvQaRXIxewUbKVksAfCraRn/nsgxwhKv0vEBBfX2slo7pQqnRmsfDnQ/VWBnpPnyq8D+o+IJWs/CdAdEf4mSj3TflADuRAyMBvkXaGkAUs4xwAAAAASUVORK5CYII=";
+const LISTENER_TEX = "data:image/png;base64,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";
+
+const stage = document.getElementById("stage");
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.setClearColor(0x0b0f17);
+stage.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x0b0f17, 8, 20);
+const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 100);
+camera.position.set(-1.9, 1.2, -2.6);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0.4, 0.45, 0);
+controls.enableDamping = true;
+controls.enablePan = false;
+controls.minDistance = 1.2;
+controls.maxDistance = 9;
+controls.maxPolarAngle = Math.PI * 0.62;
+scene.add(new THREE.HemisphereLight(0xb6c6e8, 0x1a1f14, 1.3));
+const sun = new THREE.DirectionalLight(0xffffff, 2.0);
+sun.position.set(-3, 6, -4);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+Object.assign(sun.shadow.camera, { left: -3, right: 3, top: 4, bottom: -2 });
+scene.add(sun);
+const rim = new THREE.DirectionalLight(0x6fb8ff, 0.8);
+rim.position.set(3, 3, 5);
+scene.add(rim);
+
+// Chão: quadrados de 1 bloco.
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), new THREE.MeshLambertMaterial({ color: 0x2b3a2a, transparent: true, opacity: 0.55 }));
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+const grid = new THREE.GridHelper(12, 12, 0x51664f, 0x51664f);
+grid.position.y = 0.002;
+scene.add(grid);
+
+function mcBox(x, y, z, w, h, d, u, v, texW, texH, mirror) {
+  let minX = x, minY = y, minZ = z, maxX = x + w, maxY = y + h, maxZ = z + d;
+  if (mirror) { const t = maxX; maxX = minX; minX = t; }
+  const t0=[minX,minY,minZ], t1=[maxX,minY,minZ], t2=[maxX,maxY,minZ], t3=[minX,maxY,minZ];
+  const l0=[minX,minY,maxZ], l1=[maxX,minY,maxZ], l2=[maxX,maxY,maxZ], l3=[minX,maxY,maxZ];
+  const u0=u, u1=u+d, u2=u+d+w, u22=u+d+w+w, u3=u+d+w+d, u4=u+d+w+d+w, v0=v, v1=v+d, v2=v+d+h;
+  const faces = [
+    [[l1,l0,t0,t1], u1,v0,u2,v1], [[t2,t3,l3,l2], u2,v1,u22,v0], [[t0,l0,l3,t3], u0,v1,u1,v2],
+    [[t1,t0,t3,t2], u1,v1,u2,v2], [[l1,t1,t2,l2], u2,v1,u3,v2], [[l0,l1,l2,l3], u3,v1,u4,v2],
+  ];
+  const pos = [], uv = [], idx = [];
+  for (const [vs, a0, b0, a1, b1] of faces) {
+    const uvs = [[a1,b0],[a0,b0],[a0,b1],[a1,b1]];
+    const base = pos.length / 3;
+    for (let i = 0; i < 4; i++) { pos.push(...vs[i]); uv.push(uvs[i][0] / texW, 1 - uvs[i][1] / texH); }
+    idx.push(base, base+1, base+2, base, base+2, base+3);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+function material(src) {
+  const t = new THREE.TextureLoader().load(src);
+  t.magFilter = THREE.NearestFilter; t.minFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide, alphaTest: 0.5 });
+}
+function makePart(mat, texSize) {
+  return (parent, box, pose) => {
+    const g = new THREE.Group();
+    const [px, py, pz, rx = 0, ry = 0, rz = 0] = pose;
+    g.position.set(px, py, pz);
+    g.rotation.order = "ZYX";
+    g.rotation.set(rx, ry, rz);
+    g.userData.base = { x: rx, y: ry, z: rz, px, py, pz };
+    const mesh = new THREE.Mesh(mcBox(...box.slice(0, 8), texSize, texSize, box[8]), mat);
+    mesh.castShadow = true;
+    g.add(mesh);
+    parent.add(g);
+    return g;
+  };
+}
+function rig(scale) {
+  const root = new THREE.Group();
+  const holder = new THREE.Group();
+  holder.scale.setScalar(scale / 16);
+  const space = new THREE.Group();
+  space.scale.set(-1, -1, 1);
+  space.position.y = 24;
+  holder.add(space);
+  root.add(holder);
+  return { root, space };
+}
+function reset(P) {
+  for (const p of Object.values(P)) { const b = p.userData.base; p.rotation.set(b.x, b.y, b.z); p.position.set(b.px, b.py, b.pz); }
+}
+const sin = Math.sin, cos = Math.cos;
+
+// ------------------------------------------------------------------ Ouvinte (ListenerModel.java), parado
+const L = {};
+const listener = rig(1.6);
+{
+  const part = makePart(material(LISTENER_TEX), 64);
+  L.body = part(listener.space, [-4, 0, -2.5, 8, 12, 5, 0, 14, false], [0, 1, 0, 0.12]);
+  L.head = part(L.body, [-3.5, -7, -4, 7, 7, 7, 0, 0, false], [0, 0, -0.5]);
+  L.jaw = part(L.head, [-3, 0, -4, 6, 2, 6, 0, 31, false], [0, -1, 0]);
+  L.leftEar = part(L.head, [0, -9, -3, 1, 9, 6, 28, 0, false], [3, -4, 0, 0, 0, 0.55]);
+  L.rightEar = part(L.head, [-1, -9, -3, 1, 9, 6, 28, 0, true], [-3, -4, 0, 0, 0, -0.55]);
+  L.leftArm = part(L.body, [-1, -1, -1.5, 3, 17, 3, 28, 15, false], [5, 1.5, 0]);
+  L.rightArm = part(L.body, [-2, -1, -1.5, 3, 17, 3, 28, 15, true], [-5, 1.5, 0]);
+  L.leftLeg = part(listener.space, [-1.5, 0, -1.5, 3, 11, 3, 40, 15, false], [2.2, 13, 0.5]);
+  L.rightLeg = part(listener.space, [-1.5, 0, -1.5, 3, 11, 3, 40, 15, true], [-2.2, 13, 0.5]);
+}
+listener.root.position.set(1.7, 0, 0.6);
+listener.root.rotation.y = -0.35;
+scene.add(listener.root);
+function listenerAnim(age) {
+  reset(L);
+  L.rightArm.rotation.z = 0.08 + sin(age * 0.07) * 0.04;
+  L.leftArm.rotation.z = -0.08 - sin(age * 0.07) * 0.04;
+  // Olhando para o filhote, orelhas atentas.
+  L.head.rotation.x = 0.45; L.head.rotation.y = 0.35;
+  const idle = sin(age * 0.12) * 0.12;
+  L.leftEar.rotation.z = 0.55 + idle; L.rightEar.rotation.z = -0.55 - idle;
+}
+
+// ------------------------------------------------------------------ Filhote
+// Anda de quatro apoiado nos braços compridos (como o pai, só que pequeno).
+// Em pixels do Minecraft, chão em y = 24, frente em -z. Textura 32x32.
+const P = {};
+const pup = rig(1);
+{
+  const part = makePart(material(PUP_TEX), 32);
+  // Pivô na frente-baixo do tronco: ao sentar, só o traseiro desce.
+  P.body = part(pup.space, [-2.5, -4, 0, 5, 4, 6, 0, 16, false], [0, 21, -2.5, -0.06]);
+  P.head = part(pup.space, [-3, -5, -4, 6, 5, 5, 0, 0, false], [0, 17, -2.5]);
+  P.jaw = part(P.head, [-2.5, 0, -4.5, 5, 1, 4, 0, 10, false], [0, -0.6, 0]);
+  P.leftEar = part(P.head, [0, -6, -2, 1, 6, 4, 22, 0, false], [2.5, -3.5, -1, 0, 0, 0.6]);
+  P.rightEar = part(P.head, [-1, -6, -2, 1, 6, 4, 22, 0, true], [-2.5, -3.5, -1, 0, 0, -0.6]);
+  P.leftArm = part(pup.space, [-1, 0, -1, 2, 6, 2, 22, 10, false], [3, 18, -2]);
+  P.rightArm = part(pup.space, [-1, 0, -1, 2, 6, 2, 22, 10, true], [-3, 18, -2]);
+  P.leftLeg = part(pup.space, [-1, 0, -1, 2, 3, 2, 22, 18, false], [2, 21, 2.5]);
+  P.rightLeg = part(pup.space, [-1, 0, -1, 2, 3, 2, 22, 18, true], [-2, 21, 2.5]);
+}
+scene.add(pup.root);
+
+// Ondas no chão (batida) e eco descendo para dentro da terra.
+const fx = [];
+function ring(pos, color, size, life, vy = 0) {
+  const m = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 40),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false, fog: false }));
+  m.rotation.x = -Math.PI / 2;
+  m.position.copy(pos);
+  m.userData = { t: 0, life, size, vy };
+  scene.add(m); fx.push(m);
+}
+const tmp = new THREE.Vector3();
+function tap(armA, armB, echo) {
+  const tmp2 = new THREE.Vector3();
+  armA.getWorldPosition(tmp); armB.getWorldPosition(tmp2);
+  tmp.add(tmp2).multiplyScalar(0.5);
+  tmp.y = 0.01;
+  ring(tmp.clone(), 0xd8e4ff, 0.6, 0.6);
+  if (echo) for (let i = 0; i < 5; i++) ring(new THREE.Vector3(tmp.x, -0.05 - i * 0.12, tmp.z), 0x7fd6e8, 0.25 + i * 0.05, 1.4 + i * 0.1, -0.9);
+}
+function updateFx(dt) {
+  for (let i = fx.length - 1; i >= 0; i--) {
+    const m = fx[i], u = m.userData;
+    u.t += dt;
+    const k = u.t / u.life;
+    m.scale.setScalar(0.05 + k * u.size);
+    m.position.y += u.vy * dt;
+    m.material.opacity = Math.max(0, 0.8 * (1 - k));
+    if (k >= 1) { scene.remove(m); m.geometry.dispose(); m.material.dispose(); fx.splice(i, 1); }
+  }
+}
+
+const POSES = [
+  ["idle", "Parado", "Seguindo você, parado. Orelhas mexendo à toa, como as do pai."],
+  ["walk", "Andando", "Anda de quatro, apoiado nos braços compridos."],
+  ["listen", "Ouvindo", "Depois de bater no chão: cabeça inclinada e orelhas em pé, ouvindo o eco (a busca)."],
+  ["tap", "Bate no chão", "Pulinhos batendo as patas no chão, depois inclina a cabeça e escuta. É a busca."],
+  ["no", "Não achou", "Orelhas caídas, balança a cabeça e devolve o item."],
+  ["mark", "Marcando", "Chegou: pula batendo as patas, o eco desce para dentro da terra, e ele senta marcando o lugar."],
+];
+let mode = "idle", modeStart = 0;
+const posesEl = document.getElementById("poses");
+for (const [id, name] of POSES) {
+  const b = document.createElement("button");
+  b.textContent = name; b.dataset.id = id;
+  b.onclick = () => setMode(id);
+  posesEl.appendChild(b);
+}
+function setMode(id) {
+  mode = id; modeStart = age;
+  document.querySelectorAll("#poses button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+  document.getElementById("desc").textContent = POSES.find(p => p[0] === id)[2];
+}
+document.getElementById("parent").onchange = e => { listener.root.visible = e.target.checked; };
+
+let lastSlam = -1;
+function pupAnim(age) {
+  reset(P);
+  pup.root.position.y = 0;
+  const t = age - modeStart;
+  // Orelhas à toa (padrão).
+  const idle = sin(age * 0.12) * 0.12;
+  const flick = (age % 60) < 5 ? sin(age * 2.4) * 0.35 : 0;
+  P.leftEar.rotation.z = 0.6 + idle + flick;
+  P.rightEar.rotation.z = -0.6 - idle;
+  P.leftEar.rotation.y = sin(age * 0.05) * 0.25;
+  P.rightEar.rotation.y = -sin(age * 0.05 + 1) * 0.25;
+  // Respiração.
+  P.body.scale.y = 1 + sin(age * 0.1) * 0.025;
+
+  if (mode === "walk") {
+    const s = cos(age * 0.45 * 0.6662 * 2) * 0.9;
+    P.leftArm.rotation.x = s; P.rightLeg.rotation.x = s;
+    P.rightArm.rotation.x = -s; P.leftLeg.rotation.x = -s;
+    P.head.rotation.x = sin(age * 0.6) * 0.05;
+  } else if (mode === "listen") {
+    const tr = sin(age * 3.1) * 0.05;
+    P.head.rotation.z = 0.38;
+    P.head.rotation.x = -0.1;
+    P.leftEar.rotation.z = 0.05 + tr; P.rightEar.rotation.z = -0.05 - tr;
+    P.leftEar.rotation.y = -0.7; P.rightEar.rotation.y = 0.7;
+    P.leftEar.rotation.x = -0.25; P.rightEar.rotation.x = -0.25;
+  } else if (mode === "tap" || mode === "mark") {
+    // Três pulinhos batendo as duas patas da frente no chão; depois para e escuta.
+    const HOP = 11, HOPS = 3, cycle = mode === "mark" ? 70 : 56;
+    const c = t % cycle, n = Math.floor(t / cycle), hop = Math.floor(c / HOP);
+    if (hop < HOPS) {
+      const h = (c % HOP) / HOP, air = Math.sin(Math.PI * h);
+      pup.root.position.y = air * 0.22;
+      P.leftArm.rotation.x = -1.1 * air; P.rightArm.rotation.x = -1.1 * air;
+      P.leftArm.rotation.z = 0.25 * air; P.rightArm.rotation.z = -0.25 * air;
+      P.leftLeg.rotation.x = 0.5 * air; P.rightLeg.rotation.x = 0.5 * air;
+      P.body.rotation.x = -0.06 - 0.25 * air;
+      P.head.rotation.x = 0.25 - 0.3 * air;
+      P.leftEar.rotation.z = 0.35 - 0.3 * air; P.rightEar.rotation.z = -0.35 + 0.3 * air;
+      P.leftEar.rotation.x = 0.5 * air; P.rightEar.rotation.x = 0.5 * air;
+      const key = n * 10 + hop;
+      if (h > 0.9 && lastSlam !== key) { lastSlam = key; tap(P.leftArm, P.rightArm, mode === "mark"); }
+    } else {
+      if (mode === "mark") sitPose();
+      const tr = sin(age * 3.1) * 0.05;
+      P.head.rotation.z = mode === "mark" ? 0 : 0.38;
+      P.head.rotation.x = 0.35;
+      P.leftEar.rotation.z = 0.05 + tr; P.rightEar.rotation.z = -0.05 - tr;
+      P.leftEar.rotation.y = -0.7; P.rightEar.rotation.y = 0.7;
+      P.leftEar.rotation.x = -0.25; P.rightEar.rotation.x = -0.25;
+    }
+  } else if (mode === "no") {
+    const k = Math.max(0, 1 - (t % 50) / 30);
+    P.head.rotation.y = sin(t * 1.4) * 0.55 * k;
+    P.head.rotation.x = 0.25;
+    P.leftEar.rotation.z = 1.25; P.rightEar.rotation.z = -1.25;
+    P.leftEar.rotation.x = 0.5; P.rightEar.rotation.x = 0.5;
+    P.leftEar.rotation.y = 0; P.rightEar.rotation.y = 0;
+  }
+}
+function sitPose() {
+  // Senta nas patas de trás: o traseiro desce até o chão, peito e cabeça ficam onde estão.
+  P.body.rotation.x = SIT_SIGN * 0.5;
+  P.leftLeg.rotation.x = -1.45; P.rightLeg.rotation.x = -1.45;
+  P.leftLeg.position.y += 2.3; P.rightLeg.position.y += 2.3;
+  P.leftLeg.position.z += 0.4; P.rightLeg.position.z += 0.4;
+  P.head.rotation.x -= 0.15;
+}
+let SIT_SIGN = -1;
+window.__sit = v => { SIT_SIGN = v; };
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener("resize", resize); resize();
+let age = 0, last = performance.now();
+setMode("idle");
+renderer.setAnimationLoop(now => {
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  age += dt * 20;
+  pupAnim(age);
+  listenerAnim(age);
+  updateFx(dt);
+  controls.update();
+  renderer.render(scene, camera);
+});
+window.__setMode = setMode; window.__view = (x, y, z, ty) => { camera.position.set(x, y, z); controls.target.set(0, ty, 0); controls.update(); }; window.__listener = listener;
+</script>
+</body>
+</html>

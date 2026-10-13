@@ -1,4 +1,4 @@
-"""Gera o site (site/index.html e tools/visualizador.html): o Ouvinte em 3D com os sons, os itens com receitas e o guia.
+"""Gera o site (site/index.html e tools/visualizador.html): o Ouvinte e o Filhote em 3D com os sons, os itens com receitas e o guia.
 
 Rode de novo depois de mudar texturas ou sons:  python3 tools/build_viewer.py
 A geometria do Ouvinte espelha ListenerModel.java (mesmas caixas, pivôs e animações) e os sons
@@ -106,6 +106,9 @@ ITEMS = {
     "gold": {"name": "Barra de Ouro", "icons": [data_url(vanilla_raw("item/gold_ingot.png"), "image/png")]},
     "deafening_bell": {"name": "Sino Ensurdecedor", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/deafening_bell.png")), "image/png")]},
     "listener_spawn_egg": {"name": "Ovo Gerador de Ouvinte", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/listener_spawn_egg.png")), "image/png")]},
+    "golden_ear": {"name": "Orelha de Ouro", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/golden_ear.png")), "image/png")]},
+    "egg": {"name": "Ovo", "icons": [data_url(vanilla_raw("item/egg.png"), "image/png")]},
+    "listener_pup_egg": {"name": "Ovo do Filhote", "icons": [data_url(read(os.path.join(MOD_ASSETS, "textures/item/listener_pup_egg.png")), "image/png")]},
 }
 
 def item(name):
@@ -144,6 +147,7 @@ ICONS = {
 
 textures = {
     "listener": data_url(read(os.path.join(MOD_ASSETS, "textures/entity/listener/listener.png")), "image/png"),
+    "listener_pup": data_url(read(os.path.join(MOD_ASSETS, "textures/entity/listener_pup/listener_pup.png")), "image/png"),
 }
 
 html = open(os.path.join(ROOT, "tools/viewer_template.html"), encoding="utf-8").read()

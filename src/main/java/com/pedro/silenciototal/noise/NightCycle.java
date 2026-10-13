@@ -1,6 +1,7 @@
 package com.pedro.silenciototal.noise;
 
 import com.pedro.silenciototal.ModConfig;
+import com.pedro.silenciototal.spawn.ListenerSpawner;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
@@ -33,6 +34,11 @@ public final class NightCycle {
 	/** Noite em que o Ouvinte aparece: já passou a noite de graça e o sorteio desta noite caiu. */
 	public static boolean isHuntingNight(ServerLevel level) {
 		return isNight(level) && isHuntingDay(level, day(level));
+	}
+
+	/** Noite de caça e o Ouvinte ainda não foi morto nela: é quando o medidor e o ruído existem. */
+	public static boolean isListenerAwake(ServerLevel level) {
+		return isHuntingNight(level) && ListenerSpawner.state(level.getServer()).killedNight() != day(level);
 	}
 
 	/**

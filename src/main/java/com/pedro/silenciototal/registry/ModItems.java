@@ -2,6 +2,7 @@ package com.pedro.silenciototal.registry;
 
 import com.pedro.silenciototal.SilencioTotal;
 import com.pedro.silenciototal.item.DeafeningBellItem;
+import com.pedro.silenciototal.item.PupEggItem;
 import java.util.Map;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
@@ -44,6 +45,14 @@ public final class ModItems {
 	public static final Item LISTENER_EAR = register("listener_ear", Item::new,
 			new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant());
 
+	/** Dropa junto com a Orelha na 5ª, 10ª, 15ª... morte do Ouvinte. Ingrediente do Ovo do Filhote. */
+	public static final Item GOLDEN_EAR = register("golden_ear", Item::new,
+			new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant());
+
+	/** Ovo do Filhote: 3 Orelhas + 1 Orelha de Ouro. Usado num bloco, choca o filhote já com dono. */
+	public static final Item PUP_EGG = register("listener_pup_egg", PupEggItem::new,
+			new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+
 	/** Feito com a Orelha: atordoa o Ouvinte por 10 s, uma vez por noite. */
 	public static final Item DEAFENING_BELL = register("deafening_bell", DeafeningBellItem::new,
 			new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
@@ -64,6 +73,8 @@ public final class ModItems {
 			output.accept(FELT_BOOTS);
 			output.accept(SILENT_DAGGER);
 			output.accept(LISTENER_EAR);
+			output.accept(GOLDEN_EAR);
+			output.accept(PUP_EGG);
 			output.accept(DEAFENING_BELL);
 		});
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(LISTENER_SPAWN_EGG));

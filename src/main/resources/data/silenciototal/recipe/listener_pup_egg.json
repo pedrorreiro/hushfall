@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "E E",
+    " O ",
+    " G "
+  ],
+  "key": {
+    "E": "silenciototal:listener_ear",
+    "O": "minecraft:egg",
+    "G": "silenciototal:golden_ear"
+  },
+  "result": {
+    "count": 1,
+    "id": "silenciototal:listener_pup_egg"
+  }
+}

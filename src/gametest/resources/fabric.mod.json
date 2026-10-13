@@ -7,7 +7,9 @@
 	"entrypoints": {
 		"fabric-client-gametest": [
 			"com.pedro.silenciototal.test.SilencioTotalClientTest",
-			"com.pedro.silenciototal.test.ModMenuScreenshots"
+			"com.pedro.silenciototal.test.ModMenuScreenshots",
+			"com.pedro.silenciototal.test.PupScanBenchmark",
+			"com.pedro.silenciototal.test.DemoReel"
 		]
 	},
 	"depends": {

@@ -1,11 +1,12 @@
 **Hushfall**: at night, a blind creature hunts by sound.
 
-### What's new in 1.3.0
-- **No escape by logging out**: your noise meter is saved with you. Leave the world in the middle of a chase and you come back loud, so the Listener roars and hunts you again. If the player it was chasing leaves, it goes to sniff where they vanished.
-- **It remembers**: the Listener now saves what it was doing (hunting, investigating, prowling, stunned) when the world is saved, and its memory of false alarms survives when it burrows and resurfaces.
-- **Boats and minecarts make noise**: boats +3/s, minecarts +8/s (as loud as running).
-- **Noise meter settings** (with [Mod Menu](https://modrinth.com/mod/modmenu), optional): pick the corner, margins and size of the meter, and hide the text next to it. The meter shows up live while you adjust it. Also in `config/silenciototal-client.json`.
-- The mod is now called **Hushfall** in the game's mod list, in English and Portuguese.
+### What's new in 1.4.0
+- **The Listener Pup**: every 5th time the Listener dies, it also drops a **Golden Ear**. Craft it with 2 Listener's Ears and an egg into a **Pup Egg**: a blind pet that finds ores by listening to the echo.
+  - Crouch + right-click it, put in an ore and click **Search**. It taps the ground, listens and leads you to the nearest ore of the same kind within 64 blocks.
+  - When it gets there, it echoes and sits to mark the spot. A high echo means shallow, a low echo means deep.
+  - 10 searches per pup (`pupSearches` in the config). It won't search while the Listener is awake. If it gets badly hurt, it runs off and comes back the next morning.
+- **Killing the Listener ends the night**: the noise meter fades away and there is no noise for the rest of that night.
+- **Fire counts as an attack**: setting the Listener on fire (or luring it into lava) makes it hunt the nearest player, even if you're quiet.
 
 ### Which file?
 - **`hushfall.jar`**: just the mod. You also need **Fabric API**.
@@ -22,12 +23,13 @@ How to play, the creature and the items: see the [README](https://github.com/ped
 
 **Hushfall (Silêncio Total)**: à noite, uma criatura cega caça pelo som.
 
-### Novidades da 1.3.0
-- **Sair do mundo não salva ninguém**: a sua barra de ruído fica salva com você. Se você sair no meio de uma caçada, volta fazendo barulho alto, e o Ouvinte ruge e caça de novo. Se quem ele caçava sai, ele vai farejar onde a pessoa sumiu.
-- **Ele lembra**: o Ouvinte agora salva o que estava fazendo (caçando, investigando, rondando, atordoado) quando o mundo é salvo, e a memória dos alarmes falsos continua depois que ele se enterra e ressurge.
-- **Barco e carrinho de mina fazem barulho**: barco +3/s, carrinho +8/s (tanto quanto correr).
-- **Opções do medidor** (com o [Mod Menu](https://modrinth.com/mod/modmenu), opcional): escolha o canto, as margens e o tamanho do medidor, e esconda o texto ao lado. O medidor aparece na tela enquanto você ajusta. Também em `config/silenciototal-client.json`.
-- O mod agora se chama **Hushfall** na lista de mods do jogo, em inglês e português.
+### Novidades da 1.4.0
+- **Filhote do Ouvinte**: a cada 5 mortes do Ouvinte cai também uma **Orelha de Ouro**. Com ela, 2 Orelhas do Ouvinte e um ovo, você faz o **Ovo do Filhote**: um pet cego que acha minérios ouvindo o eco.
+  - Agachado, clique direito nele, coloque um minério e clique em **Procurar**. Ele bate no chão, escuta e te leva até o minério igual mais perto, num raio de 64 blocos.
+  - Chegando lá, ele dá o eco e senta marcando o lugar. Eco agudo é raso, grave é fundo.
+  - São 10 buscas por filhote (`pupSearches` na config). Com o Ouvinte acordado ele não procura. Se a vida dele acabar, ele foge e volta na manhã seguinte.
+- **Matar o Ouvinte encerra a noite**: o medidor some aos poucos e não há ruído pelo resto daquela noite.
+- **Fogo conta como ataque**: botar fogo no Ouvinte (ou atraí-lo para a lava) faz ele caçar o jogador mais perto, mesmo em silêncio.
 
 ### Qual baixar?
 - **`hushfall.jar`**: só o mod. Você também precisa do **Fabric API**.

@@ -157,6 +157,14 @@
   .reward b { color: var(--text); font-weight: 600; }
 
   .bell { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
+  #pupStage { position: relative; aspect-ratio: 1 / 1; max-height: 440px; width: 100%; cursor: grab; }
+  #pupStage:active { cursor: grabbing; }
+  #pupStage canvas { display: block; width: 100%; height: 100%; }
+  .pup-subtitle { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); background: rgba(0,0,0,.6); padding: 3px 10px; font: 500 14px "Pixelify Sans", monospace; border-radius: 2px; opacity: 0; transition: opacity .3s; white-space: nowrap; color: #fff; }
+  .pup-recipes { margin: 72px auto 0; display: flex; flex-wrap: wrap; gap: 28px 48px; justify-content: center; }
+  .pup-recipes > div { display: grid; justify-items: center; gap: 10px; }
+  .pup-recipes small { color: var(--muted); font-size: 13.5px; text-align: center; max-width: 30ch; }
+  .pup-recipes small b { color: var(--text); font-weight: 600; }
   .note { margin-top: 20px; color: var(--muted); font-size: 14.5px; }
   .note b { color: var(--text); font-weight: 600; }
 
@@ -313,6 +321,7 @@
       <li><a href="#criatura" data-en="The Listener">O Ouvinte</a></li>
       <li><a href="#combate" data-en="Combat">Combate</a></li>
       <li><a href="#sino" data-en="The Bell">O Sino</a></li>
+      <li><a href="#filhote" data-en="The Pup">O Filhote</a></li>
       <li><a href="#itens" data-en="Items">Itens</a></li>
       <li><a href="#feedback">Feedback</a></li>
     </ul>
@@ -482,7 +491,45 @@
   </div>
 </section>
 
-<section id="itens">
+<section id="filhote">
+  <div class="wrap bell">
+    <div class="stage-box">
+      <div id="pupStage"></div>
+      <button class="sound-btn" id="pupSoundBtn" aria-label="Ligar o som" title="Ligar o som"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg></button>
+      <div class="pup-subtitle" id="pupSubtitle"></div>
+      <div class="stage-info">
+        <div class="stage-nav">
+          <button class="st-arrow" id="pupPrev" aria-label="Pose anterior" data-en-aria-label="Previous pose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="stage-state" id="pupName" style="--c: var(--low)" aria-live="polite">Parado</div>
+          <button class="st-arrow" id="pupNext" aria-label="Próxima pose" data-en-aria-label="Next pose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+        <div class="stage-caption" id="pupCaption"></div>
+      </div>
+    </div>
+    <div>
+      <div class="head" style="margin-bottom:28px">
+        <div class="eyebrow" data-en="The reward for beating it again and again">A recompensa por vencer de novo e de novo</div>
+        <h2 data-en="Listener Pup">Filhote do Ouvinte</h2>
+        <p data-en="A blind pet, like its parent. It finds ores by listening to the echo.">Um pet cego, como o pai. Ele acha minérios ouvindo o eco.</p>
+      </div>
+      <ol class="install-steps">
+        <li><span data-en="Every &lt;b&gt;5th time&lt;/b&gt; the Listener dies (5th, 10th, 15th...), it also drops a &lt;b&gt;Golden Ear&lt;/b&gt;.">A cada <b>5 mortes</b> do Ouvinte (5ª, 10ª, 15ª...), ele também deixa uma <b>Orelha de Ouro</b>.</span></li>
+        <li><span data-en="Craft the &lt;b&gt;Pup Egg&lt;/b&gt; and use it on a block. The pup hatches already yours.">Faça o <b>Ovo do Filhote</b> e use num bloco. Ele nasce já seu.</span></li>
+        <li><span data-en="&lt;b&gt;Crouch + right-click&lt;/b&gt; it, put in an ore and click &lt;b&gt;Search&lt;/b&gt;.">Agachado, <b>clique direito</b> nele, coloque um minério e clique em <b>Procurar</b>.</span></li>
+        <li><span data-en="It taps the ground, listens and &lt;b&gt;leads you&lt;/b&gt; to the nearest matching ore. A high echo means shallow, a low echo means deep.">Ele bate no chão, ouve e <b>te leva</b> até o minério igual mais perto. Eco agudo é raso, grave é fundo.</span></li>
+      </ol>
+      <p class="note" data-en="&lt;b&gt;10 searches&lt;/b&gt; per pup. It won&#x27;t search while the Listener is awake. If it gets badly hurt, it runs off and comes back in the morning.">São <b>10 buscas</b> por filhote. Com o Ouvinte acordado ele não procura. Se a vida acabar, ele foge e volta de manhã.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="pup-recipes">
+      <div><div data-recipe="golden_ear"></div></div>
+      <div><div data-recipe="listener_pup_egg"></div><small data-en="2 &lt;b&gt;Listener&#x27;s Ears&lt;/b&gt;, an egg and the &lt;b&gt;Golden Ear&lt;/b&gt;.">2 <b>Orelhas do Ouvinte</b>, um ovo e a <b>Orelha de Ouro</b>.</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="itens" class="alt">
   <div class="wrap">
     <div class="head center">
       <div class="eyebrow" data-en="Items">Itens</div>
@@ -496,7 +543,7 @@
   </div>
 </section>
 
-<section id="instalar" class="alt">
+<section id="instalar">
   <div class="wrap install">
     <div>
       <div class="head" style="margin-bottom:28px">
@@ -518,7 +565,7 @@
   </div>
 </section>
 
-<section id="feedback">
+<section id="feedback" class="alt">
   <div class="wrap">
     <div class="head center">
       <div class="eyebrow">Feedback</div>
@@ -850,11 +897,14 @@ const buffers = {};
 const soundBtn = $("#soundBtn");
 const SOUND_ICONS = { on: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19.5 5.5a9 9 0 0 1 0 13"/></svg>', off: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg>' };
 function showSound(on) {
-  soundBtn.innerHTML = on ? SOUND_ICONS.on : SOUND_ICONS.off;
-  soundBtn.classList.toggle("on", on);
   const label = on ? tr("Desligar o som", "Turn sound off") : tr("Ligar o som", "Turn sound on");
-  soundBtn.setAttribute("aria-label", label);
-  soundBtn.title = label;
+  // O do Ouvinte e o do Filhote: o som é um só para a página.
+  document.querySelectorAll(".sound-btn").forEach(b => {
+    b.innerHTML = on ? SOUND_ICONS.on : SOUND_ICONS.off;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-label", label);
+    b.title = label;
+  });
 }
 async function enableSound() {
   if (!audio) {
@@ -1168,6 +1218,8 @@ const RECIPES = {
   silent_dagger: { grid: [null, null, "iron", null, "wool", null, "stick", null, null], result: "silent_dagger" },
   deafening_bell: { grid: [null, "stick", null, "gold", "listener_ear", "gold", "gold", null, "gold"], result: "deafening_bell" },
   listener_ear: { drop: "Derrote o Ouvinte", dropEn: "Defeat the Listener", result: "listener_ear" },
+  golden_ear: { drop: "A cada 5 mortes do Ouvinte", dropEn: "Every 5th Listener death", result: "golden_ear" },
+  listener_pup_egg: { grid: ["listener_ear", null, "listener_ear", null, "egg", null, null, "golden_ear", null], result: "listener_pup_egg" },
 };
 const ARROW = "data:image/svg+xml," + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15" shape-rendering="crispEdges"><path fill="#8b8b8b" d="M0 5h13V0h2v1h1v1h1v1h1v1h1v1h1v1h1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-2V10H0z"/></svg>');
@@ -1176,7 +1228,8 @@ tip.className = "mc-tip";
 document.body.appendChild(tip);
 const cycling = [];
 const ITEM_NAMES_EN = { wool: "Any Wool", leather: "Leather", iron: "Iron Ingot", stick: "Stick", felt_boots: "Felt Boots",
-  silent_dagger: "Silent Dagger", listener_ear: "Listener's Ear", gold: "Gold Ingot", deafening_bell: "Deafening Bell", listener_spawn_egg: "Listener Spawn Egg" };
+  silent_dagger: "Silent Dagger", listener_ear: "Listener's Ear", gold: "Gold Ingot", deafening_bell: "Deafening Bell", listener_spawn_egg: "Listener Spawn Egg",
+  golden_ear: "Golden Ear", egg: "Egg", listener_pup_egg: "Listener Pup Egg" };
 const itemName = key => tr(ITEMS[key].name, ITEM_NAMES_EN[key] || ITEMS[key].name);
 // Textos das receitas que mudam com o idioma.
 const recipeTexts = [];
@@ -1227,6 +1280,179 @@ document.querySelectorAll("[data-recipe]").forEach(host => {
 });
 let cycleIndex = 0;
 setInterval(() => { cycleIndex++; for (const c of cycling) c.img.src = c.icons[cycleIndex % c.icons.length]; }, 1100);
+
+// ------------------------------------------------------------------ Filhote (porta de ListenerPupModel.java)
+{
+  const host = $("#pupStage");
+  const pr = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  pr.setPixelRatio(Math.min(devicePixelRatio, 2));
+  pr.outputColorSpace = THREE.SRGBColorSpace;
+  pr.shadowMap.enabled = true;
+  host.appendChild(pr.domElement);
+  const ps = new THREE.Scene();
+  const pcam = new THREE.PerspectiveCamera(30, 1, 0.05, 50);
+  pcam.position.set(-2.0, 1.15, -2.65);
+  const pcon = new OrbitControls(pcam, pr.domElement);
+  pcon.target.set(0, 0.42, 0);
+  pcon.enableDamping = true; pcon.enableZoom = false; pcon.enablePan = false;
+  pcon.maxPolarAngle = Math.PI * 0.55;
+  ps.add(new THREE.HemisphereLight(0x9fb4e0, 0x10140c, 1.3));
+  const pl = new THREE.DirectionalLight(0xd4e0ff, 2.2);
+  pl.position.set(-3, 6, -4); pl.castShadow = true; pl.shadow.mapSize.set(1024, 1024);
+  Object.assign(pl.shadow.camera, { left: -2, right: 2, top: 2, bottom: -2 });
+  ps.add(pl);
+  const prim = new THREE.DirectionalLight(0x6fb8ff, 0.9); prim.position.set(3, 3, 5); ps.add(prim);
+  const pg = new THREE.Mesh(new THREE.CircleGeometry(2.2, 40), new THREE.ShadowMaterial({ opacity: 0.45 }));
+  pg.rotation.x = -Math.PI / 2; pg.receiveShadow = true; ps.add(pg);
+
+  const ptex = new THREE.TextureLoader().load(TEX.listener_pup);
+  ptex.magFilter = THREE.NearestFilter; ptex.minFilter = THREE.NearestFilter; ptex.colorSpace = THREE.SRGBColorSpace;
+  const pmat = new THREE.MeshLambertMaterial({ map: ptex, side: THREE.DoubleSide, alphaTest: 0.5 });
+  function ppart(parent, box, pose) {
+    const g = new THREE.Group();
+    const [px, py, pz, rx = 0, ry = 0, rz = 0] = pose;
+    g.position.set(px, py, pz); g.rotation.order = "ZYX"; g.rotation.set(rx, ry, rz);
+    g.userData.base = { x: rx, y: ry, z: rz, px, py, pz };
+    const mesh = new THREE.Mesh(mcBox(...box.slice(0, 8), 32, 32, box[8]), pmat);
+    mesh.castShadow = true; g.add(mesh); parent.add(g);
+    return g;
+  }
+  const pup = new THREE.Group();
+  const pholder = new THREE.Group(); pholder.scale.setScalar(1 / 16);
+  const pspace = new THREE.Group(); pspace.scale.set(-1, -1, 1); pspace.position.y = 24;
+  pholder.add(pspace); pup.add(pholder); ps.add(pup);
+  const Q = {};
+  Q.body = ppart(pspace, [-2.5, -4, 0, 5, 4, 6, 0, 16, false], [0, 21, -2.5, -0.06]);
+  Q.head = ppart(pspace, [-3, -5, -4, 6, 5, 5, 0, 0, false], [0, 17, -2.5]);
+  Q.jaw = ppart(Q.head, [-2.5, 0, -4.5, 5, 1, 4, 0, 10, false], [0, -0.6, 0]);
+  Q.leftEar = ppart(Q.head, [0, -6, -2, 1, 6, 4, 22, 0, false], [2.5, -3.5, -1, 0, 0, 0.6]);
+  Q.rightEar = ppart(Q.head, [-1, -6, -2, 1, 6, 4, 22, 0, true], [-2.5, -3.5, -1, 0, 0, -0.6]);
+  Q.leftArm = ppart(pspace, [-1, 0, -1, 2, 6, 2, 22, 10, false], [3, 18, -2]);
+  Q.rightArm = ppart(pspace, [-1, 0, -1, 2, 6, 2, 22, 10, true], [-3, 18, -2]);
+  Q.leftLeg = ppart(pspace, [-1, 0, -1, 2, 3, 2, 22, 18, false], [2, 21, 2.5]);
+  Q.rightLeg = ppart(pspace, [-1, 0, -1, 2, 3, 2, 22, 18, true], [-2, 21, 2.5]);
+
+  // [id, nome, nome em inglês, cor, legenda, legenda em inglês], como os estados do Ouvinte lá em cima.
+  const POSES = [
+    ["idle", "Parado", "Idle", "var(--low)", "Segue você como um lobo. Clique direito senta ou levanta.", "Follows you like a wolf. Right-click to sit or stand."],
+    ["walk", "Andando", "Walking", "var(--low)", "Anda de quatro, apoiado nos braços compridos.", "Walks on all fours, leaning on its long arms."],
+    ["tap", "Procurando", "Searching", "var(--accent)", "Bate as patas no chão e inclina a cabeça para ouvir o eco.", "Taps its paws on the ground and tilts its head to hear the echo."],
+    ["no", "Não achou", "Nothing found", "var(--mid)", "Nada por perto: abaixa as orelhas e devolve o minério.", "Nothing nearby: ears down, and it gives the ore back."],
+    ["mark", "Achou", "Found it", "#ff8a4c", "Chegou perto do minério: bate no chão, dá o eco e senta marcando o lugar.", "Close to the ore: taps the ground, echoes and sits to mark the spot."],
+  ];
+  let pindex = 0, pmode = "idle", pstart = 0, page = 0, lastHop = -1;
+  function showPose() {
+    const p = POSES[pindex];
+    const name = $("#pupName");
+    name.style.setProperty("--c", p[3]);
+    name.textContent = tr(p[1], p[2]);
+    $("#pupCaption").textContent = tr(p[4], p[5]);
+  }
+  function setPose(i) {
+    pindex = (i + POSES.length) % POSES.length;
+    pmode = POSES[pindex][0]; pstart = page; lastHop = -1;
+    showPose();
+  }
+  $("#pupPrev").onclick = () => setPose(pindex - 1);
+  $("#pupNext").onclick = () => setPose(pindex + 1);
+  $("#pupSoundBtn").onclick = async () => {
+    if (soundOn) { soundOn = false; showSound(false); return; }
+    await enableSound();
+  };
+  showPose();
+  document.addEventListener("langchange", showPose);
+
+  const PUP_SUBTITLES = { tap: ["Filhote bate no chão", "Pup taps the ground"], echo: ["Eco sob a terra", "Echo underground"], whine: ["Filhote gane", "Pup whines"] };
+  let pupSubTimer;
+  function psound(name, pitchScale = 1) {
+    if (!soundOn) return;
+    play("entity.listener_pup." + name, { ripple: false, volume: 0.8, pitchScale });
+    const sub = $("#pupSubtitle");
+    sub.textContent = "< " + tr(...PUP_SUBTITLES[name]) + " >";
+    sub.style.opacity = 1;
+    clearTimeout(pupSubTimer);
+    pupSubTimer = setTimeout(() => sub.style.opacity = 0, 2200);
+  }
+  function reset() {
+    for (const q of Object.values(Q)) { const b = q.userData.base; q.rotation.set(b.x, b.y, b.z); q.position.set(b.px, b.py, b.pz); }
+    pup.position.y = 0;
+  }
+  function earsUp(age) {
+    const t = sin(age * 3.1) * 0.05;
+    Q.leftEar.rotation.z = 0.05 + t; Q.rightEar.rotation.z = -0.05 - t;
+    Q.leftEar.rotation.y = -0.7; Q.rightEar.rotation.y = 0.7;
+    Q.leftEar.rotation.x = -0.25; Q.rightEar.rotation.x = -0.25;
+  }
+  function sit() {
+    Q.body.rotation.x = -0.5;
+    Q.leftLeg.rotation.x = -1.45; Q.rightLeg.rotation.x = -1.45;
+    Q.leftLeg.position.y += 2.3; Q.rightLeg.position.y += 2.3;
+    Q.leftLeg.position.z += 0.4; Q.rightLeg.position.z += 0.4;
+    Q.head.rotation.x -= 0.15;
+  }
+  function animate(age) {
+    reset();
+    const t = age - pstart;
+    const idle = sin(age * 0.12) * 0.12;
+    const flick = (age % 60) < 5 ? sin(age * 2.4) * 0.35 : 0;
+    Q.leftEar.rotation.z = 0.6 + idle + flick; Q.rightEar.rotation.z = -0.6 - idle;
+    Q.leftEar.rotation.y = sin(age * 0.05) * 0.25; Q.rightEar.rotation.y = -sin(age * 0.05 + 1) * 0.25;
+    Q.body.scale.y = 1 + sin(age * 0.1) * 0.025;
+    if (pmode === "walk") {
+      const s = cos(age * 0.8) * 0.9;
+      Q.leftArm.rotation.x = s; Q.rightLeg.rotation.x = s;
+      Q.rightArm.rotation.x = -s; Q.leftLeg.rotation.x = -s;
+      Q.head.rotation.x = sin(age * 0.6) * 0.05;
+    } else if (pmode === "tap" || pmode === "mark") {
+      // Três pulinhos batendo as patas da frente; depois escuta (ou dá o eco e senta).
+      const HOP = 11, cycle = pmode === "mark" ? 90 : 80;
+      const c = t % cycle, n = Math.floor(t / cycle), hop = Math.floor(c / HOP);
+      if (hop < 3) {
+        const h = (c % HOP) / HOP, air = sin(Math.PI * h);
+        pup.position.y = air * 0.22;
+        Q.leftArm.rotation.x = -1.1 * air; Q.rightArm.rotation.x = -1.1 * air;
+        Q.leftArm.rotation.z = 0.25 * air; Q.rightArm.rotation.z = -0.25 * air;
+        Q.leftLeg.rotation.x = 0.5 * air; Q.rightLeg.rotation.x = 0.5 * air;
+        Q.body.rotation.x = -0.06 - 0.25 * air;
+        Q.head.rotation.x = 0.25 - 0.3 * air;
+        Q.leftEar.rotation.z = 0.35 - 0.3 * air; Q.rightEar.rotation.z = -0.35 + 0.3 * air;
+        Q.leftEar.rotation.x = 0.5 * air; Q.rightEar.rotation.x = 0.5 * air;
+        const key = n * 10 + hop;
+        if (h > 0.9 && lastHop !== key) { lastHop = key; psound("tap"); if (pmode === "mark" && hop === 2) setTimeout(() => psound("echo", 0.75), 150); }
+      } else {
+        if (pmode === "mark") sit();
+        Q.head.rotation.z = pmode === "mark" ? 0 : 0.38;
+        Q.head.rotation.x += 0.35;
+        earsUp(age);
+      }
+    } else if (pmode === "no") {
+      const c = t % 60;
+      if (c < 1 && lastHop !== Math.floor(t / 60)) { lastHop = Math.floor(t / 60); psound("whine"); }
+      const k = Math.max(0, 1 - c / 30);
+      Q.head.rotation.y = sin(t * 1.4) * 0.55 * k;
+      Q.head.rotation.x = 0.25;
+      Q.leftEar.rotation.z = 1.25; Q.rightEar.rotation.z = -1.25;
+      Q.leftEar.rotation.x = 0.5; Q.rightEar.rotation.x = 0.5;
+      Q.leftEar.rotation.y = 0; Q.rightEar.rotation.y = 0;
+    }
+  }
+  function presize() {
+    const w = host.clientWidth, h = host.clientHeight;
+    pr.setSize(w, h, false); pcam.aspect = w / h; pcam.updateProjectionMatrix();
+  }
+  new ResizeObserver(presize).observe(host);
+  presize();
+  let shown = false, plast = performance.now();
+  new IntersectionObserver(e => { shown = e[0].isIntersecting; }).observe(host);
+  pr.setAnimationLoop(now => {
+    const dt = Math.min(0.1, (now - plast) / 1000); plast = now;
+    if (!shown) return;
+    page += dt * 20;
+    animate(page);
+    pcon.update();
+    pr.render(ps, pcam);
+  });
+}
 </script>
 </body>
 </html>

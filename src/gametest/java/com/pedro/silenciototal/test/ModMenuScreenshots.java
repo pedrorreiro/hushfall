@@ -4,6 +4,7 @@ import com.pedro.silenciototal.client.HudConfigScreen;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.sounds.SoundSource;
 
 /**
  * Abre a lista do Mod Menu na tela de título, procura o Hushfall, abre as opções pelo Mod Menu e
@@ -12,10 +13,15 @@ import net.minecraft.client.gui.screens.Screen;
 public class ModMenuScreenshots implements FabricClientGameTest {
 	@Override
 	public void runTest(ClientGameTestContext ctx) {
+		if (DemoReel.OUT != null) {
+			return;
+		}
 		ctx.runOnClient(mc -> {
 			mc.options.languageCode = "pt_br";
 			mc.getLanguageManager().setSelected("pt_br");
 			mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
+			// Mudo: o teste abre o jogo de verdade e não deve fazer barulho no computador.
+			mc.options.getSoundSourceOptionInstance(SoundSource.MASTER).set(0.0);
 		});
 		ctx.clickScreenButton("modmenu.title");
 		ctx.waitTicks(10);

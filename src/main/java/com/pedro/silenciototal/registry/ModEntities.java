@@ -2,6 +2,7 @@ package com.pedro.silenciototal.registry;
 
 import com.pedro.silenciototal.SilencioTotal;
 import com.pedro.silenciototal.entity.Listener;
+import com.pedro.silenciototal.entity.ListenerPup;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,10 +24,22 @@ public final class ModEntities {
 					.clientTrackingRange(10)
 					.build(LISTENER_KEY));
 
+	public static final ResourceKey<EntityType<?>> LISTENER_PUP_KEY = ResourceKey.create(Registries.ENTITY_TYPE, SilencioTotal.id("listener_pup"));
+
+	/** Filhote do Ouvinte. Só nasce do Ovo do Filhote. */
+	public static final EntityType<ListenerPup> LISTENER_PUP = Registry.register(BuiltInRegistries.ENTITY_TYPE, LISTENER_PUP_KEY,
+			EntityType.Builder.of(ListenerPup::new, MobCategory.CREATURE)
+					// Sem contar as orelhas, tem uns 12 px de altura.
+					.sized(0.5f, 0.75f)
+					.eyeHeight(0.6f)
+					.clientTrackingRange(10)
+					.build(LISTENER_PUP_KEY));
+
 	private ModEntities() {
 	}
 
 	public static void init() {
 		FabricDefaultAttributeRegistry.register(LISTENER, Listener.createAttributes());
+		FabricDefaultAttributeRegistry.register(LISTENER_PUP, ListenerPup.createAttributes());
 	}
 }

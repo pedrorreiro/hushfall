@@ -41,6 +41,16 @@ fabricApi {
 	}
 }
 
+// Vídeo de demonstração: ./gradlew runClientGameTest -PdemoReel=<pasta> roda só a cena do DemoReel.
+def demoReel = providers.gradleProperty("demoReel")
+if (demoReel.isPresent()) {
+	loom.runs.configureEach {
+		if (name == "clientGameTest") {
+			vmArg "-Dhushfall.demo=${demoReel.get()}"
+		}
+	}
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

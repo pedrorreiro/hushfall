@@ -161,3 +161,43 @@ d.rectangle((2, 12, 13, 13), fill=GOLD_D)                           # boca do si
 d.ellipse((6, 13, 9, 15), fill=FLESH + (255,), outline=FLESH_DARK + (255,))  # badalo de orelha
 bell.save(R + "textures/item/deafening_bell.png")
 print("bell ok")
+
+# Orelha de Ouro 16x16: o mesmo leque da Orelha, em ouro, com o interior ainda de carne.
+gear = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+d = ImageDraw.Draw(gear)
+d.polygon([(3, 15), (5, 1), (11, 1), (13, 15)], fill=GOLD, outline=GOLD_D)
+d.polygon([(5, 13), (6, 3), (10, 3), (11, 13)], fill=FLESH + (255,))
+for y in range(4, 13, 3):
+    d.line((7, y, 9, y + 1), fill=FLESH_DARK + (255,))
+d.line((4, 2, 3, 13), fill=GOLD_L)                                  # brilho na borda
+d.line((4, 15, 12, 15), fill=GOLD_D)
+gear.save(R + "textures/item/golden_ear.png")
+print("golden ear ok")
+
+# Ovo do Filhote 16x16: ovo de pele cinza (formato do ovo do jogo) com as duas orelhas compridas
+# do filhote saindo do topo em V, cinza por fora e carne por dentro.
+PUP_EGG = [".oo..........oo.",
+           ".ofo........ofo.",
+           "..ofo......ofo..",
+           "..oFfo....ofFo..",
+           "...ofo....ofo...",
+           "....oo1111oo....",
+           ".....134431.....",
+           "....13544421....",
+           "....15544430....",
+           "...1354444320...",
+           "...1444444330...",
+           "...1444s44330...",
+           "...14444433s0...",
+           "...134s433320...",
+           "....02333320....",
+           ".....000000....."]
+PUP_EGG_COLORS = {"0": (40, 42, 38), "1": (70, 73, 68), "2": (96, 100, 93), "3": SKIN, "4": (150, 153, 143),
+                  "5": (188, 191, 180), "s": (104, 108, 100), "o": (56, 58, 54), "f": (170, 84, 92), "F": (118, 50, 58)}
+pegg = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+for y, row in enumerate(PUP_EGG):
+    for x, c in enumerate(row):
+        if c != ".":
+            pegg.putpixel((x, y), PUP_EGG_COLORS[c] + (255,))
+pegg.save(R + "textures/item/listener_pup_egg.png")
+print("pup egg ok")

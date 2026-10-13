@@ -26,6 +26,8 @@ public final class ModConfig {
 	public int maxSpawnDistance = 45;
 	/** Multiplicador geral do ruído do jogador (0.5 = metade do barulho). */
 	public float noiseMultiplier = 1.0f;
+	/** Quantas buscas cada Filhote do Ouvinte faz antes de ir embora (só contam as que acharam algo). */
+	public int pupSearches = 10;
 	/** Versão do arquivo. Usada para atualizar valores padrão antigos. */
 	public int configVersion = CURRENT_VERSION;
 
@@ -62,6 +64,7 @@ public final class ModConfig {
 		instance.maxSpawnDistance = Math.max(instance.minSpawnDistance + 4, instance.maxSpawnDistance);
 		instance.noiseMultiplier = Math.max(0f, instance.noiseMultiplier);
 		instance.nightChance = Math.max(0f, Math.min(1f, instance.nightChance));
+		instance.pupSearches = Math.max(1, instance.pupSearches);
 		try (Writer writer = Files.newBufferedWriter(path)) {
 			GSON.toJson(instance, writer);
 		} catch (IOException e) {

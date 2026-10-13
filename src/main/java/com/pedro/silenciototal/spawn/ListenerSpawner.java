@@ -8,8 +8,10 @@ import com.pedro.silenciototal.registry.ModEntities;
 import com.pedro.silenciototal.registry.ModSounds;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -138,6 +140,7 @@ public final class ListenerSpawner {
 			}
 			Listener listener = ModEntities.LISTENER.spawn(level, pos, EntitySpawnReason.EVENT);
 			if (listener != null) {
+				listener.markNatural();
 				if (health > 0) {
 					listener.setHealth(Math.min(health, listener.getMaxHealth()));
 				}
@@ -151,10 +154,18 @@ public final class ListenerSpawner {
 		return null;
 	}
 
-	/** Chamado pelo Ouvinte quando morre: só volta na noite seguinte. */
-	public static void onKilled(ServerLevel level) {
+	/**
+	 * Chamado pelo Ouvinte quando morre: só volta na noite seguinte. O medidor some pelo resto da noite.
+	 *
+	 * @param natural se ele surgiu sozinho; só assim a morte conta para o contador do mundo
+	 */
+	public static void onKilled(ServerLevel level, boolean natural) {
 		MinecraftServer server = level.getServer();
-		setState(server, state(server).killed(NightCycle.day(level)));
+		setState(server, state(server).killed(NightCycle.day(level), natural));
+		Component message = Component.translatable("message.silenciototal.listener_slain").withStyle(ChatFormatting.DARK_AQUA);
+		for (ServerPlayer player : level.players()) {
+			player.sendOverlayMessage(message);
+		}
 	}
 
 	/** Diferença máxima de altura entre o Ouvinte e o jogador ao surgir. */

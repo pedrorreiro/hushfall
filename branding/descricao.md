@@ -42,7 +42,16 @@ The Listener is a boss and hits very hard. Running is usually the smart move, bu
 - **Every hit counts.** It never heals, not even from one night to the next. Hit it, get away, sleep, and come back tomorrow.
 - **Surprise attacks** hurt more: strike when it's distracted, stunned or cornered.
 - **Hitting it gives you away.** Once you hit it, it comes for you. Always have an escape route.
-- **The reward:** defeat it and it drops the **Listener's Ear**. It only comes back the next night.
+- **The reward:** defeat it and it drops the **Listener's Ear**. It only comes back the next night, and the noise meter fades away for the rest of the night.
+
+## The Listener Pup
+
+Beat the Listener again and again and it pays off. Every 5th time it dies, it also drops a **Golden Ear**. Craft it into a **Pup Egg** and you get a blind pet, just like its parent, that finds ores by **listening to the echo**.
+
+- Give it an ore and it taps the ground, listens and **leads you** to the nearest one of the same kind.
+- When it gets there, it echoes and sits down to mark the spot. A **high echo means shallow**, a **low echo means deep**.
+- Each pup has **10 searches**. It refuses to make a sound while the Listener is awake.
+- If it gets badly hurt, it runs off and burrows. It comes back to you the next morning.
 
 ## Items
 
@@ -103,7 +112,16 @@ O Ouvinte é um chefe e bate muito forte. Fugir costuma ser a melhor ideia, mas 
 - **Cada golpe conta.** Ele não se cura, nem de uma noite para a outra. Bata, fuja, durma e volte amanhã.
 - **Ataques de surpresa** causam mais dano: ataque quando ele está distraído, tonto ou encurralado.
 - **Atacar entrega você.** Bateu nele, ele vem atrás de você. Tenha sempre uma rota de fuga.
-- **A recompensa:** derrotado, ele deixa cair a **Orelha do Ouvinte** e só volta na noite seguinte.
+- **A recompensa:** derrotado, ele deixa cair a **Orelha do Ouvinte** e só volta na noite seguinte. O medidor some pelo resto da noite.
+
+## O Filhote do Ouvinte
+
+Vencer o Ouvinte várias vezes compensa. A cada 5 mortes, ele também deixa cair uma **Orelha de Ouro**. Com ela você faz o **Ovo do Filhote**: um pet cego, como o pai, que acha minérios **ouvindo o eco**.
+
+- Entregue um minério e ele bate no chão, escuta e **te leva** até o mais perto do mesmo tipo.
+- Chegando lá, ele dá o eco e senta marcando o lugar. **Eco agudo é raso**, **eco grave é fundo**.
+- Cada filhote tem **10 buscas**. Com o Ouvinte acordado, ele se recusa a fazer barulho.
+- Se a vida dele acabar, ele foge e se enterra. Volta para você na manhã seguinte.
 
 ## Itens
 

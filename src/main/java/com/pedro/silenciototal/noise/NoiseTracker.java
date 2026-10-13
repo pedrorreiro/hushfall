@@ -84,8 +84,8 @@ public final class NoiseTracker {
 		if (NightCycle.isNight(level) && player.isAlive()) {
 			announceNight(player, data);
 		}
-		// O medidor e o ruído só existem nas noites em que o Ouvinte vem.
-		boolean active = NightCycle.isHuntingNight(level) && !player.isCreative() && !player.isSpectator() && player.isAlive();
+		// O medidor e o ruído só existem nas noites em que o Ouvinte vem, e só até ele morrer.
+		boolean active = NightCycle.isListenerAwake(level) &&!player.isCreative() && !player.isSpectator() && player.isAlive();
 		Vec3 pos = player.position();
 		Vec3 last = data.lastPos == null ? pos : data.lastPos;
 		data.lastPos = pos;
@@ -317,7 +317,10 @@ public final class NoiseTracker {
 		}
 		data.warnedNight = night;
 		Component message;
-		if (NightCycle.isHuntingNight(level)) {
+		if (NightCycle.isHuntingNight(level) && !NightCycle.isListenerAwake(level)) {
+			// Entrou no mundo depois que o Ouvinte já foi morto nesta noite.
+			message = Component.translatable("message.silenciototal.listener_slain").withStyle(ChatFormatting.DARK_AQUA);
+		} else if (NightCycle.isHuntingNight(level)) {
 			message = Component.translatable("message.silenciototal.night_falls").withStyle(ChatFormatting.DARK_AQUA);
 		} else if (night < ModConfig.get().graceNights) {
 			message = Component.translatable("message.silenciototal.grace_night").withStyle(ChatFormatting.GRAY);

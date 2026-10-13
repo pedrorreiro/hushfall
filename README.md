@@ -22,8 +22,9 @@ As regras completas estão em [REGRAS.md](REGRAS.md).
 - **Sair do mundo**: a barra fica salva com o jogador. Quem sai no meio de uma caçada volta com barulho alto e ele caça de novo.
 - **Casas**: em silêncio dentro de casa ele não entra. Fazendo barulho, ele arromba portas de madeira; porta de ferro aguenta.
 - **Dormir**: em silêncio, com ele só patrulhando, a cama funciona. Ele só impede o sono quando está caçando, alerta, desconfiado ou farejando você.
-- **Combate**: ele não regenera. Todo dano fica, inclusive de uma noite para a outra, até ele morrer.
-- **Ouvinte**: um só por mundo, chefe com 75 corações e barra de vida. 3 blocos de altura (se espreme em túneis). Surge ao anoitecer a 32–45 blocos (nunca a menos de 30) e vai rondando a sua área, sempre avisa antes de atacar e se enterra ao amanhecer. A 8 blocos ele te descobre se sua barra estiver em 10+; em silêncio ele só fareja e não ataca. Perto do limite ele desconfia (vira a cabeça, orelhas em pé) e você ouve o próprio coração com as bordas da tela escurecendo. Morto, volta na noite seguinte e dropa a **Orelha do Ouvinte**, ingrediente do **Sino Ensurdecedor** (atordoa o Ouvinte por 10 s, uma vez por noite).
+- **Combate**: ele não regenera. Todo dano fica, inclusive de uma noite para a outra, até ele morrer. Bater nele, ou botar fogo nele, faz ele caçar você.
+- **Ouvinte**: um só por mundo, chefe com 75 corações e barra de vida. 3 blocos de altura (se espreme em túneis). Surge ao anoitecer a 32–45 blocos (nunca a menos de 30) e vai rondando a sua área, sempre avisa antes de atacar e se enterra ao amanhecer. A 8 blocos ele te descobre se sua barra estiver em 10+; em silêncio ele só fareja e não ataca. Perto do limite ele desconfia (vira a cabeça, orelhas em pé) e você ouve o próprio coração com as bordas da tela escurecendo. Morto, volta na noite seguinte e dropa a **Orelha do Ouvinte**, ingrediente do **Sino Ensurdecedor** (atordoa o Ouvinte por 10 s, uma vez por noite). Ao matá-lo, o medidor some e o resto da noite fica sem ruído.
+- **Filhote do Ouvinte**: a cada 5 mortes do Ouvinte (contador do mundo) cai uma **Orelha de Ouro**. Com ela, 2 Orelhas e um ovo, você faz o **Ovo do Filhote**: um pet cego que acha minérios pelo eco. Você entrega um minério no painel e ele te leva até o mais perto num raio de 64 blocos, e o tom do eco diz a profundidade. São 10 buscas por filhote; com o Ouvinte acordado ele não procura, e com a vida zerada ele foge e volta de manhã. Regras em [FILHOTE.md](FILHOTE.md).
 
 ## Galeria
 
@@ -37,7 +38,7 @@ As regras completas estão em [REGRAS.md](REGRAS.md).
 
 ## Ver os modelos sem abrir o jogo
 
-Abra [tools/visualizador.html](tools/visualizador.html) no navegador (ou o site publicado, gerado em `site/index.html`): o Ouvinte em 3D com os 4 estados de animação e os sons de cada um, os itens com as receitas no estilo da wiki e o guia de como jogar. Depois de mudar texturas, rode:
+Abra [tools/visualizador.html](tools/visualizador.html) no navegador (ou o site publicado, gerado em `site/index.html`): o Ouvinte em 3D com os estados de animação e os sons de cada um, o Filhote em 3D com as poses da busca, os itens com as receitas no estilo da wiki e o guia de como jogar. Depois de mudar texturas, rode:
 
 ```bash
 python3 tools/build_viewer.py
@@ -50,7 +51,14 @@ Precisa de JDK 25.
 ```bash
 ./gradlew build              # gera build/libs/silenciototal-<versão>.jar
 ./gradlew runClient          # abre o jogo com o mod
-./gradlew runClientGameTest  # teste automatizado: anoitece, mede ruído, testa Ouvinte, distrações, portas, sino e amanhecer
+./gradlew runClientGameTest  # teste automatizado: anoitece, mede ruído, testa Ouvinte, distrações, portas, sino, Filhote e amanhecer
+```
+
+Vídeo de demonstração (`branding/video/hushfall_demo.mp4`): o `DemoReel` grava uma cena roteirizada (3 quadros por tick, 60 fps, e o log dos sons) e `tools/montar_video.py` corta, legenda e mixa o áudio.
+
+```bash
+./gradlew runClientGameTest -PdemoReel=/tmp/hushfall-reel
+python3 tools/montar_video.py /tmp/hushfall-reel branding/video/hushfall_demo.mp4
 ```
 
 Para instalar, coloque o jar em `mods/` junto com o Fabric API (0.161.0+26.3) e o Fabric Loader 0.19.5 ou superior. O [Mod Menu](https://modrinth.com/mod/modmenu) (21.0.0+) é opcional e dá acesso à tela de opções do medidor.
@@ -60,7 +68,8 @@ Para instalar, coloque o jar em `mods/` junto com o Fabric API (0.161.0+26.3) e 
 - `noise/`: barra de ruído (`NoiseTracker`), fontes de barulho (`NoiseSources`), sons no mundo (`WorldSounds`), ciclo noturno
 - `entity/Listener`: o Ouvinte e seus estados (patrulha, investiga, alerta, caça)
 - `spawn/ListenerSpawner`: spawn noturno longe dos jogadores
-- `item/`: Sino Ensurdecedor
+- `item/`: Sino Ensurdecedor e Ovo do Filhote
+- `entity/ListenerPup` e `pup/`: o Filhote, o painel, a varredura de minérios (`OreScanner`) e a volta depois de fugir (`PupReturns`)
 - `mixin/`: pulo, game events (note block, sino, pistão, explosão...) e dispensador
 - `client/`: HUD da barra de ruído, modelo e renderer do Ouvinte
 - `tools/`: visualizador 3D e gerador de texturas
@@ -77,8 +86,8 @@ O mesmo workflow envia o `hushfall.jar` ao [CurseForge](https://www.curseforge.c
 Também envia o `hushfall.jar` ao [Modrinth](https://modrinth.com/) (projeto RkWfqwPL), com Fabric API obrigatório e Mod Menu opcional, usando o secret `MODRINTH_TOKEN` (permissões Create versions e Read projects). Sem ele, esse passo é pulado.
 
 ```bash
-git tag v1.3.0
-git push origin v1.3.0
+git tag v1.4.0
+git push origin v1.4.0
 ```
 
 ## Site

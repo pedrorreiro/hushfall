@@ -19,10 +19,14 @@ import net.minecraft.world.phys.Vec3;
  * @param scars     todo dano que ele já levou (não regenera nem de uma noite para outra); zera quando morre
  * @param habituations lugares onde ele já procurou à toa. Ficam aqui, e não na entidade, porque ele
  *                  vira uma entidade nova toda vez que se enterra e ressurge.
+ * @param kills     quantas vezes o Ouvinte que surge sozinho já morreu neste mundo (a cada 5, uma Orelha de Ouro)
  */
 public record ListenerState(Optional<UUID> current, long night, float health, long killedNight, float scars,
-		List<Habituation> habituations) {
-	public static final ListenerState EMPTY = new ListenerState(Optional.empty(), -1, -1, -1, 0, List.of());
+		List<Habituation> habituations, int kills) {
+	public static final ListenerState EMPTY = new ListenerState(Optional.empty(), -1, -1, -1, 0, List.of(), 0);
+
+	/** A cada quantas mortes ele dropa uma Orelha de Ouro. */
+	public static final int GOLDEN_EAR_EVERY = 5;
 
 	/**
 	 * Um lugar onde ele foi atrás de uma distração e não achou nada.
@@ -43,27 +47,38 @@ public record ListenerState(Optional<UUID> current, long night, float health, lo
 			Codec.FLOAT.fieldOf("health").forGetter(ListenerState::health),
 			Codec.LONG.fieldOf("killed_night").forGetter(ListenerState::killedNight),
 			Codec.FLOAT.optionalFieldOf("scars", 0f).forGetter(ListenerState::scars),
-			Habituation.CODEC.listOf().optionalFieldOf("habituations", List.of()).forGetter(ListenerState::habituations)
+			Habituation.CODEC.listOf().optionalFieldOf("habituations", List.of()).forGetter(ListenerState::habituations),
+			Codec.INT.optionalFieldOf("kills", 0).forGetter(ListenerState::kills)
 	).apply(instance, ListenerState::new));
 
 	public ListenerState withCurrent(UUID id, long night, float health) {
-		return new ListenerState(Optional.of(id), night, health, killedNight, scars, habituations);
+		return new ListenerState(Optional.of(id), night, health, killedNight, scars, habituations, kills);
 	}
 
 	public ListenerState withHealth(float health) {
-		return new ListenerState(current, night, health, killedNight, scars, habituations);
+		return new ListenerState(current, night, health, killedNight, scars, habituations, kills);
 	}
 
-	public ListenerState killed(long night) {
-		return new ListenerState(Optional.empty(), night, -1, night, 0, habituations);
+	/** @param counts se a morte conta para o contador (o Ouvinte do ovo gerador não conta) */
+	public ListenerState killed(long night, boolean counts) {
+		return new ListenerState(Optional.empty(), night, -1, night, 0, habituations, counts ? kills + 1 : kills);
+	}
+
+	public ListenerState withKills(int kills) {
+		return new ListenerState(current, night, health, killedNight, scars, habituations, kills);
+	}
+
+	/** A próxima morte que conta é a 5ª, 10ª, 15ª...: ela dropa uma Orelha de Ouro. */
+	public boolean nextKillDropsGoldenEar() {
+		return (kills + 1) % GOLDEN_EAR_EVERY == 0;
 	}
 
 	public ListenerState withScars(float scars) {
-		return new ListenerState(current, night, health, killedNight, scars, habituations);
+		return new ListenerState(current, night, health, killedNight, scars, habituations, kills);
 	}
 
 	public ListenerState withHabituations(List<Habituation> habituations) {
-		return new ListenerState(current, night, health, killedNight, scars, List.copyOf(habituations));
+		return new ListenerState(current, night, health, killedNight, scars, List.copyOf(habituations), kills);
 	}
 
 	public boolean isCurrent(UUID id) {

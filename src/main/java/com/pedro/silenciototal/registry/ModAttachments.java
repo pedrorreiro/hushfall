@@ -2,8 +2,10 @@ package com.pedro.silenciototal.registry;
 
 import com.pedro.silenciototal.SilencioTotal;
 import com.pedro.silenciototal.noise.NoiseMemory;
+import com.pedro.silenciototal.pup.PupReturn;
 import com.pedro.silenciototal.spawn.ListenerState;
 import com.mojang.serialization.Codec;
+import java.util.List;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 
@@ -19,6 +21,10 @@ public final class ModAttachments {
 	/** Ruído do jogador ao sair do mundo: voltar não zera a barra nem encerra a caçada. Some ao morrer. */
 	public static final AttachmentType<NoiseMemory> NOISE_MEMORY = AttachmentRegistry.create(SilencioTotal.id("noise_memory"),
 			builder -> builder.persistent(NoiseMemory.CODEC));
+
+	/** Filhotes que fugiram e voltam para o dono de manhã (guardado nos attachments globais do servidor). */
+	public static final AttachmentType<List<PupReturn>> PUP_RETURNS = AttachmentRegistry.create(SilencioTotal.id("pup_returns"),
+			builder -> builder.initializer(List::of).persistent(PupReturn.CODEC.listOf()));
 
 	private ModAttachments() {
 	}

@@ -29,10 +29,12 @@ O mod só funciona **à noite** e só no **Overworld**. De dia nada disso existe
 - **Chefe**: 150 de vida (75 corações), 12 de dano, resistente a empurrão e mais rápido que você correndo. Barra de chefe aparece a até 32 blocos.
 - **Não regenera**: todo dano que ele leva fica, inclusive de uma noite para outra. Dá para enfraquecê-lo ao longo de várias noites. Ele só volta com a vida cheia depois de morrer.
 - **Ataque surpresa** (fora da caçada, encurralado ou atordoado): dano ×1,5.
+- **Fogo e lava também são ataque**: se ele queimar, caça o jogador mais perto (até 16 blocos), mesmo que você esteja em silêncio.
 - **Não percebe quedas**: anda até 12 blocos de desnível sem hesitar. Buraco fundo é armadilha.
 - **Nunca se perde**: se passar 20 segundos longe de todos, ele se enterra e ressurge perto de alguém com a mesma vida.
 - **Ouve de qualquer distância**: barulho Audível ou ALTO chega até ele onde quer que esteja. Se estiver longe demais (mais de 128 blocos), ele se enterra e ressurge a 32–45 blocos de quem fez barulho (no máximo uma vez a cada 30 s).
 - **Ao amanhecer se enterra** e volta na próxima noite com o dano que já levou. Se for morto, só volta na noite seguinte e dropa a **Orelha do Ouvinte**.
+- **Matou, acabou a noite**: aparece *"O Ouvinte caiu. Esta noite volta a ser só noite."*, o medidor some aos poucos e, pelo resto daquela noite, não há ruído nem medidor.
 
 ### Comportamento
 
@@ -138,18 +140,36 @@ Sons no mundo que o Ouvinte vai investigar. Cada ponto tem **cooldown**.
 | **Adaga Silenciosa** | ferro + lã + graveto (`_ _ I` / `_ W _` / `S _ _`) | Golpes **sem barulho**. Dano 5, ataque rápido. Levar golpe ainda faz +15. |
 | **Orelha do Ouvinte** | Drop ao matar o Ouvinte | Ingrediente do Sino Ensurdecedor. |
 | **Sino Ensurdecedor** | graveto + ouro + Orelha (`_ S _` / `G E G` / `G _ G`) | Tocado (botão direito), **atordoa o Ouvinte por 10 s** se ele estiver a até 16 blocos. **Uma vez por noite.** O toque não conta no seu ruído, mas quando o atordoamento passa ele vai investigar de onde veio o sino. |
+| **Orelha de Ouro** | Drop extra na 5ª, 10ª, 15ª... morte do Ouvinte (contador do mundo) | Ingrediente do Ovo do Filhote. |
+| **Ovo do Filhote** | 2 Orelhas + ovo + Orelha de Ouro (`E _ E` / `_ O _` / `_ G _`) | Usado num bloco, choca o Filhote do Ouvinte já domesticado por você (seção 6). |
 | **Ovo Gerador de Ouvinte** | Só no criativo | Para testar. Como só existe um, gerar outro faz o antigo sumir. |
 
 ---
 
-## 6. As duas regras de ouro
+## 6. O Filhote do Ouvinte
+
+Recompensa por vencer o Ouvinte várias vezes: um pet cego que acha minérios **ouvindo o eco**. Regras completas em [FILHOTE.md](FILHOTE.md).
+
+- **Como conseguir:** o mundo conta as mortes do Ouvinte (só os que surgem à noite, não os do ovo gerador). Na 5ª, 10ª, 15ª... ele também dropa a **Orelha de Ouro**. Com ela, 2 Orelhas do Ouvinte e um ovo, faça o **Ovo do Filhote** e use num bloco.
+- **Controles:** clique direito senta ou levanta; **agachado + clique direito** abre o painel. Fora isso, ele te segue como um lobo. Só o dono manda nele.
+- **A busca:** coloque no painel o que o minério dropa (carvão, ferro bruto, cobre bruto, ouro bruto, redstone, lápis-lazúli, diamante, esmeralda, quartzo ou fragmento de netherite) e clique em **Procurar**. O item é **gasto na hora**.
+  - Ele bate no chão e escuta. Sem minério num raio de **64 blocos** (em qualquer altura): "Nada por perto.", devolve o item e não gasta busca.
+  - Achou: te leva até o minério igual **mais perto**. Se você ficar mais de 10 blocos para trás, ele espera.
+  - Chegou: para a **3 a 5 blocos**, dá o **eco** e senta. **Eco agudo = raso, grave = fundo.** Fica sentado até você levantá-lo.
+- **Noite de caça:** com o Ouvinte acordado ele não procura. Se a noite começa enquanto ele guia, ele se esconde e continua de manhã (ou quando o Ouvinte morrer).
+- **10 buscas** por filhote (`pupSearches`). Só contam as que acharam algo. Depois da última, ao ser levantado (ou depois de 2 minutos), ele se enterra e não volta mais.
+- **Vida zerada:** ele não morre. Foge, se enterra e **volta na manhã seguinte** perto de você, com as mesmas buscas. A busca em andamento (e o item) se perde.
+
+---
+
+## 7. As duas regras de ouro
 
 1. **Sempre há um aviso antes do perigo**: rosnado distante quando ele surge, estalo quando ouve algo, rugido antes de toda caçada, passos pesados, coração disparado. Todos os sons têm legenda.
 2. **Nunca surge a menos de 30 blocos de ninguém.**
 
 ---
 
-## 7. Configuração
+## 8. Configuração
 
 `config/silenciototal.json`:
 
@@ -160,6 +180,7 @@ Sons no mundo que o Ouvinte vai investigar. Cada ponto tem **cooldown**.
 | `minSpawnDistance` | `32` | Distância mínima de qualquer jogador (nunca menos de 30). |
 | `maxSpawnDistance` | `45` | Distância máxima do jogador escolhido. |
 | `noiseMultiplier` | `1.0` | Multiplica todo o ruído do jogador. |
+| `pupSearches` | `10` | Buscas de cada Filhote do Ouvinte. |
 
 O spawn respeita a dificuldade (nada no Pacífico) e a regra `spawn_monsters`. Arrombar portas respeita a regra `mob_griefing`.
 

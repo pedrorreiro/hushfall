@@ -33,9 +33,15 @@ public final class NoiseHud {
 	 */
 	private static @Nullable ItemStack ear;
 
+	/** Segundos que o medidor leva para sumir quando a noite acaba ou o Ouvinte morre. */
+	private static final float FADE_SECONDS = 1.5f;
+
 	private static float noise;
 	private static float shown;
 	private static byte flags;
+	/** Opacidade do medidor: 1 enquanto a noite dura, depois cai até 0. */
+	private static float fade;
+	private static long lastFrame;
 
 	private NoiseHud() {
 	}
@@ -49,6 +55,8 @@ public final class NoiseHud {
 		noise = 0;
 		shown = 0;
 		flags = 0;
+		fade = 0;
+		lastFrame = 0;
 	}
 
 	public static float noise() {
@@ -61,11 +69,16 @@ public final class NoiseHud {
 
 	public static void extract(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
 		Minecraft mc = Minecraft.getInstance();
-		if (!visible() || mc.player == null) {
+		long now = System.nanoTime();
+		float seconds = lastFrame == 0 ? 0 : (now - lastFrame) / 1_000_000_000f;
+		lastFrame = now;
+		fade = visible() ? 1 : Math.max(0, fade - seconds / FADE_SECONDS);
+		if (fade <= 0 || mc.player == null) {
 			return;
 		}
+		// Sumindo, o anel esvazia junto: o silêncio volta.
 		shown = Mth.lerp(0.25f, shown, noise);
-		draw(graphics, ClientConfig.get(), noise, shown, status(), mc.player.tickCount);
+		draw(graphics, ClientConfig.get(), noise, shown, status(), mc.player.tickCount, fade);
 	}
 
 	/**
@@ -77,6 +90,12 @@ public final class NoiseHud {
 	 * @param status a linha de baixo ("A chuva abafa"), ou {@code null}
 	 */
 	public static void draw(GuiGraphicsExtractor graphics, ClientConfig config, float value, float shown, @Nullable Component status, int tickCount) {
+		draw(graphics, config, value, shown, status, tickCount, 1);
+	}
+
+	/** @param alpha opacidade de 0 a 1 (o medidor sumindo) */
+	public static void draw(GuiGraphicsExtractor graphics, ClientConfig config, float value, float shown, @Nullable Component status, int tickCount,
+			float alpha) {
 		Font font = Minecraft.getInstance().font;
 		NoiseLevel level = NoiseLevel.of(value);
 		int color = switch (level) {
@@ -102,22 +121,24 @@ public final class NoiseHud {
 
 		// Anel à esquerda e texto à direita; nos cantos da direita, o texto vai para o lado de dentro.
 		int ringX = config.corner.right() ? width - SIZE : 0;
-		drawRing(graphics, ringX, 0, Mth.clamp(shown / NoiseLevel.MAX, 0f, 1f), color);
+		drawRing(graphics, ringX, 0, Mth.clamp(shown / NoiseLevel.MAX, 0f, 1f), color, alpha);
 
 		// No centro, a orelha: "isto é o quanto ele consegue te ouvir".
+		// O item não tem transparência: a orelha sai na primeira metade do sumiço.
 		ItemStack ear = ear();
-		if (ear != null) {
+		if (ear != null && alpha > 0.5f) {
 			graphics.fakeItem(ear, ringX + SIZE / 2 - 8, SIZE / 2 - 8);
 		}
 
 		// Ao lado: a faixa e o valor ("Audível · 52") e, embaixo, o que está mexendo no ruído.
-		if (config.showText) {
+		// Texto quase transparente é desenhado opaco pela fonte do jogo: some de vez antes disso.
+		if (config.showText && alpha > 0.05f) {
 			int textY = status == null ? SIZE / 2 - 4 : SIZE / 2 - 9;
 			int labelX = config.corner.right() ? textWidth - font.width(label) : SIZE + TEXT_GAP;
-			graphics.text(font, label, labelX, textY, color, true);
+			graphics.text(font, label, labelX, textY, faded(color, alpha), true);
 			if (status != null) {
 				int statusX = config.corner.right() ? textWidth - font.width(status) : SIZE + TEXT_GAP;
-				graphics.text(font, status, statusX, textY + 10, statusColor(), true);
+				graphics.text(font, status, statusX, textY + 10, faded(statusColor(), alpha), true);
 			}
 		}
 		graphics.pose().popMatrix();
@@ -145,13 +166,13 @@ public final class NoiseHud {
 	 * Desenha o anel pixel a pixel (a GUI só sabe desenhar retângulos), juntando pixels vizinhos
 	 * da mesma cor numa linha em um único retângulo.
 	 */
-	private static void drawRing(GuiGraphicsExtractor graphics, int x0, int y0, float fraction, int color) {
+	private static void drawRing(GuiGraphicsExtractor graphics, int x0, int y0, float fraction, int color, float alpha) {
 		float c = OUTER;
 		for (int py = 0; py < SIZE; py++) {
 			int runStart = -1;
 			int runColor = 0;
 			for (int px = 0; px <= SIZE; px++) {
-				int pixel = px < SIZE ? pixelColor(px + 0.5f - c, py + 0.5f - c, fraction, color) : 0;
+				int pixel = px < SIZE ? faded(pixelColor(px + 0.5f - c, py + 0.5f - c, fraction, color), alpha) : 0;
 				if (pixel != runColor) {
 					if (runColor != 0) {
 						graphics.fill(x0 + runStart, y0 + py, x0 + px, y0 + py + 1, runColor);
@@ -161,6 +182,15 @@ public final class NoiseHud {
 				}
 			}
 		}
+	}
+
+	/** A cor com o alfa multiplicado; 0 (nada) se ficar invisível. */
+	private static int faded(int argb, float alpha) {
+		if (alpha >= 1 || argb == 0) {
+			return argb;
+		}
+		int a = Math.round((argb >>> 24) * alpha);
+		return a <= 3 ? 0 : a << 24 | argb & 0xFFFFFF;
 	}
 
 	private static int pixelColor(float dx, float dy, float fraction, int color) {

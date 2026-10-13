@@ -26,6 +26,19 @@ public final class ModSounds {
 	/** Orelha do Ouvinte: batimento que acelera conforme ele se aproxima. */
 	public static final SoundEvent EAR_HEARTBEAT = register("item.listener_ear.heartbeat");
 
+	// Filhote do Ouvinte: os sons do pai, mais agudos.
+	public static final SoundEvent PUP_AMBIENT = register("entity.listener_pup.ambient");
+	public static final SoundEvent PUP_HURT = register("entity.listener_pup.hurt");
+	public static final SoundEvent PUP_DEATH = register("entity.listener_pup.death");
+	public static final SoundEvent PUP_STEP = register("entity.listener_pup.step");
+	/** As duas patinhas batendo no chão. */
+	public static final SoundEvent PUP_TAP = register("entity.listener_pup.tap");
+	/** O eco que volta do minério. O tom diz a profundidade (agudo = raso). */
+	public static final SoundEvent PUP_ECHO = register("entity.listener_pup.echo");
+	/** Ganido de "não achei nada". */
+	public static final SoundEvent PUP_WHINE = register("entity.listener_pup.whine");
+	public static final SoundEvent PUP_BURROW = register("entity.listener_pup.burrow");
+
 	private ModSounds() {
 	}
 

@@ -212,5 +212,164 @@
         "name": "minecraft:mob/warden/heartbeat_4"
       }
     ]
+  },
+  "entity.listener_pup.ambient": {
+    "subtitle": "subtitles.silenciototal.listener_pup.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:mob/warden/tendril_clicks_1",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/warden/tendril_clicks_2",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/warden/tendril_clicks_3",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/warden/tendril_clicks_4",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/warden/tendril_clicks_5",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/warden/tendril_clicks_6",
+        "pitch": 1.9,
+        "volume": 0.5
+      }
+    ]
+  },
+  "entity.listener_pup.hurt": {
+    "subtitle": "subtitles.silenciototal.listener_pup.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/warden/hurt_1",
+        "pitch": 1.9,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/warden/hurt_2",
+        "pitch": 1.9,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/warden/hurt_3",
+        "pitch": 1.9,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/warden/hurt_4",
+        "pitch": 1.9,
+        "volume": 0.7
+      }
+    ]
+  },
+  "entity.listener_pup.death": {
+    "subtitle": "subtitles.silenciototal.listener_pup.death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/warden/death_1",
+        "pitch": 1.9,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/warden/death_2",
+        "pitch": 1.9,
+        "volume": 0.7
+      }
+    ]
+  },
+  "entity.listener_pup.step": {
+    "subtitle": "subtitles.silenciototal.listener_pup.step",
+    "sounds": [
+      {
+        "name": "minecraft:mob/wolf/baby/step1",
+        "pitch": 1.0
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/step2",
+        "pitch": 1.0
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/step3",
+        "pitch": 1.0
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/step4",
+        "pitch": 1.0
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/step5",
+        "pitch": 1.0
+      }
+    ]
+  },
+  "entity.listener_pup.tap": {
+    "subtitle": "subtitles.silenciototal.listener_pup.tap",
+    "sounds": [
+      {
+        "name": "minecraft:mob/warden/attack_impact_1",
+        "pitch": 1.8,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/warden/attack_impact_2",
+        "pitch": 1.8,
+        "volume": 0.5
+      }
+    ]
+  },
+  "entity.listener_pup.echo": {
+    "subtitle": "subtitles.silenciototal.listener_pup.echo",
+    "sounds": [
+      {
+        "name": "minecraft:block/amethyst/resonate1",
+        "pitch": 1.0
+      },
+      {
+        "name": "minecraft:block/amethyst/resonate2",
+        "pitch": 1.0
+      },
+      {
+        "name": "minecraft:block/amethyst/resonate3",
+        "pitch": 1.0
+      },
+      {
+        "name": "minecraft:block/amethyst/resonate4",
+        "pitch": 1.0
+      }
+    ]
+  },
+  "entity.listener_pup.whine": {
+    "subtitle": "subtitles.silenciototal.listener_pup.whine",
+    "sounds": [
+      {
+        "name": "minecraft:mob/wolf/baby/whine1",
+        "pitch": 0.9
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/whine2",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "entity.listener_pup.burrow": {
+    "subtitle": "subtitles.silenciototal.listener_pup.burrow",
+    "sounds": [
+      {
+        "name": "minecraft:mob/warden/dig",
+        "pitch": 1.9,
+        "volume": 0.7
+      }
+    ]
   }
 }
